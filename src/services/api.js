@@ -38,9 +38,10 @@ api.interceptors.request.use(
     }
 
     // 2. Start top bar loader immediately
-    const { startTopBar, stopTopBar, startCenter, /** stopCenter */ } =
+    const { startTopBar, stopTopBar, startCenter, stopCenter } =
       useLoaderStore.getState();
     startTopBar();
+    stopCenter();
 
     // 3. Record when the request started
     config._startTime = Date.now();
