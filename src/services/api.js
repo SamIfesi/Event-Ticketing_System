@@ -63,40 +63,22 @@ api.interceptors.request.use(
 // ─────────────────────────────────────────────────────────────────────────────
 api.interceptors.response.use(
   (response) => {
-    // 1. Cancel the slow-request timer
-    if (response.config._slowTimer) {
-      clearTimeout(response.config._slowTimer);
-    }
+    if (response.config._slowTimer) clearTimeout(response.config._slowTimer);
 
-    // 2. Stop the correct loader
     const { stopTopBar, stopCenter } = useLoaderStore.getState();
-    if (response.config._isSlowRequest) {
-      stopCenter();
-    } else {
-      stopTopBar();
-    }
+    response.config._isSlowRequest ? stopCenter() : stopTopBar();
 
     return response;
   },
   (error) => {
-    // Cancel timer even on error
-    if (error.config?._slowTimer) {
-      clearTimeout(error.config._slowTimer);
-    }
+    if (error.config?._slowTimer) clearTimeout(error.config._slowTimer);
 
-    // Stop the correct loader
     const { stopTopBar, stopCenter } = useLoaderStore.getState();
-    if (error.config?._isSlowRequest) {
-      stopCenter();
-    } else {
-      stopTopBar();
-    }
+    error.config?._isSlowRequest ? stopCenter() : stopTopBar();
 
     // 401 = expired or invalid token → force logout
     if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      // Hard redirect so Zustand state is also cleared on mount
+      useAuthStore.getState().clearAuth();
       window.location.href = '/login';
     }
 
