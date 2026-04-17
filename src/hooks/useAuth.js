@@ -118,16 +118,14 @@ export function useAuth() {
         isVerified: data.email_verified,
       });
 
-      const isVerified = data.email_verified;
-      const message = isVerified
-        ? (data.message_hint ?? 'Login successful!')
-        : 'logged in successfully! Please verify your email to continue';
-      const path = isVerified
-        ? getDefaultPath(data.user.role)
-        : '/verify-email';
-
-      toastSuccess(message);
-      navigate(path);
+      !data.email_verified
+        ? (toastSuccess(
+            'Logged in successfully! Please verify your email to continue.'
+          ),
+          navigate('/verify-email'))
+        : (toastSuccess(data.message_hint ?? 'Logged in successfully!'),
+          navigate(getDefaultPath(data.user.role)));
+          
       return;
     } catch (error) {
       toastError(handleApiError(error));
