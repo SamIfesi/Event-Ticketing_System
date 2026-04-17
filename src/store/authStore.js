@@ -6,22 +6,24 @@ export const useAuthStore = create(
     (set) => ({
       user: null,
       token: null,
+      isVerified: false,
 
       // Called after successful login or register
-      setAuth: (user, token) => set({ user, token }),
+      setAuth: (user, token, isVerified) => set({ user, token, isVerified: Boolean(isVerified) }),
 
       // Called on logout or 401 from api.js
-      clearAuth: () => set({ user: null, token: null }),
+      clearAuth: () => set({ user: null, token: null, isVerified: false }),
 
       // Called after email verified so UI updates immediately
       setEmailVerified: () =>
-        set((s) => ({
-          user: s.user ? { ...s.user, email_verified: 1 } : null,
+        set((state) => ({
+          isVerified: true,
+          user: state.user ? { ...state.user, email_verified: 1 } : null,
         })),
     }),
     {
       name: 'auth',
-      partialize: (state) => ({ user: state.user, token: state.token }),
+      partialize: (state) => ({ user: state.user, token: state.token, isVerified: state.isVerified }),
     }
   )
 );
