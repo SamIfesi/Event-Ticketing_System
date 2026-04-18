@@ -4,7 +4,8 @@
 //   - Keep authStore in sync after every mutation
 //   - Handle post-login redirect via getDefaultPath()
 //   - Boot-time rehydration: if a token exists in the persisted store but
-//     the user object is stale, re-fetch /auth/me to get fresh data
+//   - the user object is stale, re-fetch /auth/me to get fresh data
+//   - NOTE: /auth/me does NOT return a new token - we keep the existing one
 
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -28,7 +29,7 @@ export function useAuth() {
   const toastError = useUiStore((state) => state.toastError);
 
   const isLoggedIn = Boolean(user) && Boolean(token);
-  const role = user?.role || null;
+  const role = user?.role ?? null;
   const isAdmin = role === ROLES.ADMIN || role === ROLES.DEV;
   const isOrganizer =
     role === ROLES.ORGANIZER || role === ROLES.ADMIN || role === ROLES.DEV;
@@ -43,14 +44,12 @@ export function useAuth() {
     setFieldErrors({});
   }
 
-  function handleApiError(err) {
+  function extractError(err) {
     const data = err?.response?.data;
-    if (data?.errors) {
-      setFieldErrors(data.errors);
-    }
+
+    if (data?.errors) setFieldErrors(data.errors);
     const msg = data?.message ?? 'Something went wrong. Please try again.';
     setError(msg);
-    toastError(msg);
     return msg;
   }
 
@@ -66,11 +65,11 @@ export function useAuth() {
       });
       toastSuccess(
         data.message_hint ??
-          'Account created! Please check your email for the OTP to verify your account.'
+          'Account created! Check your email for the OTP to verify your account.'
       );
       navigate('/verify-email');
     } catch (error) {
-      toastError(handleApiError(error));
+      toastError(extractError(error));
     } finally {
       setLoading(false);
     }
@@ -86,7 +85,7 @@ export function useAuth() {
         toastSuccess('Email verified successfully!');
         navigate(getDefaultPath(role));
       } catch (error) {
-        toastError(handleApiError(error));
+        toastError(extractError(error));
       } finally {
         setLoading(false);
       }
@@ -101,7 +100,7 @@ export function useAuth() {
       const data = await AuthService.resendOtp();
       toastSuccess(data.message ?? 'A new OTP has been sent to your email.');
     } catch (error) {
-      toastError(handleApiError(error));
+      toastError(extractError(error));
     } finally {
       setLoading(false);
     }
@@ -115,7 +114,7 @@ export function useAuth() {
       setAuth({
         user: data.user,
         token: data.token,
-        isVerified: data.email_verified,
+        isVerified: Boolean(data.email_verified),
       });
 
       !data.email_verified
@@ -123,12 +122,11 @@ export function useAuth() {
             'Logged in successfully! Please verify your email to continue.'
           ),
           navigate('/verify-email'))
-        : (toastSuccess(data.message_hint ?? 'Logged in successfully!'),
+        : (toastSuccess(data.message_hint ?? 'Welcome back!'),
           navigate(getDefaultPath(data.user.role)));
-          
-      return;
+
     } catch (error) {
-      toastError(handleApiError(error));
+      toastError(extractError(error));
     } finally {
       setLoading(false);
     }
@@ -151,7 +149,7 @@ export function useAuth() {
       setAuth({
         user: data.user,
         token: data.token,
-        isVerified: Boolean(data.user.email_verified),
+        isVerified: Boolean(data.user?.email_verified),
       });
     } catch {
       clearAuth();
