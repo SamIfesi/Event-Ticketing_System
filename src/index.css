@@ -1,113 +1,90 @@
-:root {
-  --text-p: #0f172a;
-  --text-s: #475569;
-  --text-m: #94a3b8;
+@import 'tailwindcss';
 
-  --bg:     #f8fafc;
-  --card:   #ffffff;
-  --border: #e2e8f0;
+@theme {
+  --color-primary: #0f172a;
+  --color-secondary: #475569;
+  --color-muted: #94a3b8;
 
-  --accent:    #2563eb;
-  --accent-hv:   #1d4ed8;
-  --accent-tint: #eff6ff;
-  --accent-border:    #2564eb80;
+  --color-main-bg: #f8fafc;
+  --color-card: #ffffff;
+  --color-border: #e2e8f0;
+
+  --color-accent: #2563eb;
+  --color-accent-hover: #1d4ed8;
+  --color-accent-text: #eff6ff;
+  --color-accent-border: #2564eb80;
 
   /* backgrounds */
-  --Success: #22c55e;
-  --Error:   #ef4444;
-  --Warning: #f59e0b;
-  --Info:    #06b6d4;
+  --color-Success: #22c55e;
+  --color-Error: #ef4444;
+  --color-Warning: #f59e0b;
+  --color-Info: #06b6d4;
 
-  --shadow-sm:   0 1px 3px rgba(0,0,0,0.06);
-  --shadow-md:   0 4px 16px rgba(0,0,0,0.08);
-  --shadow-lg:   0 8px 32px rgba(0,0,0,0.10);
+  --color-shadow-main: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --color-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --color-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.1);
 
-    /* border */
-    --card-br:  12px;
-    --btn-br:   8px;
-    --input-br: 8px;
+  /* border */
+  --radius-card: 12px;
+  --radius-btn: 8px;
 
   --font-fractul: 'Fractul', sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-
-  font:                    1.125rem/145% var(--sans);
-  letter-spacing:          0.18px;
-  color-scheme:            light dark;
-  color:                   var(--text-p);
-  background:              var(--bg);
-  font-synthesis:          none;
-  text-rendering:          optimizeLegibility;
-  -webkit-font-smoothing:  antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 1rem;
-  }
+  --font-heading: system-ui, 'Segoe UI', Roboto, sans-serif;
 }
 
 /* dark theme */
 [data-theme='dark'] {
-  --text-p: #f1f5f9;
-  --text-s: #94a3b8;
-  --text-m: #475569;
+  --color-primary: #f1f5f9;
+  --color-secondary: #94a3b8;
+  --color-muted: #475569;
 
-  --bg:     #0f1117;
-  --card:   #151a23;
-  --border: #1e2433;
-  
-  --accent:      #2563eb;
-  --accent-hv:   #1d4ed8;
-  --accent-tint: #1e3a5f;
-  --accent-border: rgba(170, 59, 255, 0.5);
-  
+  --color-main-bg: #0f1117;
+  --color-card: #151a23;
+  --color-border: #1e2433;
+
+  --color-accent: #2563eb;
+  --color-accent-hover: #1d4ed8;
+  --color-accent-text: #1e3a5f;
+  --color-accent-border: rgba(170, 59, 255, 0.5);
+
   /* backgrounds */
-  --Success: #22c55e;
-  --Error:   #ef4444;
-  --Warning: #f59e0b;
-  --Info:    #06b6d4;
+  --color-Success: #22c55e;
+  --color-Error: #ef4444;
+  --color-Warning: #f59e0b;
+  --color-Info: #06b6d4;
 
   /* shadows */
-  --shadow-sm:   0 1px 3px rgba(0,0,0,0.3);
-  --shadow-md:   0 4px 16px rgba(0,0,0,0.35);
-  --shadow-lg:   0 8px 32px rgba(0,0,0,0.40);
+  --shadow-main: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-  -webkit-tap-highlight-color: transparent;
-  font-family: var(--font-fractul);
+@layer base {
+  *::before,
+  *::after,
+  * {
+    @apply box-border p-0 m-0;
+    font-family: var(--font-fractul);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  a {
+    @apply no-underline color-inherit;
+  }
+
+  #root {
+    @apply w-[1440px] max-w-full mx-auto min-h-screen flex flex-col;
+  }
 }
 
-a {
-  text-decoration: none;
-  color: inherit;
-}
-button {
-  cursor: pointer;
-  font-family: var(--font-body);
-}
-input,
-textarea,
-select {
-  font-family: var(--font-body);
-}
-
-#root {
-  width: 1440px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+@keyframes _cb_bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 /* ── Fractul ── */
