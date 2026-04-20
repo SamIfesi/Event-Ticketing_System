@@ -58,14 +58,15 @@ const ALL_STATUS_MAPS = {
 // ── Variant → styles ──────────────────────────────────────────
 const VARIANT_STYLES = {
   success:
-    'bg-[var(--Success)]/10 text-[var(--Success)] ring-[var(--Success)]/20',
-  error: 'bg-[var(--Error)]/10   text-[var(--Error)]   ring-[var(--Error)]/20',
+    'bg-[var(--color-success)]/10 text-[var(--color-success)] ring-[var(--color-success)]/20',
+  error:
+    'bg-[var(--color-error)]/10   text-[var(--color-error)]   ring-[var(--color-error)]/20',
   warning:
-    'bg-[var(--Warning)]/10 text-[var(--Warning)] ring-[var(--Warning)]/20',
-  info: 'bg-[var(--Info)]/10    text-[var(--Info)]    ring-[var(--Info)]/20',
-  neutral: 'bg-[var(--border)]     text-[var(--text-s)]  ring-[var(--border)]',
+    'bg-[var(--color-warning)]/10 text-[var(--color-warning)] ring-[var(--color-warning)]/20',
+  info: 'bg-[var(--color-info)]/10    text-[var(--color-info)]    ring-[var(--color-info)]/20',
+  neutral: 'bg-[var(--color-accent-border)]     text-[var(--color-secondary)]  ring-[var(--color-accent-border)]',
   accent:
-    'bg-[var(--accent-tint)] text-[var(--accent)] ring-[var(--accent-border)]',
+    'bg-[var(--color-accent-text)] text-[var(--color-accent)] ring-[var(--color-accent-border)]',
 };
 
 const SIZE_STYLES = {
@@ -75,12 +76,12 @@ const SIZE_STYLES = {
 
 // ── Dot indicator ─────────────────────────────────────────────
 const DOT_COLORS = {
-  success: 'bg-[var(--Success)]',
-  error: 'bg-[var(--Error)]',
-  warning: 'bg-[var(--Warning)]',
-  info: 'bg-[var(--Info)]',
-  neutral: 'bg-[var(--text-m)]',
-  accent: 'bg-[var(--accent)]',
+  success: 'bg-[var(--color-success)]',
+  error: 'bg-[var(--color-error)]',
+  warning: 'bg-[var(--color-warning)]',
+  info: 'bg-[var(--color-info)]',
+  neutral: 'bg-[var(--color-muted)]',
+  accent: 'bg-[var(--color-accent)]',
 };
 
 export default function Badge({
