@@ -56,13 +56,13 @@ function PageButton({ page, isActive, isDisabled, onClick, children, ariaLabel }
       className={`
         inline-flex items-center justify-center
         min-w-[44px] h-11 px-2
-        text-sm font-medium rounded-[var(--btn-br)]
+        text-sm font-medium rounded-btn
         border transition-colors duration-150
         touch-manipulation select-none
         disabled:opacity-40 disabled:cursor-not-allowed
         ${isActive
-          ? 'bg-[var(--accent)] text-white border-[var(--accent)]'
-          : 'bg-transparent text-[var(--text-p)] border-[var(--border)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
+          ? 'bg-accent text-white border-accent'
+          : 'bg-transparent text-primary border-border hover:border-accent hover:text-accent'
         }
       `}
     >
@@ -103,10 +103,10 @@ export default function Pagination({
           <ChevronLeft size={18} strokeWidth={2.5} />
         </PageButton>
 
-        <span className="text-sm text-[var(--text-s)] font-medium whitespace-nowrap">
-          Page <span className="text-[var(--text-p)] font-semibold">{currentPage}</span>
+        <span className="text-sm text-secondary font-medium whitespace-nowrap">
+          Page <span className="text-primary font-semibold">{currentPage}</span>
           {' '}of{' '}
-          <span className="text-[var(--text-p)] font-semibold">{totalPages}</span>
+          <span className="text-primary font-semibold">{totalPages}</span>
         </span>
 
         <PageButton
@@ -141,7 +141,7 @@ export default function Pagination({
               className="
                 inline-flex items-center justify-center
                 min-w-[44px] h-11
-                text-sm text-[var(--text-m)] select-none
+                text-sm text-muted select-none
               "
             >
               &hellip;
