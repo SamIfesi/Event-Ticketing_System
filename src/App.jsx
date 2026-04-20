@@ -7,6 +7,7 @@ import { ROLES } from './config/constants';
 
 import TopBarLoader   from './components/loaders/TopBarLoader';
 import CenterLoader   from './components/loaders/CenterLoader';
+import ToastContainer from './components/ui/ToastContainer';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import RoleRoute      from './components/auth/RoleRoute';
 
@@ -46,12 +47,6 @@ import RoleRoute      from './components/auth/RoleRoute';
 // payment
 // import PaymentCallbackPage from './pages/payment/PaymentCallbackPage';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// NavigationLoader
-// Fires the top bar for 350ms on every route change — pure navigation feedback,
-// no API call involved. Zustand counts stack, so concurrent nav + API calls
-// keep the bar alive until both are done.
-// ─────────────────────────────────────────────────────────────────────────────
 function NavigationLoader() {
   const location    = useLocation();
   const startTopBar = useLoaderStore((state) => state.startTopBar);
@@ -89,26 +84,20 @@ function GuestOnly({ children }) {
   return           <Navigate to={getDefaultPath(user?.role)} replace />;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
 // AppRoutes
-// ─────────────────────────────────────────────────────────────────────────────
 function AppRoutes() {
   return (
     <Routes>
-
-      {/* ── Root ─────────────────────────────────────────────────────────── */}
       <Route path="/" element={<RootRedirect />} />
 
-      {/* ── Public (no auth required) ────────────────────────────────────── */}
       <Route path="/events"       element={<div>Events (todo)</div>} />
       <Route path="/events/:id"   element={<div>Event detail (todo)</div>} />
       <Route path="/unauthorized" element={<div>Unauthorized (todo)</div>} />
 
-      {/* ── Auth pages ───────────────────────────────────────────────────── */}
       <Route path="/login"    element={<GuestOnly><div>Login (todo)</div></GuestOnly>} />
       <Route path="/register" element={<GuestOnly><div>Register (todo)</div></GuestOnly>} />
 
-      {/* verify-email: protected but requireVerified=false — reachable while unverified */}
+
       <Route
         path="/verify-email"
         element={
@@ -118,13 +107,11 @@ function AppRoutes() {
         }
       />
 
-      {/* ── Attendee ─────────────────────────────────────────────────────── */}
       <Route path="/dashboard"   element={<ProtectedRoute><div>Attendee dashboard (todo)</div></ProtectedRoute>} />
       <Route path="/my-bookings" element={<ProtectedRoute><div>My bookings (todo)</div></ProtectedRoute>} />
       <Route path="/my-tickets"  element={<ProtectedRoute><div>My tickets (todo)</div></ProtectedRoute>} />
       <Route path="/profile"     element={<ProtectedRoute><div>Profile (todo)</div></ProtectedRoute>} />
 
-      {/* ── Organizer ────────────────────────────────────────────────────── */}
       <Route
         path="/organizer/dashboard"
         element={
@@ -186,7 +173,6 @@ function AppRoutes() {
         }
       />
 
-      {/* ── Admin / Dev ──────────────────────────────────────────────────── */}
       <Route
         path="/admin/dashboard"
         element={
@@ -218,7 +204,6 @@ function AppRoutes() {
         }
       />
 
-      {/* ── Payment callback ─────────────────────────────────────────────── */}
       <Route
         path="/payment/callback"
         element={
@@ -228,7 +213,6 @@ function AppRoutes() {
         }
       />
 
-      {/* ── 404 ──────────────────────────────────────────────────────────── */}
       <Route path="*" element={<div>404 (todo)</div>} />
 
     </Routes>
