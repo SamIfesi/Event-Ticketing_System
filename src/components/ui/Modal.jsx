@@ -6,13 +6,6 @@
 //   - Scroll-locks the body while open
 //   - Renders via a portal so it always sits above everything
 //
-// The modal has three optional pre-built sections:
-//   title      — bold heading
-//   description — secondary text below the title
-//   footer     — slot for action buttons (you pass them in)
-//
-// For destructive confirmations, use the `ConfirmModal` export below.
-//
 // Usage — basic:
 //   const { openModal, closeModal, activeModal } = useUiStore();
 //
@@ -124,8 +117,8 @@ export default function Modal({
           className={`
             pointer-events-auto
             w-full ${maxWidth}
-            bg-[var(--card)] border border-[var(--border)]
-            rounded-[var(--card-br)] shadow-[var(--shadow-lg)]
+            bg-card border border-border
+            rounded-card shadow-shadow-lg
             flex flex-col
             animate-[modalIn_220ms_cubic-bezier(0.16,1,0.3,1)_forwards]
             ${className}
@@ -137,14 +130,14 @@ export default function Modal({
               className="
               flex items-start justify-between gap-4
               px-5 pt-5 pb-4
-              border-b border-[var(--border)]
+              border-b border-border
             "
             >
               <div className="flex flex-col gap-1">
                 {title && (
                   <h2
                     id="modal-title"
-                    className="text-base font-semibold text-[var(--text-p)] leading-snug"
+                    className="text-base font-semibold text-primary leading-snug"
                   >
                     {title}
                   </h2>
@@ -152,7 +145,7 @@ export default function Modal({
                 {description && (
                   <p
                     id="modal-description"
-                    className="text-sm text-[var(--text-s)] leading-relaxed"
+                    className="text-sm text-secondary leading-relaxed"
                   >
                     {description}
                   </p>
@@ -167,9 +160,9 @@ export default function Modal({
                   className="
                     shrink-0 -mt-1 -mr-1
                     w-11 h-11 flex items-center justify-center
-                    rounded-[var(--btn-br)]
-                    text-[var(--text-m)] hover:text-[var(--text-p)]
-                    hover:bg-[var(--border)]
+                    rounded-btn
+                    text-muted hover:text-primary
+                    hover:bg-border
                     transition-colors duration-150
                     touch-manipulation
                   "
@@ -182,7 +175,7 @@ export default function Modal({
 
           {/* ── Body ───────────────────────────────────────── */}
           {children && (
-            <div className="px-5 py-4 text-sm text-[var(--text-s)] leading-relaxed">
+            <div className="px-5 py-4 text-sm text-secondary leading-relaxed">
               {children}
             </div>
           )}
@@ -193,7 +186,7 @@ export default function Modal({
               className="
               flex items-center justify-end gap-3
               px-5 pb-5 pt-4
-              border-t border-[var(--border)]
+              border-t border-border
               flex-wrap
             "
             >
@@ -202,18 +195,6 @@ export default function Modal({
           )}
         </div>
       </div>
-
-      {/* ── Keyframe animations (injected once) ──────────────── */}
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to   { opacity: 1; }
-        }
-        @keyframes modalIn {
-          from { opacity: 0; transform: scale(0.95) translateY(8px); }
-          to   { opacity: 1; transform: scale(1)    translateY(0);   }
-        }
-      `}</style>
     </>,
     document.body
   );
