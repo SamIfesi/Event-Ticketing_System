@@ -48,10 +48,10 @@
   --color-accent-border: rgba(170, 59, 255, 0.5);
 
   /* backgrounds */
-  --color-Success: #22c55e;
-  --color-Error: #ef4444;
-  --color-Warning: #f59e0b;
-  --color-Info: #06b6d4;
+  --color-success: #22c55e;
+  --color-error: #ef4444;
+  --color-warning: #f59e0b;
+  --color-info: #06b6d4;
 
   /* shadows */
   --shadow-main: 0 1px 3px rgba(0, 0, 0, 0.3);
@@ -77,6 +77,7 @@
   }
 }
 
+/* used in TOAST-CONTAINER */
 @keyframes _cb_bounce {
   0%,
   100% {
@@ -85,6 +86,16 @@
   50% {
     transform: translateY(-10px);
   }
+}
+
+/* used in MODAL */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.95) translateY(8px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);   }
 }
 
 /* ── Fractul ── */
