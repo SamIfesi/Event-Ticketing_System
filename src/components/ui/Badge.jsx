@@ -64,7 +64,8 @@ const VARIANT_STYLES = {
   warning:
     'bg-[var(--color-warning)]/10 text-[var(--color-warning)] ring-[var(--color-warning)]/20',
   info: 'bg-[var(--color-info)]/10    text-[var(--color-info)]    ring-[var(--color-info)]/20',
-  neutral: 'bg-[var(--color-accent-border)]     text-[var(--color-secondary)]  ring-[var(--color-accent-border)]',
+  neutral:
+    'bg-[var(--color-border)]     text-[var(--color-secondary)]  ring-[var(--color-border)]',
   accent:
     'bg-[var(--color-accent-text)] text-[var(--color-accent)] ring-[var(--color-accent-border)]',
 };
