@@ -60,8 +60,9 @@ function PageButton({ page, isActive, isDisabled, onClick, children, ariaLabel }
         border transition-colors duration-150
         touch-manipulation select-none
         disabled:opacity-40 disabled:cursor-not-allowed
-        ${isActive
-          ? 'bg-accent text-white border-accent'
+        ${
+          isActive
+            ? 'bg-accent text-white border-accent'
           : 'bg-transparent text-primary border-border hover:border-accent hover:text-accent'
         }
       `}
