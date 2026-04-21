@@ -14,6 +14,11 @@ import { useAuthStore } from '../store/authStore';
 import { getDefaultPath } from '../utils/roleGuard';
 import { useUiStore } from '../store/uiStore';
 import { ROLES } from '../config/constants';
+import {
+  validateEmail,
+  validateOtp,
+  validatePassword,
+} from '../utils/validators/authValidator';
 
 export function useAuth() {
   const navigate = useNavigate();
@@ -159,49 +164,72 @@ export function useAuth() {
     rehydrate();
   }, []);
 
-// FORGOTTON PASSWORD IMPLEMENTATION HOOKS
-  const forgotPassword = useCallback(async (email) => {
-    setLoading(true);
-    resetErrors();
-    try {
-      const data = await AuthService.forgotPassword(email);
-      toastSuccess(data.message ?? 'OTP sent to your email.');
-      navigate('forgot-password/verify', { state: { email } });
-    } catch (error) {
-      toastError(extractError(error));
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  // FORGOTTON PASSWORD IMPLEMENTATION HOOKS
+  const forgotPassword = useCallback(
+    async (email) => {
+      setLoading(true);
+      resetErrors();
+      try {
+        const data = await AuthService.forgotPassword(email);
+        toastSuccess(data.message ?? 'OTP sent to your email.');
+        navigate('/forgot-password/verify', { state: { email } });
+      } catch (error) {
+        toastError(extractError(error));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [navigate]
+  );
 
-  const verifyForgotOtp = useCallback(async ({ email, otp})=>{
-    setLoading(true);
-    resetErrors()
-    try {
-      const data = await AuthService.verifyForgotOtp({ email, otp });
+  const verifyForgotOtp = useCallback(
+    async ({ email, otp }) => {
+      setLoading(true);
+      resetErrors();
+
+      const emailError = validateEmail(email);
+      const otpError = validateOtp(otp);
+
+      if (emailError || otpError) {
+        toastError(emailError || otpError);
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const data = await AuthService.verifyForgotOtp({ email, otp });
+
         toastSuccess(data.message ?? 'OTP verified successfully!');
-        navigate('/reset-password', { state: { email, otp } });
-    } catch (error) {
-      toastError(extractError(error));
-    } finally {
-      setLoading(false);
-    }
-  });
 
-  const resetPassword = useCallback(async ({email, otp, password})=>{
+        navigate('/reset-password', {
+          state: { email, otp },
+        });
+      } catch (error) {
+        toastError(extractError(error));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [navigate]
+  );
+
+  const resetPassword = useCallback(async ({ email, otp, password }) => {
     setLoading(true);
     resetErrors();
 
     try {
-      const data = await AuthSerivce.resetPassword({email, otp, password});
-      toastSuccess(data.message ?? 'Password reset successfully! Please login with your new password.');
+      const data = await AuthService.resetPassword({ email, otp, password });
+      toastSuccess(
+        data.message ??
+          'Password reset successfully! Please login with your new password.'
+      );
       navigate('/login');
     } catch (error) {
       toastError(extractError(error));
     } finally {
       setLoading(false);
     }
-  })
+  }, []);
 
   return {
     // State
