@@ -42,7 +42,17 @@ const AuthService = {
   async forgotPassword(email) {
     const response = await api.post('/auth/forgot-password', { email });
     return response.data; // returns {success, message}
-  }
+  },
+
+  async verifyForgotOtp({ email, otp }) {
+    const response = await api.post('/auth/verify-forgot-otp', {email, otp});
+    return response.data; // returns {success, message}
+  },
+
+  async resetPassword({ email, otp, password }) {
+    const response = await api.post('/auth/reset-password', {email, otp, password});
+    return response.data; // returns {success, message}
+  },
 };
 
 export default AuthService;
