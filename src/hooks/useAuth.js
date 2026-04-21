@@ -124,7 +124,6 @@ export function useAuth() {
           navigate('/verify-email'))
         : (toastSuccess(data.message_hint ?? 'Welcome back!'),
           navigate(getDefaultPath(data.user.role)));
-
     } catch (error) {
       toastError(extractError(error));
     } finally {
@@ -160,6 +159,50 @@ export function useAuth() {
     rehydrate();
   }, []);
 
+// FORGOTTON PASSWORD IMPLEMENTATION HOOKS
+  const forgotPassword = useCallback(async (email) => {
+    setLoading(true);
+    resetErrors();
+    try {
+      const data = await AuthService.forgotPassword(email);
+      toastSuccess(data.message ?? 'OTP sent to your email.');
+      navigate('forgot-password/verify', { state: { email } });
+    } catch (error) {
+      toastError(extractError(error));
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const verifyForgotOtp = useCallback(async ({ email, otp})=>{
+    setLoading(true);
+    resetErrors()
+    try {
+      const data = await AuthService.verifyForgotOtp({ email, otp });
+        toastSuccess(data.message ?? 'OTP verified successfully!');
+        navigate('/reset-password', { state: { email, otp } });
+    } catch (error) {
+      toastError(extractError(error));
+    } finally {
+      setLoading(false);
+    }
+  });
+
+  const resetPassword = useCallback(async ({email, otp, password})=>{
+    setLoading(true);
+    resetErrors();
+
+    try {
+      const data = await AuthSerivce.resetPassword({email, otp, password});
+      toastSuccess(data.message ?? 'Password reset successfully! Please login with your new password.');
+      navigate('/login');
+    } catch (error) {
+      toastError(extractError(error));
+    } finally {
+      setLoading(false);
+    }
+  })
+
   return {
     // State
     user,
@@ -182,5 +225,10 @@ export function useAuth() {
     logout,
     rehydrate,
     resetErrors,
+
+    // forgotton password
+    forgotPassword,
+    verifyForgotOtp,
+    resetPassword,
   };
 }
