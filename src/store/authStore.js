@@ -10,8 +10,9 @@ export const useAuthStore = create(
       isVerified: false,
 
       // Called after successful login or register
-      setAuth: (user, token, isVerified) => set({ user, token, isVerified: Boolean(isVerified) }),
-      
+      setAuth: ({ user, token, isVerified }) =>
+        set({ user, token, isVerified: Boolean(isVerified) }),
+
       // Called after email verified so UI updates immediately
       setEmailVerified: () =>
         set((state) => ({
@@ -21,11 +22,14 @@ export const useAuthStore = create(
 
       // Called on logout or 401 from api.js
       clearAuth: () => set({ user: null, token: null, isVerified: false }),
-
     }),
     {
       name: STORAGE_KEY.AUTH,
-      partialize: (state) => ({ user: state.user, token: state.token, isVerified: state.isVerified }),
+      partialize: (state) => ({
+        user: state.user,
+        token: state.token,
+        isVerified: state.isVerified,
+      }),
     }
   )
 );
