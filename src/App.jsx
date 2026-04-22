@@ -1,121 +1,292 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from 'react-router-dom';
+import { useEffect } from 'react';
+import { useLoaderStore } from './store/loaderStore';
+import { useAuthStore } from './store/authStore';
+import { getDefaultPath } from './utils/roleGuard';
+import { ROLES } from './config/constants';
 
-function App() {
-  const [count, setCount] = useState(0)
+import TopBarLoader from './components/loaders/TopBarLoader';
+import CenterLoader from './components/loaders/CenterLoader';
+import ToastContainer from './components/ui/ToastContainer';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import RoleRoute from './components/auth/RoleRoute';
 
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+// auth Pages 
+import LoginPage from './pages/public/LoginPage.jsx';
+// import RegisterPage      from './pages/public/RegisterPage';
+// import VerifyEmailPage   from './pages/public/VerifyEmailPage';
+// import ForgotPasswordPage from './pages/public/ForgotPasswordPage';
 
-      <div className="ticks"></div>
+// ── Page imports ──────────────────────────────────────────────────────────────
+// public
+// import HomePage          from './pages/public/HomePage';
+// import EventsPage        from './pages/public/EventsPage';
+// import EventDetailPage   from './pages/public/EventDetailPage';
+// import UnauthorizedPage  from './pages/public/UnauthorizedPage';
+// import NotFoundPage      from './pages/public/NotFoundPage';
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+// attendee
+// import AttendeeDashboard from './pages/attendee/AttendeeDashboard';
+// import MyBookingsPage    from './pages/attendee/MyBookingsPage';
+// import MyTicketsPage     from './pages/attendee/MyTicketsPage';
+// import ProfilePage       from './pages/attendee/ProfilePage';
+
+// organizer
+// import OrganizerDashboard  from './pages/organizer/OrganizerDashboard';
+// import ManageEventsPage    from './pages/organizer/ManageEventsPage';
+// import CreateEventPage     from './pages/organizer/CreateEventPage';
+// import EditEventPage       from './pages/organizer/EditEventPage';
+// import EventBookingsPage   from './pages/organizer/EventBookingsPage';
+// import CheckinPage         from './pages/organizer/CheckinPage';
+
+// admin
+// import AdminDashboard    from './pages/admin/AdminDashboard';
+// import UsersPage         from './pages/admin/UsersPage';
+// import AdminEventsPage   from './pages/admin/AdminEventsPage';
+
+// payment
+// import PaymentCallbackPage from './pages/payment/PaymentCallbackPage';
+
+function NavigationLoader() {
+  const location = useLocation();
+  const startTopBar = useLoaderStore((state) => state.startTopBar);
+  const stopTopBar = useLoaderStore((state) => state.stopTopBar);
+
+  useEffect(() => {
+    startTopBar();
+    const t = setTimeout(stopTopBar, 350);
+    return () => {
+      clearTimeout(t);
+      stopTopBar();
+    };
+  }, [location.pathname]);
+
+  return null;
 }
 
-export default App
+function RootRedirect() {
+  const token = useAuthStore((state) => state.token);
+  const isVerified = useAuthStore((state) => state.isVerified);
+  const user = useAuthStore((state) => state.user);
+
+  if (!token) return <Navigate to="/login" replace />;
+  if (!isVerified) return <Navigate to="/verify-email" replace />;
+  return <Navigate to={getDefaultPath(user?.role)} replace />;
+}
+
+function GuestOnly({ children }) {
+  const token = useAuthStore((state) => state.token);
+  const isVerified = useAuthStore((state) => state.isVerified);
+  const user = useAuthStore((state) => state.user);
+
+  if (!token) return children;
+  if (!isVerified) return <Navigate to="/verify-email" replace />;
+  return <Navigate to={getDefaultPath(user?.role)} replace />;
+}
+
+// AppRoutes
+function AppRoutes() {
+  return (
+    <Routes>
+      <Route path="/" element={<RootRedirect />} />
+
+      {/* Public */}
+      <Route path="/events" element={<div>Events (todo)</div>} />
+      <Route path="/events/:id" element={<div>Event detail (todo)</div>} />
+      <Route path="/unauthorized" element={<div>Unauthorized (todo)</div>} />
+
+      {/* Auth - guest only (logged-in users are redirected away) */}
+      <Route
+        path="/login"
+        element={
+          <GuestOnly>
+            <LoginPage />
+          </GuestOnly>
+        }
+      />
+      <Route
+        path="/register"
+        element={
+          <GuestOnly>
+            <RegisterPage />
+          </GuestOnly>
+        }
+      />
+      <Route
+        path="/forgot-password"
+        element={
+          <GuestOnly>
+            <ForgotPasswordPage />
+          </GuestOnly>
+        }
+      />
+
+      {/* verify email - needs token but Not verified */}
+      <Route
+        path="/verify-email"
+        element={
+          <ProtectedRoute requireVerified={false}>
+            <VerifyEmailPage />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Attendees */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <div>Attendee dashboard (todo)</div>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/my-bookings"
+        element={
+          <ProtectedRoute>
+            <div>My bookings (todo)</div>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/my-tickets"
+        element={
+          <ProtectedRoute>
+            <div>My tickets (todo)</div>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <div>Profile (todo)</div>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Organizers */}
+      <Route
+        path="/organizer/dashboard"
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
+              <div>Organizer dashboard (todo)</div>
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/organizer/events"
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
+              <div>Manage events (todo)</div>
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/organizer/events/create"
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
+              <div>Create event (todo)</div>
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/organizer/events/:id/edit"
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
+              <div>Edit event (todo)</div>
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/organizer/events/:id/bookings"
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
+              <div>Event bookings (todo)</div>
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/organizer/events/:id/checkin"
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
+              <div>Check-in (todo)</div>
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* admin */}
+      <Route
+        path="/admin/dashboard"
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowed={[ROLES.ADMIN, ROLES.DEV]}>
+              <div>Admin dashboard (todo)</div>
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/users"
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowed={[ROLES.ADMIN, ROLES.DEV]}>
+              <div>Users (todo)</div>
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/events"
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowed={[ROLES.ADMIN, ROLES.DEV]}>
+              <div>Admin events (todo)</div>
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      {/* Payment */}
+      <Route
+        path="/payment/callback"
+        element={
+          <ProtectedRoute>
+            <div>Payment callback (todo)</div>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route path="*" element={<div>404 (todo)</div>} />
+    </Routes>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <NavigationLoader />
+      <TopBarLoader />
+      <CenterLoader />
+      <AppRoutes />
+    </BrowserRouter>
+  );
+}
