@@ -1,18 +1,29 @@
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from 'react-router-dom';
 import { useEffect } from 'react';
 import { useLoaderStore } from './store/loaderStore';
 import { useAuthStore } from './store/authStore';
 import { getDefaultPath } from './utils/roleGuard';
 import { ROLES } from './config/constants';
 
-import TopBarLoader   from './components/loaders/TopBarLoader';
-import CenterLoader   from './components/loaders/CenterLoader';
+import TopBarLoader from './components/loaders/TopBarLoader';
+import CenterLoader from './components/loaders/CenterLoader';
 import ToastContainer from './components/ui/ToastContainer';
 import ProtectedRoute from './components/auth/ProtectedRoute';
-import RoleRoute      from './components/auth/RoleRoute';
+import RoleRoute from './components/auth/RoleRoute';
+
+// auth Pages 
+import LoginPage         from './pages/public/LoginPage';
+import RegisterPage      from './pages/public/RegisterPage';
+import VerifyEmailPage   from './pages/public/VerifyEmailPage';
+import ForgotPasswordPage from './pages/public/ForgotPasswordPage';
 
 // ── Page imports ──────────────────────────────────────────────────────────────
-
 // public
 // import HomePage          from './pages/public/HomePage';
 // import EventsPage        from './pages/public/EventsPage';
@@ -20,10 +31,6 @@ import RoleRoute      from './components/auth/RoleRoute';
 // import UnauthorizedPage  from './pages/public/UnauthorizedPage';
 // import NotFoundPage      from './pages/public/NotFoundPage';
 
-// auth
-// import LoginPage         from './pages/public/LoginPage';
-// import RegisterPage      from './pages/public/RegisterPage';
-// import VerifyEmailPage   from './pages/public/VerifyEmailPage';
 
 // attendee
 // import AttendeeDashboard from './pages/attendee/AttendeeDashboard';
@@ -48,9 +55,9 @@ import RoleRoute      from './components/auth/RoleRoute';
 // import PaymentCallbackPage from './pages/payment/PaymentCallbackPage';
 
 function NavigationLoader() {
-  const location    = useLocation();
+  const location = useLocation();
   const startTopBar = useLoaderStore((state) => state.startTopBar);
-  const stopTopBar  = useLoaderStore((state) => state.stopTopBar);
+  const stopTopBar = useLoaderStore((state) => state.stopTopBar);
 
   useEffect(() => {
     startTopBar();
@@ -65,23 +72,23 @@ function NavigationLoader() {
 }
 
 function RootRedirect() {
-  const token      = useAuthStore((state) => state.token);
+  const token = useAuthStore((state) => state.token);
   const isVerified = useAuthStore((state) => state.isVerified);
-  const user       = useAuthStore((state) => state.user);
+  const user = useAuthStore((state) => state.user);
 
-  if (!token)      return <Navigate to="/login"        replace />;
+  if (!token) return <Navigate to="/login" replace />;
   if (!isVerified) return <Navigate to="/verify-email" replace />;
-  return           <Navigate to={getDefaultPath(user?.role)} replace />;
+  return <Navigate to={getDefaultPath(user?.role)} replace />;
 }
 
 function GuestOnly({ children }) {
-  const token      = useAuthStore((state) => state.token);
+  const token = useAuthStore((state) => state.token);
   const isVerified = useAuthStore((state) => state.isVerified);
-  const user       = useAuthStore((state) => state.user);
+  const user = useAuthStore((state) => state.user);
 
-  if (!token)      return children;
+  if (!token) return children;
   if (!isVerified) return <Navigate to="/verify-email" replace />;
-  return           <Navigate to={getDefaultPath(user?.role)} replace />;
+  return <Navigate to={getDefaultPath(user?.role)} replace />;
 }
 
 // AppRoutes
@@ -90,28 +97,82 @@ function AppRoutes() {
     <Routes>
       <Route path="/" element={<RootRedirect />} />
 
-      <Route path="/events"       element={<div>Events (todo)</div>} />
-      <Route path="/events/:id"   element={<div>Event detail (todo)</div>} />
+      {/* Public */}
+      <Route path="/events" element={<div>Events (todo)</div>} />
+      <Route path="/events/:id" element={<div>Event detail (todo)</div>} />
       <Route path="/unauthorized" element={<div>Unauthorized (todo)</div>} />
 
-      <Route path="/login"    element={<GuestOnly><div>Login (todo)</div></GuestOnly>} />
-      <Route path="/register" element={<GuestOnly><div>Register (todo)</div></GuestOnly>} />
+      {/* Auth - guest only (logged-in users are redirected away) */}
+      <Route
+        path="/login"
+        element={
+          <GuestOnly>
+            <LoginPage />
+          </GuestOnly>
+        }
+      />
+      <Route
+        path="/register"
+        element={
+          <GuestOnly>
+            <RegisterPage />
+          </GuestOnly>
+        }
+      />
+      <Route
+        path="/forgot-password"
+        element={
+          <GuestOnly>
+            <ForgotPasswordPage />
+          </GuestOnly>
+        }
+      />
 
-
+      {/* verify email - needs token but Not verified */}
       <Route
         path="/verify-email"
         element={
           <ProtectedRoute requireVerified={false}>
-            <div>Verify email (todo)</div>
+            <VerifyEmailPage />
           </ProtectedRoute>
         }
       />
 
-      <Route path="/dashboard"   element={<ProtectedRoute><div>Attendee dashboard (todo)</div></ProtectedRoute>} />
-      <Route path="/my-bookings" element={<ProtectedRoute><div>My bookings (todo)</div></ProtectedRoute>} />
-      <Route path="/my-tickets"  element={<ProtectedRoute><div>My tickets (todo)</div></ProtectedRoute>} />
-      <Route path="/profile"     element={<ProtectedRoute><div>Profile (todo)</div></ProtectedRoute>} />
+      {/* Attendees */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <div>Attendee dashboard (todo)</div>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/my-bookings"
+        element={
+          <ProtectedRoute>
+            <div>My bookings (todo)</div>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/my-tickets"
+        element={
+          <ProtectedRoute>
+            <div>My tickets (todo)</div>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <div>Profile (todo)</div>
+          </ProtectedRoute>
+        }
+      />
 
+      {/* Organizers */}
       <Route
         path="/organizer/dashboard"
         element={
@@ -173,6 +234,7 @@ function AppRoutes() {
         }
       />
 
+      {/* admin */}
       <Route
         path="/admin/dashboard"
         element={
@@ -203,7 +265,7 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
-
+      {/* Payment */}
       <Route
         path="/payment/callback"
         element={
@@ -214,7 +276,6 @@ function AppRoutes() {
       />
 
       <Route path="*" element={<div>404 (todo)</div>} />
-
     </Routes>
   );
 }
