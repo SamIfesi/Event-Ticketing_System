@@ -16,8 +16,7 @@ import { useUiStore } from '../store/uiStore';
 import { ROLES } from '../config/constants';
 import {
   validateEmail,
-  validateOtp,
-  validatePassword,
+  validateOtp
 } from '../utils/validators/authValidator';
 
 export function useAuth() {
