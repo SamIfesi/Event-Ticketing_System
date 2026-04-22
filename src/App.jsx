@@ -18,10 +18,10 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 import RoleRoute from './components/auth/RoleRoute';
 
 // auth Pages 
-import LoginPage         from './pages/public/LoginPage';
-import RegisterPage      from './pages/public/RegisterPage';
-import VerifyEmailPage   from './pages/public/VerifyEmailPage';
-import ForgotPasswordPage from './pages/public/ForgotPasswordPage';
+import LoginPage from './pages/public/LoginPage.jsx';
+// import RegisterPage      from './pages/public/RegisterPage';
+// import VerifyEmailPage   from './pages/public/VerifyEmailPage';
+// import ForgotPasswordPage from './pages/public/ForgotPasswordPage';
 
 // ── Page imports ──────────────────────────────────────────────────────────────
 // public
