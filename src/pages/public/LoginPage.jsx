@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, OctagonAlert } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
@@ -19,7 +19,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-start justify-center bg-main-bg px-4 py-12">
+    <div className="min-h-screen flex items-start justify-center bg-main-bg px-6 py-12">
       <div className="w-full max-w-[26.25rem]">
         <div className="flex flex-col items-start mb-8">
           <img src={logo} alt="Ticketer Logo" className="mb-8 self-center" />
@@ -31,16 +31,13 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <div className="bg-card border border-border rounded-card shadow-shadow-md px-6 py-8">
+        <div className="bg-main-bg py-8">
           {error && (
             <div
               role="alert"
               className="mb-5 flex items-start gap-2.5 rounded-btn border border-error/30 bg-error/8 px-4 py-3"
             >
-              <span
-                aria-hidden="true"
-                className="mt-0.5 h-2 w-2 shrink-0 rounded-full bg-error"
-              />
+              <OctagonAlert size={17} className="text-error" />
               <p className="text-sm font-medium text-error">{error}</p>
             </div>
           )}
