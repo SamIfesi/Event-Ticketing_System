@@ -10,12 +10,7 @@ import logo from '/assets/icons/logos.svg';
 export default function RegisterPage() {
   const { register, loading, error, fieldErrors } = useAuth();
 
-  const [form, setForm] = useState({
-    password: '',
-    confirmPassword: '',
-  });
   const [errors, setErrors] = useState({});
-
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState({
@@ -30,6 +25,9 @@ export default function RegisterPage() {
   }
   // const isValid =
   //   name.trim().length >= 3 && email.trim() && password.length >= 8;
+
+  const passwordMatch =
+    password.confirmPassword && password.password !== password.confirmPassword;
 
   return (
     <div className="min-h-screen flex items-start justify-center bg-main-bg px-6 py-12">
@@ -93,8 +91,13 @@ export default function RegisterPage() {
                 id="password"
                 placeholder="••••••••"
                 autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={password.password}
+                onChange={(e) =>
+                  setPassword({
+                    password: e.target.value,
+                    confirmPassword: password.confirmPassword,
+                  })
+                }
                 error={fieldErrors.password}
                 icon={<Lock size={17} />}
                 disabled={loading}
@@ -111,17 +114,22 @@ export default function RegisterPage() {
                   </button>
                 }
               />
-              <PasswordStrength password={password} />
+              <PasswordStrength password={password.password} />
 
               <Input
                 className="mt-4"
-                label="Password"
+                label="Confirm Password"
                 type={showPassword ? 'text' : 'password'}
-                id="password"
+                id="confirmPassword"
                 placeholder="••••••••"
                 autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={password.confirmPassword}
+                onChange={(e) =>
+                  setPassword({
+                    password: password.password,
+                    confirmPassword: e.target.value,
+                  })
+                }
                 error={fieldErrors.password}
                 icon={<Lock size={17} />}
                 disabled={loading}
@@ -138,6 +146,9 @@ export default function RegisterPage() {
                   </button>
                 }
               />
+              <p className={`mt-1 text-end transition-color duration-180 touch-manipulation ${passwordMatch ? 'text-success' : 'text-error'}`}>
+                {passwordMatch ? 'Passwords match' : 'Passwords do not match'}
+              </p>
             </div>
           </form>
         </div>
