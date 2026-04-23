@@ -4,7 +4,7 @@ import { Mail, Lock, Eye, EyeOff, OctagonAlert } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
-import logo from '../../../public/assets/icons/logos.svg';
+import logo from '/assets/icons/logos.svg';
 
 export default function LoginPage() {
   const { login, loading, error, fieldErrors } = useAuth();
@@ -21,6 +21,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-start justify-center bg-main-bg px-6 py-12">
       <div className="w-full max-w-[26.25rem]">
+        
         <div className="flex flex-col items-start mb-8">
           <img src={logo} alt="Ticketer Logo" className="mb-8 self-center" />
           <h1 className="text-3xl font-bold text-primary tracking-tight">
@@ -31,7 +32,7 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <div className="bg-main-bg py-8">
+        <div className="bg-main-bg pt-4 pb-8">
           {error && (
             <div
               role="alert"
