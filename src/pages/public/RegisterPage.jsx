@@ -17,17 +17,19 @@ export default function RegisterPage() {
     confirmPassword: '',
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
     await register({ name, email, password });
   }
-  // const isValid =
-  //   name.trim().length >= 3 && email.trim() && password.length >= 8;
-
+  
   const passwordMatch =
-    password.confirmPassword && password.password === password.confirmPassword;
+  password.confirmPassword && password.password === password.confirmPassword;
 
+  const isValid =
+    name.trim().length >= 3 && email.trim() && password.password.length >= 8 && passwordMatch;
+  
   return (
     <div className="min-h-screen flex items-start justify-center bg-main-bg px-6 py-12">
       <div className="w-full max-w-[26.25rem]">
@@ -41,7 +43,7 @@ export default function RegisterPage() {
           </p>
         </div>
 
-        <div className="bg-main-bg pt-4 pb-8">
+        <div className="bg-main-bg">
           {error && (
             <div
               role="alert"
@@ -118,7 +120,7 @@ export default function RegisterPage() {
               <Input
                 className="mt-4"
                 label="Confirm Password"
-                type={showPassword ? 'text' : 'password'}
+                type={showConfirmPassword ? 'text' : 'password'}
                 id="confirmPassword"
                 placeholder="••••••••"
                 autoComplete="current-password"
@@ -135,13 +137,17 @@ export default function RegisterPage() {
                 right={
                   <button
                     type="button"
-                    onClick={() => setShowPassword((v) => !v)}
+                    onClick={() => setShowConfirmPassword((v) => !v)}
                     aria-label={
-                      showPassword ? 'Hide password' : 'Show password'
+                      showConfirmPassword ? 'Hide password' : 'Show password'
                     }
                     className="text-muted hover:text-primary transition-color duration-180 touch-manipulation"
                   >
-                    {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+                    {showConfirmPassword ? (
+                      <EyeOff size={17} />
+                    ) : (
+                      <Eye size={17} />
+                    )}
                   </button>
                 }
               />
@@ -153,8 +159,43 @@ export default function RegisterPage() {
                 </p>
               )}
             </div>
+
+            <p className="text-xs text-muted leading-relaxed -mt-1">
+              By creating an account you agree to our{' '}
+              <span className="text-secondary font-medium">
+                Terms of Service
+              </span>{' '}
+              and{' '}
+              <span className="text-secondary font-medium">Privacy Policy</span>
+              .
+            </p>
+
+            <Button
+              type="submit"
+              variant="primary"
+              size="md"
+              loading={loading}
+              disabled={!isValid}
+              className="w-full mt-1"
+            >
+              Create Account
+            </Button>
           </form>
         </div>
+
+        <p className="mt-6 text-center text-sm text-secondary">
+          Already have an account?{' '}
+          <Link
+            to="/login"
+            className="font-semibold
+            text-accent
+            hover:text-accent-hover
+            transition-colors
+            duration-180"
+          >
+            Sign in
+          </Link>
+        </p>
       </div>
     </div>
   );
