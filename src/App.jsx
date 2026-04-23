@@ -19,7 +19,7 @@ import RoleRoute from './components/auth/RoleRoute';
 
 // auth Pages 
 import LoginPage from './pages/public/LoginPage.jsx';
-// import RegisterPage      from './pages/public/RegisterPage';
+import RegisterPage      from './pages/public/RegisterPage';
 // import VerifyEmailPage   from './pages/public/VerifyEmailPage';
 // import ForgotPasswordPage from './pages/public/ForgotPasswordPage';
 
@@ -115,7 +115,7 @@ function AppRoutes() {
         path="/register"
         element={
           <GuestOnly>
-            <div>Register Page (todo)</div>
+            <RegisterPage/>
           </GuestOnly>
         }
       />
