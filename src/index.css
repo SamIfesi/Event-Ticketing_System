@@ -69,22 +69,24 @@
   }
 
   a {
-    @apply no-underline color-inherit;
+    @apply no-underline text-inherit;
   }
 
   #root {
-    @apply w-[1440px] max-w-full mx-auto min-h-screen flex flex-col;
+    @apply w-[1440px] max-w-full mx-auto min-h-[100vh] flex flex-col;
   }
 }
 
 /* used in TOAST-CONTAINER */
-@keyframes _cb_bounce {
+@keyframes postman-bounce {
   0%,
   100% {
-    transform: translateY(0);
+    transform: scaleY(0.3); /* Both top and bottom shrink toward center */
+    opacity: 0.4;
   }
   50% {
-    transform: translateY(-10px);
+    transform: scaleY(1); /* Expands to full height */
+    opacity: 1;
   }
 }
 
