@@ -10,7 +10,6 @@ import logo from '/assets/icons/logos.svg';
 export default function RegisterPage() {
   const { register, loading, error, fieldErrors } = useAuth();
 
-  const [errors, setErrors] = useState({});
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState({
@@ -27,7 +26,7 @@ export default function RegisterPage() {
   //   name.trim().length >= 3 && email.trim() && password.length >= 8;
 
   const passwordMatch =
-    password.confirmPassword && password.password !== password.confirmPassword;
+    password.confirmPassword && password.password === password.confirmPassword;
 
   return (
     <div className="min-h-screen flex items-start justify-center bg-main-bg px-6 py-12">
@@ -146,9 +145,13 @@ export default function RegisterPage() {
                   </button>
                 }
               />
-              <p className={`mt-1 text-end transition-color duration-180 touch-manipulation ${passwordMatch ? 'text-success' : 'text-error'}`}>
-                {passwordMatch ? 'Passwords match' : 'Passwords do not match'}
-              </p>
+              {password.confirmPassword && (
+                <p
+                  className={`mt-2 text-end text-xs transition-color duration-180 ${passwordMatch ? 'text-success' : 'text-error'}`}
+                >
+                  {passwordMatch ? 'Passwords match' : 'Passwords do not match'}
+                </p>
+              )}
             </div>
           </form>
         </div>
