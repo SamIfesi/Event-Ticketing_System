@@ -21,15 +21,18 @@ export default function RegisterPage() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    await register({ name, email, password });
+    await register({ name, email, password: password.password });
   }
-  
+
   const passwordMatch =
-  password.confirmPassword && password.password === password.confirmPassword;
+    password.confirmPassword && password.password === password.confirmPassword;
 
   const isValid =
-    name.trim().length >= 3 && email.trim() && password.password.length >= 8 && passwordMatch;
-  
+    name.trim().length >= 3 &&
+    email.trim() &&
+    password.password.length >= 8 &&
+    passwordMatch;
+
   return (
     <div className="min-h-screen flex items-start justify-center bg-main-bg px-6 py-12">
       <div className="w-full max-w-[26.25rem]">
