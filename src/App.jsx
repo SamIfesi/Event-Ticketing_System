@@ -115,7 +115,7 @@ function AppRoutes() {
         path="/register"
         element={
           <GuestOnly>
-            <RegisterPage />
+            <div>Register Page (todo)</div>
           </GuestOnly>
         }
       />
@@ -123,7 +123,8 @@ function AppRoutes() {
         path="/forgot-password"
         element={
           <GuestOnly>
-            <ForgotPasswordPage />
+            {/* <ForgotPasswordPage /> */}
+            <div>ForgotPasswordPage Page (todo)</div>
           </GuestOnly>
         }
       />
@@ -133,7 +134,8 @@ function AppRoutes() {
         path="/verify-email"
         element={
           <ProtectedRoute requireVerified={false}>
-            <VerifyEmailPage />
+            {/* <VerifyEmailPage /> */}
+            <div>VerifyEmail Page (todo)</div>
           </ProtectedRoute>
         }
       />
