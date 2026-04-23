@@ -45,7 +45,7 @@ const Input = forwardRef(function Input(
       {label && (
         <label
           htmlFor="fieldId"
-          className="text-sm font-medium text-primary select-none"
+          className="text-sm font-medium text-primary select-none mb-2"
         >
           {label}
         </label>
