@@ -69,10 +69,10 @@ export default function TopBarLoader() {
       aria-hidden="true"
       className="fixed top-0 left-0 right-0 z-[9999] pointer-events-none"
     >
-      <div className="w-full h-[3px] bg-transparent">
+      <div className="w-full h-[5px] bg-transparent">
         <div
           ref={fillRef}
-          className="relative h-full w-0 bg-[var(--accent)] will-change-[width]"
+          className="relative h-full w-0 bg-accent will-change-[width]"
         >
           {active && (
             <span className="absolute inset-y-0 right-0 w-20 animate-pulse bg-gradient-to-r from-transport to-white/35"></span>
