@@ -6,7 +6,7 @@ import Button from '../../components/ui/Button';
 import { Mail, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-function useResendTimer(initialSeconds = 75) {
+function useResendTimer(initialSeconds = 60) {
   const [seconds, setSeconds] = useState(initialSeconds);
   const [canResend, setCanResend] = useState(false);
   const timerRef = useRef(null);
@@ -34,12 +34,12 @@ function useResendTimer(initialSeconds = 75) {
   return { seconds, canResend, startTimer };
 }
 
-export default function verifyEmailPage() {
+export default function VerifyEmailPage() {
   const user = useAuthStore((state) => state.user);
-  const { verifyEmail, resendOtp, loading, error } = useAuth;
+  const { verifyEmail, resendOtp, loading, error } = useAuth();
 
   const [otp, setOtp] = useState('');
-  const { seconds, canResend, startTimer } = useResendTimer(75);
+  const { seconds, canResend, startTimer } = useResendTimer(60);
   const disabled = otp.length !== 6;
 
   async function handleComplete(value) {
@@ -124,11 +124,11 @@ export default function verifyEmailPage() {
             disabled={loading}
             className="text-sm font-semibold text-accent hover:text-accent-hover transition-colors duration-189 disabled:opacity-50 touch-manipulation"
           >
-            Resend code
+            Resend new code
           </button>
         ) : (
           <p className="text-sm text-muted">
-            Resend code in{' '}
+            Resend new code in{' '}
             <span className="font-semibold tabular-nums text-secondary">
               {seconds}s
             </span>

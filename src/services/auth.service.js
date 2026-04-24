@@ -20,8 +20,8 @@ const AuthService = {
   },
 
   async resendOtp() {
-    const response = await api.post('/auth/verify-email');
-    return response.data; // returns {success, message}
+    const response = await api.post('/auth/resend-otp');
+    return response.data.data; // returns {success, message}
   },
 
   async login({email, password}) {
