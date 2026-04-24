@@ -20,7 +20,7 @@ import RoleRoute from './components/auth/RoleRoute';
 // auth Pages 
 import LoginPage from './pages/public/LoginPage.jsx';
 import RegisterPage      from './pages/public/RegisterPage';
-// import VerifyEmailPage   from './pages/public/VerifyEmailPage';
+import VerifyEmailPage   from './pages/public/VerifyEmailPage';
 // import ForgotPasswordPage from './pages/public/ForgotPasswordPage';
 
 // ── Page imports ──────────────────────────────────────────────────────────────
@@ -134,8 +134,7 @@ function AppRoutes() {
         path="/verify-email"
         element={
           <ProtectedRoute requireVerified={false}>
-            {/* <VerifyEmailPage /> */}
-            <div>VerifyEmail Page (todo)</div>
+            <VerifyEmailPage />
           </ProtectedRoute>
         }
       />
