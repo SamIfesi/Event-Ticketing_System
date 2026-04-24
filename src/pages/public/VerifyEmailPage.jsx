@@ -36,7 +36,7 @@ function useResendTimer(initialSeconds = 60) {
 
 export default function VerifyEmailPage() {
   const user = useAuthStore((state) => state.user);
-  const { verifyEmail, resendOtp, loading, error } = useAuth();
+  const { verifyEmail, resendOtp, logout, loading, error } = useAuth();
 
   const [otp, setOtp] = useState('');
   const { seconds, canResend, startTimer } = useResendTimer(60);
@@ -58,6 +58,12 @@ export default function VerifyEmailPage() {
     await resendOtp();
     setOtp('');
     startTimer();
+  }
+
+  async function handleLogout(e){
+    e.preventDefault();
+    if(loading)return;
+    await logout();
   }
 
   function maskEmail(email) {
@@ -122,7 +128,7 @@ export default function VerifyEmailPage() {
           <button
             onClick={handleResend}
             disabled={loading}
-            className="text-sm font-semibold text-accent hover:text-accent-hover transition-colors duration-189 disabled:opacity-50 touch-manipulation"
+            className="text-sm font-semibold text-accent hover:text-accent-hover transition-colors duration-180 disabled:opacity-50 touch-manipulation"
           >
             Resend new code
           </button>
@@ -137,12 +143,12 @@ export default function VerifyEmailPage() {
       </div>
       <p className="mt-6 text-center text-sm text-secondary">
         Wrong account?{' '}
-        <Link
-          to="/login"
+        <button
+          onClick={handleLogout}
           className="font-semibold text-accent hover:text-accent-hover transition-colors duration-180 touch-manipulation"
         >
           Sign out
-        </Link>
+        </button>
       </p>
     </div>
   );
