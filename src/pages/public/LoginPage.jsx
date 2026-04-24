@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, OctagonAlert } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, TriangleAlert } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
@@ -38,7 +38,7 @@ export default function LoginPage() {
               role="alert"
               className="mb-5 flex items-start gap-2.5 rounded-btn border border-error/30 bg-error/8 px-4 py-3"
             >
-              <OctagonAlert size={17} className="text-error" />
+              <TriangleAlert size={17} className="text-error" />
               <p className="text-sm font-medium text-error">{error}</p>
             </div>
           )}
