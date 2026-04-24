@@ -14,6 +14,8 @@ export default function OTPInput({
   const digits = Array.from({ length: OTP_LENGTH }, (_, i) => value[i] ?? '');
   const inputRefs = useRef(Array.from({ length: OTP_LENGTH }, () => null));
 
+  const lastSubmitted = useRef('');
+
   useEffect(() => {
     if (autoFocus) {
       inputRefs.current[0]?.focus();
@@ -22,8 +24,11 @@ export default function OTPInput({
 
   // fire onComplete when all 6 digits are present
   useEffect(() => {
-    if (value.length === OTP_LENGTH && onComplete) {
+    if (value.length === OTP_LENGTH && onComplete && value !== lastSubmitted.current) {
+      lastSubmitted.current = value;
       onComplete(value);
+    }else if (value.length < OTP_LENGTH) {
+      lastSubmitted.current = '';
     }
   }, [onComplete, value]);
 
