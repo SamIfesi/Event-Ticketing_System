@@ -199,9 +199,7 @@ export function useAuth() {
 
         toastSuccess(data.message ?? 'OTP verified successfully!');
 
-        navigate('/reset-password', {
-          state: { email, reset_token: data.reset_token },
-        });
+        navigate(`/reset-password?token=${data.reset_token}`);
       } catch (error) {
         toastError(extractError(error));
       } finally {
