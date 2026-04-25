@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, TriangleAlert } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
 import logo from '/assets/icons/logos.svg';
 
 export default function LoginPage() {
-  const { login, loading, error, fieldErrors } = useAuth();
+  const { login, loading, fieldErrors } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,7 +21,6 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-start justify-center bg-main-bg px-6 py-12">
       <div className="w-full max-w-[26.25rem]">
-        
         <div className="flex flex-col items-start mb-8">
           <img src={logo} alt="Ticketer Logo" className="mb-8 self-center" />
           <h1 className="text-3xl font-bold text-primary tracking-tight">
@@ -33,16 +32,6 @@ export default function LoginPage() {
         </div>
 
         <div className="bg-main-bg pt-4 pb-8">
-          {error && (
-            <div
-              role="alert"
-              className="mb-5 flex items-start gap-2.5 rounded-btn border border-error/30 bg-error/8 px-4 py-3"
-            >
-              <TriangleAlert size={17} className="text-error" />
-              <p className="text-sm font-medium text-error">{error}</p>
-            </div>
-          )}
-
           <form
             onSubmit={handleSubmit}
             noValidate
