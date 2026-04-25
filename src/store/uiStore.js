@@ -1,9 +1,9 @@
 import { create } from 'zustand';
 
 let toastId = 0;
+
 export const useUiStore = create((set, get) => ({
   toasts: [],
-
   /**
    * automatoically remove afte 'duration' ms (default 4000).
    *
@@ -19,7 +19,9 @@ export const useUiStore = create((set, get) => ({
     }));
 
     if (duration > 0) {
-      setTimeout(() => get().dismissToast(id), duration);
+      setTimeout(() => {
+        useUiStore.getState().dismissToast(id);
+      }, duration);
     }
   },
 
