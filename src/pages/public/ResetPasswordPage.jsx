@@ -81,7 +81,7 @@ export default function ResetPasswordPage() {
               type={showNew ? 'text' : 'password'}
               id="new_password"
               placeholder="Min. 8 characters"
-              autoComplete="new-password"
+              autoComplete="new_password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               error={Boolean(error)}

@@ -210,15 +210,15 @@ export function useAuth() {
   );
 
   const resetPassword = useCallback(
-    async ({ email, reset_token, password, confrim_password }) => {
+    async ({ email, resetToken, newPassword, confirmPassword }) => {
       setLoading(true);
       resetErrors();
 
       try {
         const data = await AuthService.resetPassword({
-          reset_token,
-          password,
-          confrim_password,
+          reset_token: resetToken,
+          new_Password: newPassword,
+          confirm_Password: confirmPassword,
         });
         toastSuccess(
           data.message ??
