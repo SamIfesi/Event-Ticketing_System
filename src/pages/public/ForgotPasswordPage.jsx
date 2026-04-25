@@ -12,7 +12,7 @@ export default function ForgotPasswordPage() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    await forgotPassword({ email });
+    await forgotPassword(email);
   }
 
   return (
