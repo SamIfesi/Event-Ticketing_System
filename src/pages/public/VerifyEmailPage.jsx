@@ -76,7 +76,7 @@ export default function VerifyEmailPage() {
     <div className="min-h-screen flex flex-col items-center justify-start bg-main-bg px-6 py-12">
       <div className="flex flex-col items-center mb-8">
         <div className="w-14 h-14 rounded-card bg-accent-text border border-accent-border flex items-center justify-center mb-4">
-          <Mail size={26} color="var(--color-accent)" />
+          <Mail size={26} className='text-accent' />
         </div>
         <h1 className="text-2xl font-bold text-primary tracking-tight">
           Check your email
