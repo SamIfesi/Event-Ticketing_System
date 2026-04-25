@@ -1,52 +1,82 @@
-// src/pages/public/VerifyOtpPage.jsx
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-// import { useAuthStore } from '../../store/authStore';
 import { ShieldCheck, ArrowLeft, X } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import OTPInput from '../../components/auth/OTPInput';
 import Button from '../../components/ui/Button';
 
-export default function VerifyOtpPage() {
-  const { loading, error, resendOtp, verifyForgotOtp } = useAuth();
-  const [otp, setOtp] = useState('');
-  const disabled = otp.length !== 6;
-  // const location = useLocation();
+function useResendTimer(initialSeconds = 60) {
+  const [seconds, setSeconds] = useState(initialSeconds);
+  const [canResend, setCanResend] = useState(false);
+  const timerRef = useRef(null);
 
-  // const email = location.state?.email ?? '';
+  function startTimer() {
+    setSeconds(initialSeconds);
+    setCanResend(false);
+    clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setSeconds((prev) => {
+        if (prev <= 1) {
+          clearInterval(timerRef.current);
+          setCanResend(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  }
+
+  useEffect(() => {
+    startTimer();
+    return () => clearInterval(timerRef.current);
+  }, []);
+
+  return { seconds, canResend, startTimer };
+}
+
+export default function VerifyOtpPage() {
+  const { loading, verifyForgotOtp, error } = useAuth();
+  const [otp, setOtp] = useState('');
+  const { seconds, canResend } = useResendTimer(60);
+  const disabled = otp.length !== 6;
+  const location = useLocation();
+
+  const email = location.state?.email ?? '';
   // // If someone lands here directly with no email, send them back
-  // if (!email) {
-  //   return (
-  //     <div className="min-h-screen flex items-center justify-center bg-main-bg px-4">
-  //       <div className="text-center">
-  //         <p className="text-sm text-secondary mb-4">
-  //           Session expired or invalid access.
-  //         </p>
-  //         <Link
-  //           to="/forgot-password"
-  //           className="text-sm font-semibold text-accent hover:text-accent-hover"
-  //         >
-  //           Start over
-  //         </Link>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  if (!email) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-main-bg px-4">
+        <div className="text-center">
+          <p className="text-sm text-secondary mb-4">
+            Session expired or invalid access.
+          </p>
+          <Link
+            to="/forgot-password"
+            className="text-sm font-semibold text-accent hover:text-accent-hover"
+          >
+            Start over
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   async function handleComplete(value) {
     if (loading) return;
-    await verifyForgotOtp(value);
+    await verifyForgotOtp({ email, otp: value });
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
     if (otp.length < 6 || loading) return;
-    await verifyForgotOtp(otp);
+    await verifyForgotOtp({ email, otp });
   }
 
-  async function handleResend() {
-    await resendOtp();
-    setOtp('');
+  function maskEmail(email) {
+    if (typeof email !== 'string' || !email.includes('@')) return '';
+    
+    const [local, domain] = email.split('@');
+    return `${local[0]}${'*'.repeat(Math.min(local.length - 1, 4))}@${domain}`;
   }
 
   return (
@@ -61,37 +91,22 @@ export default function VerifyOtpPage() {
         </Link>
 
         <div className="flex flex-col items-center mb-8">
-          <div className="w-14 h-14 rounded-card bg-accent-text border border-accent-border flex items-center justify-center mb-4">   
+          <div className="w-14 h-14 rounded-card bg-accent-text border border-accent-border flex items-center justify-center mb-4">
             <ShieldCheck size={24} strokeWidth={1.75} className="text-accent" />
           </div>
           <h1 className="text-2xl font-bold text-primary tracking-tight">
             Enter verification code
           </h1>
-          <p className="mt-2 text-sm text-secondary text-center leading-relaxed max-w-[300px]">
+          <p className="text-sm text-secondary mt-2 text-center max-w-[22rem] leading-relaxed">
             We sent a 6-digit code to{' '}
-            {/* <span className="font-semibold text-primary">{email}</span>. It */}
-            expires in 30 minutes.
+            <span className="font-semibold text-primary">
+              {maskEmail(email)}
+            </span>
+            . Enter the code below to verify your email address.
           </p>
         </div>
 
-        {error && (
-          <div
-            role="alert"
-            className="mb-5 flex items-start gap-2.5 rounded-btn border border-error/30 bg-error/8 px-4 py-3"
-          >
-            <span
-              aria-hidden="true"
-              className="mt-0.5 h-2 w-2 shrink-0 rounded-full bg-error"
-            />
-            <p className="text-sm font-medium text-error">{error}</p>
-          </div>
-        )}
-
-        <form
-          onSubmit={handleSubmit}
-          noValidate
-          // className="flex flex-col gap-5"
-        >
+        <form onSubmit={handleSubmit} noValidate>
           <OTPInput
             value={otp}
             onChange={setOtp}
@@ -113,15 +128,29 @@ export default function VerifyOtpPage() {
           </Button>
         </form>
 
-        <p className="mt-5 text-center text-xs text-muted">
-          Didn't receive it?{' '}
-          <button
-            onClick={handleResend}
-            className="font-semibold text-accent hover:text-accent-hover transition-colors duration-150"
-          >
-            Resend code
-          </button>
-        </p>
+        <div className="mt-6 text-center text-sm">
+          <span className={canResend ? 'text-secondary' : 'text-muted'}>
+            Didn't receive the code?{' '}
+          </span>
+
+          {canResend ? (
+            <Link
+              to="/forgot-password"
+              className={`font-semibold text-accent hover:text-accent-hover transition-colors duration-180 touch-manipulation ${
+                loading ? 'pointer-events-none opacity-50' : ''
+              }`}
+            >
+              Try again
+            </Link>
+          ) : (
+            <span className="text-muted">
+              Try again in{' '}
+              <span className="font-semibold tabular-nums text-secondary">
+                {seconds}s
+              </span>
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );
