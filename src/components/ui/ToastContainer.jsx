@@ -26,12 +26,12 @@ function ToastItem({ toast, onDismiss, isMobile }) {
     setTimeout(() => onDismiss(toast.id), 280);
   }
 
-  const enterTransform = 'translateY(0)    translateX(0)';
-  const mobileExit = 'translateY(100%)    translateX(0)';
-  const desktopExit = 'translateY(0)    translateX(100% + 1.5rem)';
-
-  const transform =
-    visible && !leaving ? enterTransform : isMobile ? mobileExit : desktopExit;
+  const show = visible && !leaving;
+  const transform = show
+    ? 'translateY(0) translateX(0)'
+    : isMobile
+      ? 'translateY(110%) translateX(0)'
+      : 'translateY(-110%) translateX(0)';
 
   return (
     <div
@@ -40,9 +40,9 @@ function ToastItem({ toast, onDismiss, isMobile }) {
       onClick={dismiss}
       style={{
         transform,
-        opacity: visible && !leaving ? 1 : 0,
+        opacity: show ? 1 : 0,
         transition: leaving
-          ? 'transform 280ms cubic-bezier(0.4,0,1,1), opacity 280ms ease'
+          ? 'transform 260ms cubic-bezier(0.4,0,1,1), opacity 260ms ease'
           : 'transform 360ms cubic-bezier(0.16,1,0.3,1), opacity 300ms ease',
       }}
       className="relative flex items-start gap-3 w-full bg-card border border-border rounded-card shadow-lg px-4 py-3.5 cursor-pointer overflow-hidden active:brightness-95 touch-manipulation"
@@ -67,7 +67,7 @@ function ToastItem({ toast, onDismiss, isMobile }) {
         className="absolute right-0 top-0 w-11 h-11 flex items-center justify-center text-muted hover:text-primary transition-colors duration-200 touch-manipulation"
         aria-label="Dismiss notification"
       >
-        <X size={15} strokeWidth={2.5} />
+        <X size={17} strokeWidth={2.5} />
       </button>
     </div>
   );
@@ -75,7 +75,7 @@ function ToastItem({ toast, onDismiss, isMobile }) {
 
 export default function ToastContainer() {
   const toasts = useUiStore((state) => state.toasts);
-  const dismissToast = useUiStore((state) => state.dismissToasts);
+  const dismissToast = useUiStore((state) => state.dismissToast);
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
   if (toasts.length === 0) return null;
@@ -90,7 +90,7 @@ export default function ToastContainer() {
           <div key={toast.id} className="pointer-events-auto">
             <ToastItem
               toast={toast}
-              onDimss={dismissToast}
+              onDismiss={dismissToast}
               isMobile={isMobile}
             />
           </div>
