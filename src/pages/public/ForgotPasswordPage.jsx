@@ -1,4 +1,3 @@
-// src/pages/public/ForgotPasswordPage.jsx
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, ArrowLeft } from 'lucide-react';
@@ -7,7 +6,7 @@ import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
 
 export default function ForgotPasswordPage() {
-  const { error, loading, fieldErrors, forgotPassword } = useAuth();
+  const { loading, fieldErrors, forgotPassword } = useAuth();
 
   const [email, setEmail] = useState('');
 
@@ -38,19 +37,6 @@ export default function ForgotPasswordPage() {
             Enter your email and we'll send you a 6-digit verification code.
           </p>
         </div>
-
-        {error && (
-          <div
-            role="alert"
-            className="mb-5 flex items-start gap-2.5 rounded-btn border border-error/30 bg-error/8 px-4 py-3"
-          >
-            <span
-              aria-hidden="true"
-              className="mt-0.5 h-2 w-2 shrink-0 rounded-full bg-error"
-            />
-            <p className="text-sm font-medium text-error">{error}</p>
-          </div>
-        )}
 
         <form
           onSubmit={handleSubmit}
