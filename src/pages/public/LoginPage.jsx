@@ -37,7 +37,6 @@ export default function LoginPage() {
             noValidate
             className="flex flex-col gap-5"
           >
-            {/* Email */}
             <Input
               label="Email address"
               type="email"
@@ -51,7 +50,6 @@ export default function LoginPage() {
               disabled={loading}
             />
 
-            {/* Password */}
             <Input
               label="Password"
               type={showPassword ? 'text' : 'password'}
@@ -75,7 +73,6 @@ export default function LoginPage() {
               }
             />
 
-            {/* forgotten password link */}
             <div className="flex justify-end -mt-2">
               <Link
                 to="/forgot-password"

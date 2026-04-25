@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { User, Mail, Lock, Eye, EyeOff, TriangleAlert } from 'lucide-react';
+import { User, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import PasswordStrength from './PasswordStrength';
 import Input from '../../components/ui/Input';
@@ -8,7 +8,7 @@ import Button from '../../components/ui/Button';
 import logo from '/assets/icons/logos.svg';
 
 export default function RegisterPage() {
-  const { register, loading, error, fieldErrors } = useAuth();
+  const { register, loading, fieldErrors } = useAuth();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -47,16 +47,6 @@ export default function RegisterPage() {
         </div>
 
         <div className="bg-main-bg">
-          {error && (
-            <div
-              role="alert"
-              className="mb-5 flex items-start gap-2.5 rounded-btn border border-error/30 bg-error/8 px-4 py-3"
-            >
-              <TriangleAlert size={17} className="text-error" />
-              <p className="text-sm font-medium text-error">{error}</p>
-            </div>
-          )}
-
           <form
             onSubmit={handleSubmit}
             noValidate
@@ -94,7 +84,7 @@ export default function RegisterPage() {
                 type={showPassword ? 'text' : 'password'}
                 id="password"
                 placeholder="••••••••"
-                autoComplete="current-password"
+                autoComplete="new-password"
                 value={password.password}
                 onChange={(e) =>
                   setPassword({
@@ -126,7 +116,7 @@ export default function RegisterPage() {
                 type={showConfirmPassword ? 'text' : 'password'}
                 id="confirmPassword"
                 placeholder="••••••••"
-                autoComplete="current-password"
+                autoComplete="new-password"
                 value={password.confirmPassword}
                 onChange={(e) =>
                   setPassword({
@@ -134,7 +124,7 @@ export default function RegisterPage() {
                     confirmPassword: e.target.value,
                   })
                 }
-                error={fieldErrors.password}
+                error={fieldErrors.confirmPassword}
                 icon={<Lock size={17} />}
                 disabled={loading}
                 right={
@@ -156,7 +146,9 @@ export default function RegisterPage() {
               />
               {password.confirmPassword && (
                 <p
-                  className={`mt-2 text-end text-xs transition-color duration-180 ${passwordMatch ? 'text-success' : 'text-error'}`}
+                  className={`mt-2 text-end text-xs transition-color duration-180 ${
+                    passwordMatch ? 'text-success' : 'text-error'
+                  }`}
                 >
                   {passwordMatch ? 'Passwords match' : 'Passwords do not match'}
                 </p>
@@ -190,11 +182,7 @@ export default function RegisterPage() {
           Already have an account?{' '}
           <Link
             to="/login"
-            className="font-semibold
-            text-accent
-            hover:text-accent-hover
-            transition-colors
-            duration-180"
+            className="font-semibold text-accent hover:text-accent-hover transition-colors duration-180"
           >
             Sign in
           </Link>
