@@ -3,8 +3,7 @@ import { useAuthStore } from '../../store/authStore';
 import { useAuth } from '../../hooks/useAuth';
 import OTPInput from '../../components/auth/OTPInput';
 import Button from '../../components/ui/Button';
-import { Mail, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Mail } from 'lucide-react';
 
 function useResendTimer(initialSeconds = 60) {
   const [seconds, setSeconds] = useState(initialSeconds);
@@ -31,6 +30,7 @@ function useResendTimer(initialSeconds = 60) {
     startTimer();
     return () => clearInterval(timerRef.current);
   }, []);
+
   return { seconds, canResend, startTimer };
 }
 
@@ -60,9 +60,9 @@ export default function VerifyEmailPage() {
     startTimer();
   }
 
-  async function handleLogout(e){
+  async function handleLogout(e) {
     e.preventDefault();
-    if(loading)return;
+    if (loading) return;
     await logout();
   }
 
@@ -78,27 +78,17 @@ export default function VerifyEmailPage() {
         <div className="w-14 h-14 rounded-card bg-accent-text border border-accent-border flex items-center justify-center mb-4">
           <Mail size={26} color="var(--color-accent)" />
         </div>
-        <h1 className="text-2xl font-bolde text-primary tracking-tight">
+        <h1 className="text-2xl font-bold text-primary tracking-tight">
           Check your email
         </h1>
         <p className="text-sm text-secondary mt-2 text-center max-w-[22rem] leading-relaxed">
           We sent a 6-digit verification code to{' '}
-          <span className="font-semiBold text-primary">
+          <span className="font-semibold text-primary">
             {maskEmail(user?.email)}
           </span>
           . Enter the code below to verify your email address.
         </p>
       </div>
-
-      {error && (
-        <div
-          className="mb-6 flex items-start gap-2.5 rounded-btn border border-error/30 bg-error/8 px-4 py-3"
-          role="alert"
-        >
-          <X size={17} className="text-error" />
-          <p className="text-sm font-medium text-error">{error}</p>
-        </div>
-      )}
 
       <form onSubmit={handleSubmit} noValidate>
         <OTPInput
@@ -141,6 +131,7 @@ export default function VerifyEmailPage() {
           </p>
         )}
       </div>
+
       <p className="mt-6 text-center text-sm text-secondary">
         Wrong account?{' '}
         <button
