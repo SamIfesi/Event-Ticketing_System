@@ -21,7 +21,9 @@ import RoleRoute from './components/auth/RoleRoute';
 import LoginPage from './pages/public/LoginPage.jsx';
 import RegisterPage      from './pages/public/RegisterPage';
 import VerifyEmailPage   from './pages/public/VerifyEmailPage';
-// import ForgotPasswordPage from './pages/public/ForgotPasswordPage';
+import ForgotPasswordPage from './pages/public/ForgotPasswordPage';
+import ResetPassworPage from './pages/public/ResetPasswordPage';
+import VerifyOtpPage from './pages/public/VerifyOtpPage';
 
 // ── Page imports ──────────────────────────────────────────────────────────────
 // public
@@ -115,7 +117,7 @@ function AppRoutes() {
         path="/register"
         element={
           <GuestOnly>
-            <RegisterPage/>
+            <RegisterPage />
           </GuestOnly>
         }
       />
@@ -123,8 +125,23 @@ function AppRoutes() {
         path="/forgot-password"
         element={
           <GuestOnly>
-            {/* <ForgotPasswordPage /> */}
-            <div>ForgotPasswordPage Page (todo)</div>
+            <ForgotPasswordPage />
+          </GuestOnly>
+        }
+      />
+      <Route
+        path="/verify-otp"
+        element={
+          <GuestOnly>
+            <VerifyOtpPage />
+          </GuestOnly>
+        }
+      />
+      <Route
+        path="/reset-password"
+        element={
+          <GuestOnly>
+            <ResetPassworPage />
           </GuestOnly>
         }
       />
@@ -287,6 +304,7 @@ export default function App() {
       <NavigationLoader />
       <TopBarLoader />
       <CenterLoader />
+      <ToastContainer />
       <AppRoutes />
     </BrowserRouter>
   );
