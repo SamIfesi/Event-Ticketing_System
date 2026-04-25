@@ -168,7 +168,7 @@ export function useAuth() {
       try {
         const data = await AuthService.forgotPassword(email);
         toastSuccess(data.message ?? 'OTP sent to your email.');
-        navigate('/forgot-password/verify', { state: { email } });
+        navigate('/verify-otp', { state: { email } });
       } catch (error) {
         toastError(extractError(error));
       } finally {
