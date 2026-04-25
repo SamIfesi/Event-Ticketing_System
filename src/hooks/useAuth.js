@@ -187,7 +187,9 @@ export function useAuth() {
       const otpError = validateOtp(otp);
 
       if (emailError || otpError) {
-        toastError(emailError || otpError);
+        const msg = emailError || otpError;
+        setError(msg);
+        toastError(msg);
         setLoading(false);
         return;
       }
@@ -198,7 +200,7 @@ export function useAuth() {
         toastSuccess(data.message ?? 'OTP verified successfully!');
 
         navigate('/reset-password', {
-          state: { email, otp },
+          state: { email, reset_token: data.reset_token },
         });
       } catch (error) {
         toastError(extractError(error));
@@ -209,23 +211,30 @@ export function useAuth() {
     [navigate]
   );
 
-  const resetPassword = useCallback(async ({ email, otp, password }) => {
-    setLoading(true);
-    resetErrors();
+  const resetPassword = useCallback(
+    async ({ email, reset_token, password, confrim_password }) => {
+      setLoading(true);
+      resetErrors();
 
-    try {
-      const data = await AuthService.resetPassword({ email, otp, password });
-      toastSuccess(
-        data.message ??
-          'Password reset successfully! Please login with your new password.'
-      );
-      navigate('/login');
-    } catch (error) {
-      toastError(extractError(error));
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+      try {
+        const data = await AuthService.resetPassword({
+          reset_token,
+          password,
+          confrim_password,
+        });
+        toastSuccess(
+          data.message ??
+            'Password reset successfully! Please login with your new password.'
+        );
+        navigate('/login');
+      } catch (error) {
+        toastError(extractError(error));
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
 
   return {
     // State
