@@ -24,14 +24,14 @@ export default function RegisterPage() {
     await register({ name, email, password: password.password });
   }
 
-  const passwordMatch =
+  const passwordsMatch =
     password.confirmPassword && password.password === password.confirmPassword;
 
   const isValid =
     name.trim().length >= 3 &&
     email.trim() &&
     password.password.length >= 8 &&
-    passwordMatch;
+    passwordsMatch;
 
   return (
     <div className="min-h-screen flex items-start justify-center bg-main-bg px-6 py-12">
@@ -147,10 +147,10 @@ export default function RegisterPage() {
               {password.confirmPassword && (
                 <p
                   className={`mt-2 text-end text-xs transition-color duration-180 ${
-                    passwordMatch ? 'text-success' : 'text-error'
+                    passwordsMatch ? 'text-success' : 'text-error'
                   }`}
                 >
-                  {passwordMatch ? 'Passwords match' : 'Passwords do not match'}
+                  {passwordsMatch ? 'Passwords match' : 'Passwords do not match'}
                 </p>
               )}
             </div>
