@@ -4,7 +4,7 @@ import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
-import logo from '/assets/icons/logos.svg';
+import logo from '/assets/icons/logo.svg';
 
 export default function LoginPage() {
   const { login, loading, fieldErrors } = useAuth();
