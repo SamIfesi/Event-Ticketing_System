@@ -28,7 +28,7 @@ import OnboardingPage from './pages/public/OnboardingPage.jsx';
 
 // ── Page imports ──────────────────────────────────────────────────────────────
 // public
-// import HomePage          from './pages/public/HomePage';
+import HomePage from './pages/public/HomePage';
 // import EventsPage        from './pages/public/EventsPage';
 // import EventDetailPage   from './pages/public/EventDetailPage';
 // import UnauthorizedPage  from './pages/public/UnauthorizedPage';
@@ -115,6 +115,7 @@ function AppRoutes() {
         }
       />
       {/* Public */}
+      <Route path="/home" element={<HomePage />} />
       <Route path="/events" element={<div>Events (todo)</div>} />
       <Route path="/events/:id" element={<div>Event detail (todo)</div>} />
       <Route path="/unauthorized" element={<div>Unauthorized (todo)</div>} />
