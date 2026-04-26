@@ -216,9 +216,9 @@ export function useAuth() {
 
       try {
         const data = await AuthService.resetPassword({
-          reset_token: resetToken,
-          new_Password: newPassword,
-          confirm_Password: confirmPassword,
+          resetToken,
+          newPassword,
+          confirmPassword,
         });
         toastSuccess(
           data.message ??
