@@ -49,11 +49,11 @@ const AuthService = {
     return response.data.data; // returns {success, message, token}
   },
 
-  async resetPassword({ new_password, confirm_password, reset_token }) {
+  async resetPassword({ resetToken, newPassword, confirmPassword }) {
     const response = await api.post('/auth/reset-password', {
-      new_password,
-      confirm_password,
-      reset_token,
+      reset_token: resetToken,
+      new_password: newPassword,
+      confirm_password: confirmPassword,
     });
     return response.data; // returns {success, message}
   },
