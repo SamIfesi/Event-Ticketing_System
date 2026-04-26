@@ -17,13 +17,14 @@ import ToastContainer from './components/ui/ToastContainer';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import RoleRoute from './components/auth/RoleRoute';
 
-// auth Pages 
+// auth Pages
 import LoginPage from './pages/public/LoginPage.jsx';
-import RegisterPage      from './pages/public/RegisterPage';
-import VerifyEmailPage   from './pages/public/VerifyEmailPage';
+import RegisterPage from './pages/public/RegisterPage';
+import VerifyEmailPage from './pages/public/VerifyEmailPage';
 import ForgotPasswordPage from './pages/public/ForgotPasswordPage';
 import ResetPassworPage from './pages/public/ResetPasswordPage';
 import VerifyOtpPage from './pages/public/VerifyOtpPage';
+import OnboardingPage from './pages/public/OnboardingPage.jsx';
 
 // ── Page imports ──────────────────────────────────────────────────────────────
 // public
@@ -32,7 +33,6 @@ import VerifyOtpPage from './pages/public/VerifyOtpPage';
 // import EventDetailPage   from './pages/public/EventDetailPage';
 // import UnauthorizedPage  from './pages/public/UnauthorizedPage';
 // import NotFoundPage      from './pages/public/NotFoundPage';
-
 
 // attendee
 // import AttendeeDashboard from './pages/attendee/AttendeeDashboard';
@@ -77,8 +77,15 @@ function RootRedirect() {
   const token = useAuthStore((state) => state.token);
   const isVerified = useAuthStore((state) => state.isVerified);
   const user = useAuthStore((state) => state.user);
+  const hasSeenOnboarding = localStorage.getItem('onboarding_seen');
 
-  if (!token) return <Navigate to="/login" replace />;
+  if (!token) {
+    return hasSeenOnboarding ? (
+      <Navigate to="/login" replace />
+    ) : (
+      <Navigate to="/onboarding" replace />
+    );
+  }
   if (!isVerified) return <Navigate to="/verify-email" replace />;
   return <Navigate to={getDefaultPath(user?.role)} replace />;
 }
@@ -98,12 +105,19 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<RootRedirect />} />
-
+      // Onboarding Pages
+      <Route
+        path="/onboarding"
+        element={
+          <GuestOnly>
+            <OnboardingPage />
+          </GuestOnly>
+        }
+      />
       {/* Public */}
       <Route path="/events" element={<div>Events (todo)</div>} />
       <Route path="/events/:id" element={<div>Event detail (todo)</div>} />
       <Route path="/unauthorized" element={<div>Unauthorized (todo)</div>} />
-
       {/* Auth - guest only (logged-in users are redirected away) */}
       <Route
         path="/login"
@@ -145,7 +159,6 @@ function AppRoutes() {
           </GuestOnly>
         }
       />
-
       {/* verify email - needs token but Not verified */}
       <Route
         path="/verify-email"
@@ -155,7 +168,6 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
-
       {/* Attendees */}
       <Route
         path="/dashboard"
@@ -189,7 +201,6 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
-
       {/* Organizers */}
       <Route
         path="/organizer/dashboard"
@@ -251,7 +262,6 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
-
       {/* admin */}
       <Route
         path="/admin/dashboard"
@@ -292,7 +302,6 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
-
       <Route path="*" element={<div>404 (todo)</div>} />
     </Routes>
   );
