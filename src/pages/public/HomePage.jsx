@@ -8,6 +8,7 @@ import {
   Users,
   Ticket,
   ChevronRight,
+  ChevronLeft,
   Zap,
   Music,
   Briefcase,
@@ -21,7 +22,7 @@ import { useAuthStore } from '../../store/authStore';
 import { formatEventDate } from '../../utils/formatDate';
 import { formatCurrency } from '../../utils/formatCurrency';
 import logo from '/assets/icons/logo.svg';
-import line from '/assets/icons/line.svg';
+import line from '/assets/illustrations/line.svg';
 
 // ── Fake data until EventsService is wired in ────────────────────────────────
 const FEATURED_EVENTS = [
@@ -87,11 +88,6 @@ const STATS = [
   { label: 'Active organisers', value: '340+' },
   { label: 'Cities covered', value: '12' },
 ];
-
-// ── Category pill gradient colour based on icon colour ──────────────────────
-function getCategoryGradient(color) {
-  return `${color}18`;
-}
 
 // ── Event card placeholder gradient ─────────────────────────────────────────
 const CARD_GRADIENTS = [
@@ -184,7 +180,6 @@ function EventCard({ event, index }) {
         <h3 className="font-bold text-primary text-sm leading-snug line-clamp-2 group-hover:text-accent transition-colors duration-180">
           {event.title}
         </h3>
-
         <div className="flex flex-col gap-1.5 mt-auto">
           <div className="flex items-center gap-1.5 text-xs text-secondary">
             <Calendar size={13} className="shrink-0 text-muted" />
@@ -200,29 +195,133 @@ function EventCard({ event, index }) {
   );
 }
 
-// ── Category card ────────────────────────────────────────────────────────────
+// ── Category card — compact for the scroll strip ─────────────────────────────
 function CategoryCard({ cat }) {
   const Icon = cat.icon;
   return (
     <Link
       to={`/events?category=${cat.id}`}
-      className="group flex flex-col items-center gap-2.5 p-5 bg-card border border-border rounded-card hover:border-accent/40 hover:shadow-md transition-all duration-200 active:scale-[.98]"
+      className="group flex-shrink-0 flex flex-col items-center gap-3 w-28 p-4 bg-main-bg border border-border rounded-card hover:border-accent/40 hover:shadow-md transition-all duration-200 active:scale-[.97] touch-manipulation snap-start"
     >
       <div
         className="w-12 h-12 rounded-xl flex items-center justify-center transition-transform duration-200 group-hover:scale-110"
-        style={{ background: getCategoryGradient(cat.color) }}
+        style={{ background: `${cat.color}18` }}
       >
         <Icon size={22} style={{ color: cat.color }} strokeWidth={1.75} />
       </div>
-      <span className="text-xs font-semibold text-primary text-center">
-        {cat.name}
-      </span>
-      <span className="text-xs text-muted">{cat.count} events</span>
+      <div className="text-center">
+        <span className="block text-xs font-semibold text-primary leading-tight">
+          {cat.name}
+        </span>
+        <span className="block text-[11px] text-muted mt-0.5">
+          {cat.count} events
+        </span>
+      </div>
     </Link>
   );
 }
 
-// ── Stat chip ────────────────────────────────────────────────────────────────
+// ── Horizontal category scroller ──────────────────────────────────────────────
+function CategoryScroller() {
+  const scrollRef = useRef(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  function updateArrows() {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 8);
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 8);
+  }
+
+  function scrollBy(direction) {
+    const el = scrollRef.current;
+    if (!el) return;
+    // 2 card widths: card(112px) + gap(16px) ≈ 256px × 2
+    el.scrollBy({ left: direction * 256, behavior: 'smooth' });
+  }
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    updateArrows();
+    el.addEventListener('scroll', updateArrows, { passive: true });
+    const ro = new ResizeObserver(updateArrows);
+    ro.observe(el);
+    return () => {
+      el.removeEventListener('scroll', updateArrows);
+      ro.disconnect();
+    };
+  }, []);
+
+  return (
+    <div className="relative">
+      {/* Left fade */}
+      <div
+        className={`absolute left-0 top-0 bottom-2 w-14 z-10 pointer-events-none bg-gradient-to-r from-card to-transparent transition-opacity duration-200 rounded-l-card ${
+          canScrollLeft ? 'opacity-100' : 'opacity-0'
+        }`}
+      />
+
+      {/* Left arrow */}
+      <button
+        onClick={() => scrollBy(-1)}
+        aria-label="Scroll categories left"
+        className={`absolute -left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-card border border-border shadow-md flex items-center justify-center text-secondary hover:text-primary hover:border-accent/40 transition-all duration-150 touch-manipulation ${
+          canScrollLeft
+            ? 'opacity-100 pointer-events-auto'
+            : 'opacity-0 pointer-events-none'
+        }`}
+      >
+        <ChevronLeft size={16} strokeWidth={2.5} />
+      </button>
+
+      {/* Scroll track — hidden scrollbar via inline style */}
+      <div
+        ref={scrollRef}
+        className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-1"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
+        {/* Inline rule to kill WebKit scrollbar without needing a CSS file edit */}
+        <style>{`
+          .cat-strip::-webkit-scrollbar { display: none; }
+        `}</style>
+
+        {/* Left breathing room */}
+        <div className="flex-shrink-0 w-1" aria-hidden="true" />
+
+        {CATEGORIES.map((cat) => (
+          <CategoryCard key={cat.id} cat={cat} />
+        ))}
+
+        {/* Right breathing room */}
+        <div className="flex-shrink-0 w-1" aria-hidden="true" />
+      </div>
+
+      {/* Right fade */}
+      <div
+        className={`absolute right-0 top-0 bottom-2 w-14 z-10 pointer-events-none bg-gradient-to-l from-card to-transparent transition-opacity duration-200 rounded-r-card ${
+          canScrollRight ? 'opacity-100' : 'opacity-0'
+        }`}
+      />
+
+      {/* Right arrow */}
+      <button
+        onClick={() => scrollBy(1)}
+        aria-label="Scroll categories right"
+        className={`absolute -right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-card border border-border shadow-md flex items-center justify-center text-secondary hover:text-primary hover:border-accent/40 transition-all duration-150 touch-manipulation ${
+          canScrollRight
+            ? 'opacity-100 pointer-events-auto'
+            : 'opacity-0 pointer-events-none'
+        }`}
+      >
+        <ChevronRight size={16} strokeWidth={2.5} />
+      </button>
+    </div>
+  );
+}
+
+// ── Stat item ────────────────────────────────────────────────────────────────
 function StatItem({ value, label }) {
   return (
     <div className="flex flex-col items-center gap-1 text-center">
@@ -281,9 +380,8 @@ export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen bg-main-bg">
       {/* ── Navbar ──────────────────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-50 bg-card/80 backdrop-blur-md border-b border-border ">
+      <header className="sticky top-0 z-50 bg-card/80 backdrop-blur-md border-b border-border">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
-          {/* Logo */}
           <Link to="/home" className="flex items-center gap-2 shrink-0">
             <img src={logo} alt="Ticketer" className="h-6" />
           </Link>
@@ -372,7 +470,11 @@ export default function HomePage() {
               Every great{' '}
               <span className="text-accent relative">
                 experience
-                <img src={line} alt="" className="absolute -bottom-1 left-0 w-full"/>
+                <img
+                  src={line}
+                  alt=""
+                  className="absolute -bottom-1 left-0 w-full"
+                />
               </span>{' '}
               starts with a ticket.
             </h1>
@@ -443,6 +545,7 @@ export default function HomePage() {
         {/* ── Categories ──────────────────────────────────────────────────── */}
         <section className="bg-card border-y border-border py-16">
           <div className="max-w-6xl mx-auto px-6">
+            {/* Header */}
             <div className="flex items-end justify-between mb-8 gap-5">
               <div>
                 <p className="text-xs font-semibold text-accent uppercase tracking-widest mb-1">
@@ -461,11 +564,8 @@ export default function HomePage() {
               </Link>
             </div>
 
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-5">
-              {CATEGORIES.map((cat) => (
-                <CategoryCard key={cat.id} cat={cat} />
-              ))}
-            </div>
+            {/* Horizontal scroller */}
+            <CategoryScroller />
           </div>
         </section>
 
@@ -540,11 +640,11 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="flex flex-col md:flex-row gap-3 shrink-0">
+            <div className="flex flex-col sm:flex-row gap-3 shrink-0 w-full sm:w-auto">
               {isLoggedIn ? (
                 <Link
                   to="/organizer/dashboard"
-                  className="flex items-center gap-2 h-12 px-6 bg-white text-accent font-bold text-sm rounded-btn hover:bg-white/90 transition-colors duration-180 active:scale-95 md:w-full"
+                  className="flex items-center justify-center gap-2 h-12 px-6 bg-white text-accent font-bold text-sm rounded-btn hover:bg-white/90 transition-colors duration-180 active:scale-95 w-full sm:w-auto"
                 >
                   Go to Dashboard
                   <ArrowRight size={16} strokeWidth={2.5} />
@@ -553,14 +653,14 @@ export default function HomePage() {
                 <>
                   <Link
                     to="/register"
-                    className="flex items-center gap-2 h-12 px-6 bg-white text-accent font-bold text-sm rounded-btn hover:bg-white/90 transition-colors duration-180 active:scale-95 md:w-full"
+                    className="flex items-center justify-center gap-2 h-12 px-6 bg-white text-accent font-bold text-sm rounded-btn hover:bg-white/90 transition-colors duration-180 active:scale-95 w-full sm:w-40"
                   >
                     Start for free
                     <ArrowRight size={16} strokeWidth={2.5} />
                   </Link>
                   <Link
                     to="/login"
-                    className="flex items-center justify-center h-12 px-6 border border-white/40 text-white font-semibold text-sm rounded-btn hover:bg-white/10 transition-colors duration-180 md:w-full"
+                    className="flex items-center justify-center h-12 px-6 border border-white/40 text-white font-semibold text-sm rounded-btn hover:bg-white/10 transition-colors duration-180 w-full sm:w-40"
                   >
                     Sign in
                   </Link>
@@ -573,14 +673,10 @@ export default function HomePage() {
 
       {/* ── Footer ──────────────────────────────────────────────────────────── */}
       <footer className="border-t border-border bg-card">
-        <div className="max-w-6xl mx-auto px-6 py-10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
             <div className="flex flex-col items-center sm:items-start gap-2">
-              <img
-                src={logo}
-                alt="Ticketer"
-                className="h-5"
-              />
+              <img src={logo} alt="Ticketer logo" className="h-5" />
               <p className="text-xs text-muted">
                 Nigeria's event ticketing platform
               </p>
