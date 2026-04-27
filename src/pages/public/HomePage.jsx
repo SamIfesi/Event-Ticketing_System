@@ -417,11 +417,11 @@ export default function HomePage() {
             {isLoggedIn ? (
               <Link
                 to="/profile"
-                className="flex items-center gap-2 h-9 px-3 rounded-btn border border-border hover:bg-border text-sm font-medium text-primary transition-colors duration-150"
+                className="flex items-center gap-2 px-3 text-xl font-medium text-primary"
               >
-                <div className="w-6 h-6 rounded-full bg-accent-text flex items-center justify-center">
-                  <span className="text-xs font-bold text-accent">
-                    {user?.name?.charAt(0)?.toUpperCase() ?? 'U'}
+                <div className="w-10 h-10 rounded-full bg-accent-text flex items-center justify-center">
+                  <span className="font-bold text-accent">
+                    {user?.name?.charAt(0)?.toUpperCase()}
                   </span>
                 </div>
                 <span className="hidden sm:block max-w-[100px] truncate">
