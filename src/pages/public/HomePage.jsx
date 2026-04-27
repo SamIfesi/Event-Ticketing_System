@@ -516,7 +516,7 @@ export default function HomePage() {
         </section>
 
         {/* ── Organiser CTA ─────────────────────────────────────────────────── */}
-        <section className="bg-accent mx-6 lg:max-w-6xl rounded-card mb-16 px-6 py-12 relative overflow-hidden">
+        <section className="bg-accent mx-6 lg:mx-auto lg:max-w-6xl rounded-card mb-16 px-6 py-12 relative overflow-hidden">
           {/* Background decoration */}
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute -top-12 -right-12 w-64 h-64 rounded-full bg-white/7" />
@@ -573,7 +573,7 @@ export default function HomePage() {
 
       {/* ── Footer ──────────────────────────────────────────────────────────── */}
       <footer className="border-t border-border bg-card">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
+        <div className="max-w-6xl mx-auto px-6 py-10">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
             <div className="flex flex-col items-center sm:items-start gap-2">
               <img
@@ -605,7 +605,7 @@ export default function HomePage() {
 
           <div className="mt-8 pt-6 border-t border-border text-center">
             <p className="text-xs text-muted">
-              © {new Date().getFullYear()} Ticketer. Built for Nigeria.
+              © {new Date().getFullYear()} Ticketer.
             </p>
           </div>
         </div>
