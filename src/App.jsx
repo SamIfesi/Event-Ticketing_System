@@ -81,7 +81,7 @@ function RootRedirect() {
 
   if (!token) {
     return hasSeenOnboarding ? (
-      <Navigate to="/login" replace />
+      <Navigate to="/home" replace />
     ) : (
       <Navigate to="/onboarding" replace />
     );
