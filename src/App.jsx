@@ -29,10 +29,10 @@ import OnboardingPage from './pages/public/OnboardingPage.jsx';
 // ── Page imports ──────────────────────────────────────────────────────────────
 // public
 import HomePage from './pages/public/HomePage';
-// import EventsPage        from './pages/public/EventsPage';
-// import EventDetailPage   from './pages/public/EventDetailPage';
-// import UnauthorizedPage  from './pages/public/UnauthorizedPage';
-// import NotFoundPage      from './pages/public/NotFoundPage';
+import EventsPage        from './pages/public/EventsPage';
+import EventDetailPage   from './pages/public/EventDetailPage';
+import UnauthorizedPage  from './pages/public/UnauthorizedPage';
+import NotFoundPage      from './pages/public/NotFoundPage';
 
 // attendee
 // import AttendeeDashboard from './pages/attendee/AttendeeDashboard';
@@ -116,9 +116,10 @@ function AppRoutes() {
       />
       {/* Public */}
       <Route path="/home" element={<HomePage />} />
-      <Route path="/events" element={<div>Events (todo)</div>} />
-      <Route path="/events/:id" element={<div>Event detail (todo)</div>} />
-      <Route path="/unauthorized" element={<div>Unauthorized (todo)</div>} />
+      <Route path="/events" element={<EventsPage />} />
+      <Route path="/events/:id" element={<EventDetailPage />} />
+      <Route path="/unauthorized" element={<UnauthorizedPage />} />
+      <Route path="/*" element={<NotFoundPage />} />
       {/* Auth - guest only (logged-in users are redirected away) */}
       <Route
         path="/login"
