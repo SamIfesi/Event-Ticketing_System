@@ -35,7 +35,7 @@ import UnauthorizedPage  from './pages/public/UnauthorizedPage';
 import NotFoundPage      from './pages/public/NotFoundPage';
 
 // attendee
-// import AttendeeDashboard from './pages/attendee/AttendeeDashboard';
+import AttendeeDashboard from './pages/attendee/AttendeeDashboard';
 // import MyBookingsPage    from './pages/attendee/MyBookingsPage';
 // import MyTicketsPage     from './pages/attendee/MyTicketsPage';
 // import ProfilePage       from './pages/attendee/ProfilePage';
@@ -175,7 +175,7 @@ function AppRoutes() {
         path="/dashboard"
         element={
           <ProtectedRoute>
-            <div>Attendee dashboard (todo)</div>
+            <AttendeeDashboard />
           </ProtectedRoute>
         }
       />
