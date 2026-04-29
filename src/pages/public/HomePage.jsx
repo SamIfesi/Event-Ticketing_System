@@ -25,8 +25,10 @@ import { formatEventDate } from '../../utils/formatDate';
 import { formatCurrency } from '../../utils/formatCurrency';
 import EventsService from '../../services/events.service';
 import CategoryService from '../../services/category.service';
-import logo from '/assets/icons/logo.svg';
 import line from '/assets/illustrations/line.svg';
+import Navbar from '../../components/layout/Navbar';
+import Sidebar from '../../components/layout/Sidebar';
+import Footer from '../../components/layout/Footer';
 
 // Maps the icon string stored in the DB → the actual Lucide component.
 // Your DB stores strings like 'music', 'monitor', 'trophy' (see schema.sql).
@@ -354,14 +356,14 @@ function EmptyEvents() {
 // Main page
 // ────────────────────────────────────────────────────────────────────────────
 export default function HomePage() {
-  const user = useAuthStore((s) => s.user);
-  const token = useAuthStore((s) => s.token);
+  const token = useAuthStore((state) => state.token);
   const isLoggedIn = Boolean(token);
 
   const [featuredEvents, setFeaturedEvents] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loadingEvents, setLoadingEvents] = useState(true);
   const [loadingCategories, setLoadingCategories] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Fetch 4 upcoming published events for the featured grid
   useEffect(() => {
@@ -397,70 +399,8 @@ export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen bg-main-bg">
       {/* Navbar */}
-      <header className="sticky top-0 z-50 bg-card/80 backdrop-blur-md border-b border-border">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
-          <Link to="/home" className="flex items-center gap-2 shrink-0">
-            <img src={logo} alt="Ticketer logo" className="h-6" />
-          </Link>
-          <nav className="hidden md:flex items-center gap-6">
-            <Link
-              to="/events"
-              className="text-sm font-medium text-secondary hover:text-primary transition-colors duration-150"
-            >
-              Browse Events
-            </Link>
-            {isLoggedIn && (
-              <>
-                <Link
-                  to="/my-bookings"
-                  className="text-sm font-medium text-secondary hover:text-primary transition-colors duration-150"
-                >
-                  My Bookings
-                </Link>
-                <Link
-                  to="/my-tickets"
-                  className="text-sm font-medium text-secondary hover:text-primary transition-colors duration-150"
-                >
-                  My Tickets
-                </Link>
-              </>
-            )}
-          </nav>
-          <div className="flex items-center gap-2 shrink-0">
-            {isLoggedIn ? (
-              <Link
-                to="/profile"
-                className="flex items-center gap-2 px-3 text-xl font-medium text-primary"
-              >
-                <div className="w-10 h-10 rounded-full bg-accent-text flex items-center justify-center">
-                  <span className="font-bold text-accent">
-                    {user?.name?.charAt(0)?.toUpperCase()}
-                  </span>
-                </div>
-                <span className="hidden sm:block max-w-[100px] truncate">
-                  {user?.name?.split(' ')[0]}
-                </span>
-              </Link>
-            ) : (
-              <>
-                <Link
-                  to="/login"
-                  className="px-4 text-sm font-semibold text-secondary hover:text-primary transition-colors duration-150"
-                >
-                  Sign in
-                </Link>
-                <Link
-                  to="/register"
-                  className="h-9 px-4 bg-accent hover:bg-accent-hover text-white text-sm font-semibold rounded-btn transition-colors duration-180 flex items-center"
-                >
-                  Get started
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
-      </header>
-
+      <Navbar onMenuClick={()=>setSidebarOpen(true)}/>
+      <Sidebar isOpen={sidebarOpen} onClose={()=>setSidebarOpen(false)}/>
       <main className="flex-1">
         {/* Hero */}
         <section className="relative overflow-hidden bg-main-bg pt-16 pb-20 px-6">
@@ -681,38 +621,7 @@ export default function HomePage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border bg-card">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-            <div className="flex flex-col items-center sm:items-start gap-2">
-              <img src={logo} alt="Ticketer logo" className="h-5" />
-              <p className="text-xs text-muted">
-                Nigeria's event ticketing platform
-              </p>
-            </div>
-            <nav className="flex items-center gap-6 flex-wrap justify-center">
-              {[
-                { label: 'Browse Events', to: '/events' },
-                { label: 'Sign In', to: '/login' },
-                { label: 'Register', to: '/register' },
-              ].map((link) => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  className="text-xs text-secondary hover:text-primary transition-colors duration-150"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
-          </div>
-          <div className="mt-8 pt-6 border-t border-border text-center">
-            <p className="text-xs text-muted">
-              © {new Date().getFullYear()} Ticketer.
-            </p>
-          </div>
-        </div>
-      </footer>
+      <Footer/>
     </div>
   );
 }
