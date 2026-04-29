@@ -133,10 +133,6 @@ function HeroSearch() {
   );
 }
 
-// ── EventCard — real API shape ───────────────────────────────────────────────
-// The list endpoint returns: id, title, description, location, banner_image,
-// start_date, category_name, organizer_name, status, total_tickets, tickets_sold.
-// min_price is NOT included in the list — we fall back to "View tickets".
 function EventCard({ event, index }) {
   const hasPrice = event.min_price != null;
   return (
