@@ -14,8 +14,8 @@ import CategoryService from '../../services/category.service';
 import { formatEventDate } from '../../utils/formatDate';
 import { formatCurrency } from '../../utils/formatCurrency';
 import Pagination from '../../components/ui/Pagination';
-import { useAuthStore } from '../../store/authStore';
-import logo from '/assets/icons/logo.svg';
+import Navbar from '../../components/layout/Navbar';
+import Sidebar from '../../components/layout/Sidebar';
 
 const CARD_GRADIENTS = [
   'from-blue-600 to-indigo-800',
@@ -143,12 +143,9 @@ function EmptyState({ hasFilters, onClear }) {
 }
 
 export default function EventsPage() {
-  const user = useAuthStore((s) => s.user);
-  const token = useAuthStore((s) => s.token);
-  const isLoggedIn = Boolean(token);
-
   const [categories, setCategories] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     CategoryService.getCategories()
@@ -256,63 +253,8 @@ export default function EventsPage() {
   return (
     <div className="flex flex-col min-h-screen bg-main-bg">
       {/* Navbar */}
-      <header className="sticky top-0 z-50 bg-card/80 backdrop-blur-md border-b border-border">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
-          <Link to="/home" className="shrink-0">
-            <img src={logo} alt="Ticketer" className="h-6" />
-          </Link>
-          <nav className="hidden md:flex items-center gap-6">
-            <Link to="/events" className="text-sm font-semibold text-accent">
-              Browse Events
-            </Link>
-            {isLoggedIn && (
-              <>
-                <Link
-                  to="/my-bookings"
-                  className="text-sm font-medium text-secondary hover:text-primary transition-colors duration-150"
-                >
-                  My Bookings
-                </Link>
-                <Link
-                  to="/my-tickets"
-                  className="text-sm font-medium text-secondary hover:text-primary transition-colors duration-150"
-                >
-                  My Tickets
-                </Link>
-              </>
-            )}
-          </nav>
-          <div className="flex items-center gap-2 shrink-0">
-            {isLoggedIn ? (
-              <Link to="/profile" className="flex items-center gap-2 px-3">
-                <div className="w-10 h-10 rounded-full bg-accent-text flex items-center justify-center">
-                  <span className="font-bold text-accent text-sm">
-                    {user?.name?.charAt(0)?.toUpperCase()}
-                  </span>
-                </div>
-                <span className="hidden sm:block text-sm font-medium text-primary max-w-[100px] truncate">
-                  {user?.name?.split(' ')[0]}
-                </span>
-              </Link>
-            ) : (
-              <>
-                <Link
-                  to="/login"
-                  className="px-4 text-sm font-semibold text-secondary hover:text-primary transition-colors duration-150"
-                >
-                  Sign in
-                </Link>
-                <Link
-                  to="/register"
-                  className="h-9 px-4 bg-accent hover:bg-accent-hover text-white text-sm font-semibold rounded-btn transition-colors duration-180 flex items-center"
-                >
-                  Get started
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
-      </header>
+      <Navbar onMenuClick={() => setSidebarOpen(true)} />
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       {/* Page title */}
       <div className="bg-card border-b border-border">
