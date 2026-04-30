@@ -55,6 +55,11 @@ import AttendeeDashboard from './pages/attendee/AttendeeDashboard';
 
 // payment
 // import PaymentCallbackPage from './pages/payment/PaymentCallbackPage';
+const savedTheme = localStorage.getItem('theme') || 'light';
+
+if (savedTheme === 'dark') {
+  document.documentElement.setAttribute('data-theme', 'dark');
+}
 
 function NavigationLoader() {
   const location = useLocation();
