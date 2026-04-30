@@ -124,7 +124,7 @@ export function useAuth() {
           ),
           navigate('/verify-email'))
         : (toastSuccess(data.message_hint ?? 'Welcome back!'),
-          navigate(getDefaultPath(data.user.role)));
+          navigate('/events'));
     } catch (error) {
       toastError(extractError(error));
     } finally {
@@ -138,7 +138,7 @@ export function useAuth() {
     } catch {
     } finally {
       clearAuth();
-      navigate('/login');
+      navigate('/home');
     }
   }, []);
 
