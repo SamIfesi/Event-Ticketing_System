@@ -212,7 +212,7 @@ function QuickAction({ icon: Icon, label, to, color }) {
 function EmptyBookings() {
   return (
     <div className="flex flex-col items-center justify-center py-12 gap-4 text-center">
-      <div className="w-14 h-14 rounded-card bg-accent-text border border-accent-bordr flex items-center justify-center">
+      <div className="w-14 h-14 rounded-card bg-accent-text border border-accent-border flex items-center justify-center">
         <Ticket size={24} strokeWidth={1.5} className="text-accent" />
       </div>
       <div>
@@ -226,7 +226,7 @@ function EmptyBookings() {
         to="/events"
         className=" flex items-center gap-1.5 text-sm font-semibold text-accent hover:text-accent-hover transition-colors duration-180"
       >
-        Browse events
+        Browse events →
       </Link>
     </div>
   );
