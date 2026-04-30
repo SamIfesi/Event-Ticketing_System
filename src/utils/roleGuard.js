@@ -26,6 +26,6 @@ export function getDefaultPath(role) {
       return '/organizer/dashboard';
     case ROLES.ATTENDEE:
     default:
-      return '/home';
+      return '/dashboard';
   }
 }
