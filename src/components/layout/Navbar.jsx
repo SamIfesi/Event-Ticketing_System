@@ -4,8 +4,8 @@ import { useAuthStore } from '../../store/authStore';
 import logo from '/assets/icons/logo.svg';
 
 export default function Navbar({ onMenuClick }) {
-  const user = useAuthStore((s) => s.user);
-  const token = useAuthStore((s) => s.token);
+  const user = useAuthStore((state) => state.user);
+  const token = useAuthStore((state) => state.token);
   const isLoggedIn = Boolean(token);
   const location = useLocation();
 
