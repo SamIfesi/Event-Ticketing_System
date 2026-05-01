@@ -58,11 +58,34 @@
   --color-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.35);
   --color-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
-*,
-html,
-body {
-  transition: background-color 0.3s ease, color 0.3s ease;
+*::before,
+*::after,
+* {
+  transition:
+    background-color 800ms ease,
+    color 800ms ease,
+    border-color 800ms ease,
+    box-shadow 800ms ease,
+    fill 800ms ease,
+    stroke 800ms ease,
+    outline-color 800ms ease,
+    text-decoration-color 800ms ease;
 }
+
+button,
+a,
+input,
+select,
+textarea {
+  transition:
+    background-color 800ms ease,
+    color 800ms ease,
+    border-color 800ms ease,
+    box-shadow 800ms ease,
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
 @layer base {
   *::before,
   *::after,
