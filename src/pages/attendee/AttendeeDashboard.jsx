@@ -8,8 +8,6 @@ import {
   ArrowRight,
   Clock,
   MapPin,
-  CheckCircle2,
-  XCircle,
   AlertCircle,
   ChevronRight,
   Search,
@@ -19,163 +17,14 @@ import { useAuthStore } from '../../store/authStore';
 import { useProfile } from '../../hooks/useProfile';
 import { useBookings } from '../../hooks/useBookings';
 import { formatCurrency } from '../../utils/formatCurrency';
-import {
-  formatShortDate,
-  formatTime,
-  isEventPast,
-} from '../../utils/formatDate';
+import { isEventPast } from '../../utils/formatDate';
 import Badge from '../../components/ui/Badge';
 import Navbar from '../../components/layout/Navbar';
 import Sidebar from '../../components/layout/Sidebar';
 import Footer from '../../components/layout/Footer';
-
-function StatCard({ icon: Icon, label, value, sub, accent, loading }) {
-  return (
-    <div className="relative bg-card border border-border rounded-card p-5 overflow-hidden group hover:border-accent/30 hover:shadow-md transition-all duration-200">
-      {/* Background decoration */}
-      <div
-        className="absolute -top-4 -right-4 w-20 h-20 rounded-full opacity-[0.06] transition-all duration-300 group-hover:opacity-10 group-hover:scale-110"
-        style={{ background: accent }}
-      />
-      <div className="relative flex flex-col gap-3">
-        <div
-          className="w-10 h-10 rounded-btn flex items-center justify-center"
-          style={{ background: `${accent}18` }}
-        >
-          <Icon size={18} strokeWidth={1.75} style={{ color: accent }} />
-        </div>
-        {loading ? (
-          <div className="flex flex-col gap-1.5 animate-pulse">
-            <div className="h-7 bg-border rounded w-16" />
-            <div className="h-3 bg-border rounded w-20" />
-          </div>
-        ) : (
-          <div>
-            <p className="text-2xl font-black text-primary tracking-tight leading-none">
-              {value}
-            </p>
-            <p className="text-xs text-muted mt-1">{label}</p>
-            {sub && <p className="text-xs text-secondary mt-0.5">{sub}</p>}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-const GRADIENTS = [
-  'from-blue-600 to-indigo-700',
-  'from-amber-500 to-orange-600',
-  'from-emerald-500 to-teal-600',
-  'from-rose-500 to-pink-600',
-];
-
-function UpcomingEventCard({ booking, index }) {
-  const event = booking?.event ?? booking;
-  const isPast = event?.start_date ? isEventPast(event.start_date) : false;
-
-  return (
-    <Link
-      to={`/events/${event?.id ?? booking?.event_id}`}
-      className="group flex flex-col bg-card border border-border rounded-card overflow-hidden hover:shadow-lg hover:boder-accent/30 transition-all duration-200 active:scale-[.99]"
-    >
-      <div
-        className={`relative h-28 bg-gradient-to-br ${GRADIENTS[index % GRADIENTS.length]} overflow-hidden`}
-      >
-        {event?.banner_image && (
-          <img
-            src={event.banner_image}
-            alt={event.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-400"
-          />
-        )}
-
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to transparent" />
-        <div className="absolute bottom-2.5 left-3 right-3">
-          <p className="text-white text-xs font-semibold leading-snug line-clamp-2">
-            {event?.title ?? 'Event'}
-          </p>
-        </div>
-
-        {isPast && (
-          <div className="absolute top-2 right-2 px-2 py-0.5 bg-black/50 backdrop-blur-sm rounded-full text-white text-[10px] font-semibold">
-            Past
-          </div>
-        )}
-      </div>
-
-      <div className="p-3 flex flex-col gap-1.5">
-        {event?.start_date && (
-          <div className="flex item-center gap-1.5 text-xs text-secondary">
-            <Clock className="text-muted shrink-0" size={11} />
-            <span>
-              {formatShortDate(event.start_date)} .{' '}
-              {formatTime(event.start_date)}
-            </span>
-          </div>
-        )}
-
-        {event?.location && (
-          <div className="flex items-center gap-1.5 text-xs text-secondary">
-            <MapPin className="text-muted shrink-0" size={11} />
-            <span className="truncate">{event.location}</span>
-          </div>
-        )}
-        <div className="mt-1 flex items-center justify-between">
-          <Badge
-            status={booking?.payment_status ?? booking?.status ?? 'confirmed'}
-            size="sm"
-          />
-          <span className="text-[10px] text-muted">
-            {booking?.quantity ?? 1} ticket
-            {(booking?.quantity ?? 1) !== 1 ? 's' : ''}
-          </span>
-        </div>
-      </div>
-    </Link>
-  );
-}
-
-function BookingRow({ booking }) {
-  return (
-    <Link
-      to={`/my-booking`}
-      className="flex items-center gap-4 px-4 py-3.5 hover:bg-main-bg transition-color duration-180 group touch-manipulation"
-    >
-      <div className="w-9 h-9 rounded-btn bg-accent-text flex items-center justify-center shrink-0">
-        <BookOpn size={15} className="text-accent" strokeWidth={1.75} />
-      </div>
-
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-primary truncate">
-          {booking?.event_title ?? booking?.event?.title ?? 'Event booking'}
-        </p>
-        <p className="text-xs text-muted mt-0.5">
-          {booking?.created_at ? formatShortDate(booking.created_at) : '—'}
-          {booking?.quantity
-            ? ` · ${booking.quantity} ticket${booking.quantity !== 1 ? 's' : ''}`
-            : ''}
-        </p>
-      </div>
-
-      <div className="flex">
-        <Badge
-          status={booking?.payment_status ?? booking?.status ?? 'confirmed'}
-          size="sm"
-        />
-        {booking?.total_amount != null && (
-          <span className="text-xs font-semibold text-primary">
-            {formatCurrency(booking.total_amount)}
-          </span>
-        )}
-      </div>
-      <ChevronRight
-        size={14}
-        className="text-muted group-hover:text-primary transition-colors shrink-0"
-      />
-    </Link>
-  );
-}
+import StatCard from '../../components/dashboard/StatCard';
+import UpcomingEventCard from '../../components/dashboard/UpcomingEventCard';
+import BookingRow from '../../components/bookings/BookingRow';
 
 function SkeletonRow() {
   return (
@@ -513,7 +362,7 @@ export default function AttendeeDashboard() {
         </div>
       </main>
 
-      <Footer/>
+      <Footer />
     </div>
   );
 }
