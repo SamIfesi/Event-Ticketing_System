@@ -10,7 +10,7 @@
 //   />
 
 import EventCard from './EventCard';
-import { Ticket, Search } from 'lucide-react';
+import { Music, Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 function EventCardSkeleton({ compact }) {
@@ -33,14 +33,14 @@ function EmptyState({ message, ctaLabel, ctaTo }) {
   return (
     <div className="col-span-full flex flex-col items-center justify-center py-16 gap-4 text-center">
       <div className="w-14 h-14 rounded-card bg-accent-text border border-accent-border flex items-center justify-center">
-        <Ticket size={24} strokeWidth={1.5} className="text-accent" />
+        <Music size={24} strokeWidth={1.5} className="text-accent" />
       </div>
       <div>
         <p className="font-semibold text-primary">
           {message ?? 'No events yet'}
         </p>
         <p className="text-sm text-secondary mt-1 max-w-xs">
-          Events will appear here once they are published.
+          Events will appear here once organisers publish them. Check back soon!
         </p>
       </div>
       {ctaTo && (
