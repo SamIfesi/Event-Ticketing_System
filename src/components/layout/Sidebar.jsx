@@ -7,6 +7,7 @@
 //   - Role-aware nav links — only shows sections the user can access
 //   - Smooth slide-in/out animation
 //   - User card at the top
+//   - theme toggle at the bottom
 //   - Logout at the bottom
 //
 // Usage:
