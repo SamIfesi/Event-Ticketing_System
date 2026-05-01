@@ -1,5 +1,3 @@
-// src/components/bookings/BookingRow.jsx
-//
 // A single row / card representing one booking.
 // Used in My Bookings page, attendee dashboard, and organizer bookings list.
 //
