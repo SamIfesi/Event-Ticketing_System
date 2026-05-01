@@ -124,7 +124,7 @@ function AppRoutes() {
       <Route path="/events" element={<EventsPage />} />
       <Route path="/events/:id" element={<EventDetailPage />} />
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
-      <Route path="/*" element={<NotFoundPage />} />
+      <Route path="/404" element={<NotFoundPage />} />
       {/* Auth - guest only (logged-in users are redirected away) */}
       <Route
         path="/login"
