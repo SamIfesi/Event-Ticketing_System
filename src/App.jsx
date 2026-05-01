@@ -36,7 +36,7 @@ import NotFoundPage      from './pages/public/NotFoundPage';
 
 // attendee
 import AttendeeDashboard from './pages/attendee/AttendeeDashboard';
-// import MyBookingsPage    from './pages/attendee/MyBookingsPage';
+import MyBookingsPage    from './pages/attendee/MyBookingsPage';
 // import MyTicketsPage     from './pages/attendee/MyTicketsPage';
 // import ProfilePage       from './pages/attendee/ProfilePage';
 
@@ -188,7 +188,7 @@ function AppRoutes() {
         path="/my-bookings"
         element={
           <ProtectedRoute>
-            <div>My bookings (todo)</div>
+          <MyBookingsPage />
           </ProtectedRoute>
         }
       />
