@@ -29,94 +29,10 @@ import {
   formatTime,
   isEventPast,
 } from '../../utils/formatDate';
-import { formatCurrency } from '../../utils/formatCurrency';
 import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
 import logo from '/assets/icons/logo.svg';
-
-// ── Ticket type card ─────────────────────────────────────────────────────────
-// Renders a single ticket tier (Regular, VIP, Early Bird, etc.)
-// Shows availability, price, and a buy button.
-function TicketTypeCard({ ticketType, onSelect, disabled }) {
-  const available =
-    (ticketType.quantity ?? 0) - (ticketType.quantity_sold ?? 0);
-  const soldOut = available <= 0;
-  const isFree = Number(ticketType.price) === 0;
-
-  return (
-    <div
-      className={`border rounded-card p-4 transition-all duration-150 ${
-        soldOut
-          ? 'border-border opacity-60 cursor-not-allowed'
-          : 'border-border hover:border-accent/40 hover:shadow-md cursor-pointer'
-      }`}
-    >
-      <div className="flex items-start justify-between gap-4 mb-3">
-        <div className="flex-1 min-w-0">
-          <h3 className="font-bold text-primary text-sm">{ticketType.name}</h3>
-          {ticketType.description && (
-            <p className="text-xs text-secondary mt-1 leading-relaxed">
-              {ticketType.description}
-            </p>
-          )}
-        </div>
-        {/* Price badge */}
-        <div className="shrink-0 text-right">
-          <span className="font-black text-primary text-lg">
-            {isFree ? 'Free' : formatCurrency(ticketType.price)}
-          </span>
-          {!isFree && <p className="text-xs text-muted">per ticket</p>}
-        </div>
-      </div>
-
-      {/* Availability bar */}
-      {!soldOut && available <= 20 && (
-        <div className="mb-3">
-          <div className="flex items-center justify-between text-xs mb-1">
-            <span className="text-warning font-medium">
-              Only {available} left
-            </span>
-          </div>
-          <div className="h-1.5 bg-border rounded-full overflow-hidden">
-            <div
-              className="h-full bg-warning rounded-full"
-              style={{
-                width: `${Math.min((available / ticketType.quantity) * 100, 100)}%`,
-              }}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Action button */}
-      <Button
-        variant={soldOut ? 'secondary' : 'primary'}
-        size="sm"
-        disabled={soldOut || disabled}
-        onClick={() => !soldOut && onSelect(ticketType)}
-        className="w-full mt-1"
-      >
-        {soldOut ? 'Sold out' : 'Select ticket'}
-      </Button>
-    </div>
-  );
-}
-
-// ── Skeleton for the ticket type section ─────────────────────────────────────
-function TicketSkeleton() {
-  return (
-    <div className="border border-border rounded-card p-4 animate-pulse">
-      <div className="flex justify-between mb-3">
-        <div className="flex-1">
-          <div className="h-4 bg-border rounded w-24 mb-2" />
-          <div className="h-3 bg-border rounded w-40" />
-        </div>
-        <div className="h-7 bg-border rounded w-20" />
-      </div>
-      <div className="h-9 bg-border rounded-btn" />
-    </div>
-  );
-}
+import TicketTypeSelector from '../../components/events/TicketTypeSelector';
 
 // ── Page skeleton while the event loads ──────────────────────────────────────
 function PageSkeleton() {
@@ -537,11 +453,13 @@ export default function EventDetailPage() {
                   <div className="flex flex-col gap-3 mt-3">
                     {event.ticket_types && event.ticket_types.length > 0 ? (
                       event.ticket_types.map((tt) => (
-                        <TicketTypeCard
+                        <TicketTypeSelector
                           key={tt.id}
-                          ticketType={tt}
-                          onSelect={handleSelectTicket}
-                          disabled={isPast}
+                          ticketTypes={event.ticket_types ?? []}
+                          disabled={isPast || event.status !== 'published'}
+                          onSelect={({ ticketType, quantity }) =>
+                            handleSelectTicket(ticketType, quantity)
+                          }
                         />
                       ))
                     ) : (
