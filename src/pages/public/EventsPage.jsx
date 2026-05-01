@@ -15,6 +15,7 @@ import Pagination from '../../components/ui/Pagination';
 import Navbar from '../../components/layout/Navbar';
 import Sidebar from '../../components/layout/Sidebar';
 import EventGrid from '../../components/events/EventGrid';
+import EventFilters from '../../components/events/EventFilters';
 
 const DATE_OPTIONS = [
   { value: '', label: 'All dates' },
@@ -160,31 +161,25 @@ export default function EventsPage() {
           {/* Desktop sidebar */}
           <aside className="hidden lg:block w-52 shrink-0">
             {/* Desktop also has a search input above the sidebar filters */}
-            <div className="mb-5">
-              <h3 className="text-xs font-bold text-primary uppercase tracking-wider mb-3">
-                Search
-              </h3>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  setSearch(searchInput);
-                }}
-                className="relative"
-              >
-                <Search
-                  size={14}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none"
-                />
-                <input
-                  type="text"
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  placeholder="Search events…"
-                  className="w-full h-10 pl-9 pr-3 bg-bg text-primary border border-border rounded-btn text-sm placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-colors duration-180"
-                />
-              </form>
-            </div>
-            <SidebarContent />
+            <EventFilters
+              mode="sidebar"
+              categories={categories}
+              category={category}
+              date={date}
+              setCategory={setCategory}
+              setDateFilter={setDateFilter}
+              clearFilters={handleClearAll}
+            />
+
+            <EventFilters
+              mode="pills"
+              categories={categories}
+              category={category}
+              date={date}
+              setCategory={setCategory}
+              setDateFilter={setDateFilter}
+              clearFilters={handleClearAll}
+            />
           </aside>
 
           {/* Main content */}
