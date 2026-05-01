@@ -11,136 +11,16 @@ import { Link } from 'react-router-dom';
 import { Search, X, MapPin, Calendar, Ticket, Filter } from 'lucide-react';
 import { useEvents } from '../../hooks/useEvents';
 import CategoryService from '../../services/category.service';
-import { formatEventDate } from '../../utils/formatDate';
-import { formatCurrency } from '../../utils/formatCurrency';
 import Pagination from '../../components/ui/Pagination';
 import Navbar from '../../components/layout/Navbar';
 import Sidebar from '../../components/layout/Sidebar';
-
-const CARD_GRADIENTS = [
-  'from-blue-600 to-indigo-800',
-  'from-amber-500 to-orange-700',
-  'from-emerald-500 to-teal-700',
-  'from-rose-500 to-pink-700',
-  'from-violet-600 to-purple-800',
-  'from-cyan-500 to-sky-700',
-];
+import EventGrid from '../../components/events/EventGrid';
 
 const DATE_OPTIONS = [
   { value: '', label: 'All dates' },
   { value: 'upcoming', label: 'Upcoming' },
   { value: 'past', label: 'Past' },
 ];
-
-function EventCard({ event, index }) {
-  const hasPrice = event.min_price != null;
-  return (
-    <Link
-      to={`/events/${event.id}`}
-      className="group flex flex-col bg-card border border-border rounded-card overflow-hidden hover:shadow-lg hover:border-accent/30 transition-all duration-200 active:scale-[.99]"
-    >
-      <div
-        className={`relative h-44 bg-gradient-to-br ${CARD_GRADIENTS[index % CARD_GRADIENTS.length]} overflow-hidden`}
-      >
-        {event.banner_image ? (
-          <img
-            src={event.banner_image}
-            alt={event.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-400"
-          />
-        ) : (
-          <div className="absolute inset-0 flex items-end p-4">
-            <span className="text-white/20 text-6xl font-black leading-none select-none">
-              {event.title.charAt(0)}
-            </span>
-          </div>
-        )}
-        {event.category_name && (
-          <span className="absolute top-3 left-3 px-2.5 py-1 bg-black/40 backdrop-blur-sm text-white text-xs font-semibold rounded-full">
-            {event.category_name}
-          </span>
-        )}
-        <span className="absolute top-3 right-3 px-2.5 py-1 bg-black/40 backdrop-blur-sm text-white text-xs font-bold rounded-full">
-          {hasPrice
-            ? event.min_price === 0
-              ? 'Free'
-              : `From ${formatCurrency(event.min_price)}`
-            : 'View tickets'}
-        </span>
-      </div>
-
-      <div className="flex flex-col gap-2 p-4 flex-1">
-        <h3 className="font-bold text-primary text-sm leading-snug line-clamp-2 group-hover:text-accent transition-colors duration-180">
-          {event.title}
-        </h3>
-        {event.description && (
-          <p className="text-xs text-muted leading-relaxed line-clamp-2">
-            {event.description}
-          </p>
-        )}
-        <div className="flex flex-col gap-1.5 mt-auto pt-2 border-t border-border">
-          <div className="flex items-center gap-1.5 text-xs text-secondary">
-            <Calendar size={12} className="shrink-0 text-muted" />
-            <span>{formatEventDate(event.start_date)}</span>
-          </div>
-          {event.location && (
-            <div className="flex items-center gap-1.5 text-xs text-secondary">
-              <MapPin size={12} className="shrink-0 text-muted" />
-              <span className="truncate">{event.location}</span>
-            </div>
-          )}
-          {event.organizer_name && (
-            <p className="text-xs text-muted">By {event.organizer_name}</p>
-          )}
-        </div>
-      </div>
-    </Link>
-  );
-}
-
-function EventCardSkeleton() {
-  return (
-    <div className="flex flex-col bg-card border border-border rounded-card overflow-hidden animate-pulse">
-      <div className="h-44 bg-border" />
-      <div className="p-4 flex flex-col gap-3">
-        <div className="h-4 bg-border rounded w-3/4" />
-        <div className="h-3 bg-border rounded w-full" />
-        <div className="mt-2 pt-2 border-t border-border flex flex-col gap-2">
-          <div className="h-3 bg-border rounded w-2/3" />
-          <div className="h-3 bg-border rounded w-1/2" />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function EmptyState({ hasFilters, onClear }) {
-  return (
-    <div className="col-span-full flex flex-col items-center justify-center py-20 gap-5 text-center">
-      <div className="w-16 h-16 rounded-card bg-accent-text border border-accent-border flex items-center justify-center">
-        <Ticket size={28} strokeWidth={1.5} className="text-accent" />
-      </div>
-      <div>
-        <p className="font-semibold text-primary text-lg">
-          {hasFilters ? 'No events match your filters' : 'No events yet'}
-        </p>
-        <p className="text-sm text-secondary mt-1 max-w-xs mx-auto">
-          {hasFilters
-            ? 'Try adjusting your search terms or removing a filter.'
-            : 'Events appear here once organisers publish them. Check back soon!'}
-        </p>
-      </div>
-      {hasFilters && (
-        <button
-          onClick={onClear}
-          className="text-sm font-semibold text-accent hover:text-accent-hover transition-colors duration-150"
-        >
-          Clear all filters
-        </button>
-      )}
-    </div>
-  );
-}
 
 export default function EventsPage() {
   const [categories, setCategories] = useState([]);
@@ -343,7 +223,6 @@ export default function EventsPage() {
                 )}
               </button>
             </div>
-
             {/* Mobile collapsible filter panel */}
             {showFilters && (
               <div className="lg:hidden bg-card border border-border rounded-card p-4 mb-6">
@@ -398,7 +277,6 @@ export default function EventsPage() {
                 </div>
               </div>
             )}
-
             {/* Active filter chips */}
             {hasFilters && (
               <div className="flex flex-wrap items-center gap-2 mb-5">
@@ -441,20 +319,13 @@ export default function EventsPage() {
             )}
 
             {/* Events grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
-              {loading ? (
-                Array.from({ length: 6 }).map((_, i) => (
-                  <EventCardSkeleton key={i} />
-                ))
-              ) : events.length > 0 ? (
-                events.map((event, i) => (
-                  <EventCard key={event.id} event={event} index={i} />
-                ))
-              ) : (
-                <EmptyState hasFilters={hasFilters} onClear={handleClearAll} />
-              )}
-            </div>
-
+            <EventGrid
+              events={events}
+              loading={loading}
+              cols={3}
+              emptyMessage="No events match your filters"
+              ctaTo="/events"
+            />
             {/* Pagination */}
             {pagination?.total_pages > 1 && (
               <div className="mt-10">
