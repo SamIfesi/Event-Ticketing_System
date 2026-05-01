@@ -36,7 +36,9 @@ function EmptyState({ message, ctaLabel, ctaTo }) {
         <Ticket size={24} strokeWidth={1.5} className="text-accent" />
       </div>
       <div>
-        <p className="font-semibold text-primary">{message ?? 'No events yet'}</p>
+        <p className="font-semibold text-primary">
+          {message ?? 'No events yet'}
+        </p>
         <p className="text-sm text-secondary mt-1 max-w-xs">
           Events will appear here once they are published.
         </p>
