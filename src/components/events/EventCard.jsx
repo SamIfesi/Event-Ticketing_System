@@ -21,7 +21,7 @@ const GRADIENTS = [
   'from-cyan-500 to-sky-700',
 ];
 
-export function EventCard({ event, index = 0, compact = false }) {
+export default function EventCard({ event, index = 0, compact = false }) {
   const hasPrice = event.min_price != null;
   const gradient = GRADIENTS[index % GRADIENTS.length];
 
@@ -103,18 +103,5 @@ export function EventCard({ event, index = 0, compact = false }) {
         </div>
       </div>
     </Link>
-  );
-}
-
-export function EventCardSkeleton() {
-  return (
-    <div className="flex flex-col bg-card border border-border rounded-card overflow-hidden animate-pulse">
-      <div className="h-44 bg-border" />
-      <div className="p-4 flex flex-col gap-3">
-        <div className="h-4 bg-border rounded w-3/4" />
-        <div className="h-3 bg-border rounded w-1/2" />
-        <div className="h-3 bg-border rounded w-2/3" />
-      </div>
-    </div>
   );
 }
