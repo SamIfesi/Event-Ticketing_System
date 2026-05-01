@@ -18,13 +18,6 @@ import Footer from '../../components/layout/Footer';
 import EventGrid from '../../components/events/EventGrid';
 import CategoryScroller from '../../components/events/CategoryScroller';
 
-const CARD_GRADIENTS = [
-  'from-blue-600 to-indigo-800',
-  'from-amber-500 to-orange-700',
-  'from-emerald-500 to-teal-700',
-  'from-rose-500 to-pink-700',
-];
-
 const STATS = [
   { label: 'Events hosted', value: '1,200+' },
   { label: 'Tickets sold', value: '48,000+' },
