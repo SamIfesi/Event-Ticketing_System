@@ -92,7 +92,7 @@ export default function NotFoundPage() {
           </button>
 
           <Link
-            to="/"
+            to="/home"
             className="flex items-center justify-center gap-2 h-12 px-6 bg-accent hover:bg-accent-hover text-white text-sm font-semibold rounded-btn transition-colors duration-180 active:scale-95 touch-manipulation w-full sm:w-40"
           >
             <Home size={16} strokeWidth={2.5} />
