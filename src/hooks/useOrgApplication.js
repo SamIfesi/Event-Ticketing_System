@@ -15,13 +15,13 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import OrganizerApplicationService from '../services/organizerApplication.service';
+import OrganizerApplicationService from '../services/orgApplication.service';
 import { useUiStore } from '../store/uiStore';
 import { PAGINATION } from '../config/constants';
 
 export function useOrganizerApplication() {
-  const toastSuccess = useUiStore((s) => s.toastSuccess);
-  const toastError = useUiStore((s) => s.toastError);
+  const toastSuccess = useUiStore((state) => state.toastSuccess);
+  const toastError = useUiStore((state) => state.toastError);
 
   // ── Attendee: my application ──────────────────────────────────
   const [myApplication, setMyApplication] = useState(null);
