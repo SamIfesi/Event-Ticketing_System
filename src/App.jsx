@@ -35,10 +35,11 @@ import UnauthorizedPage  from './pages/public/UnauthorizedPage';
 import NotFoundPage      from './pages/public/NotFoundPage';
 
 // attendee
-import AttendeeDashboard from './pages/attendee/AttendeeDashboard';
-import MyBookingsPage    from './pages/attendee/MyBookingsPage';
-// import MyTicketsPage     from './pages/attendee/MyTicketsPage';
-// import ProfilePage       from './pages/attendee/ProfilePage';
+import AttendeeDashboard      from './pages/attendee/AttendeeDashboard';
+import MyBookingsPage         from './pages/attendee/MyBookingsPage';
+import BecomeOrganizerPage    from './pages/attendee/BecomeOrganizerPage';
+// import MyTicketsPage       from './pages/attendee/MyTicketsPage';
+// import ProfilePage         from './pages/attendee/ProfilePage';
 
 // organizer
 // import OrganizerDashboard  from './pages/organizer/OrganizerDashboard';
@@ -189,6 +190,14 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
           <MyBookingsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/become-organizer"
+        element={
+          <ProtectedRoute>
+          <BecomeOrganizerPage />
           </ProtectedRoute>
         }
       />
