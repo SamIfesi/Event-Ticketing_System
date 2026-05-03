@@ -16,16 +16,12 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import OrganizerApplicationService from '../services/organizerApplication.service';
-import { useAuthStore } from '../store/authStore';
 import { useUiStore } from '../store/uiStore';
 import { PAGINATION } from '../config/constants';
 
 export function useOrganizerApplication() {
   const toastSuccess = useUiStore((s) => s.toastSuccess);
   const toastError = useUiStore((s) => s.toastError);
-  const setAuth = useAuthStore((s) => s.setAuth);
-  const token = useAuthStore((s) => s.token);
-  const isVerified = useAuthStore((s) => s.isVerified);
 
   // ── Attendee: my application ──────────────────────────────────
   const [myApplication, setMyApplication] = useState(null);
@@ -57,12 +53,14 @@ export function useOrganizerApplication() {
     setFieldErrors({});
   }
 
-  function extractError (err){
+  function extractError(err) {
     const data = err?.response?.data;
 
     if (data?.errors) setFieldErrors(data.errors);
-    const msg = data?.message ?? 'Something went wrong. Failed to submit application, please try again.';
-    setError(msg)
+    const msg =
+      data?.message ??
+      'Something went wrong. Failed to submit application, please try again.';
+    setError(msg);
     return msg;
   }
 
@@ -73,7 +71,9 @@ export function useOrganizerApplication() {
       const data = await OrganizerApplicationService.getMyApplication();
       setMyApplication(data.application ?? null);
     } catch (err) {
-      // Silently fail — if no application exists, that's fine
+      const msg =
+        err?.response?.data?.message ?? 'Failed to load your application.';
+      toastError(msg);
       setMyApplication(null);
     } finally {
       setMyApplicationLoading(false);
@@ -84,24 +84,25 @@ export function useOrganizerApplication() {
   // ── Submit application ────────────────────────────────────────
   const submitApplication = useCallback(
     async (formData) => {
+      setLoading(true);
       setSubmitting(true);
-      setError(null);
-      setFieldErrors({});
+      resetErrors();
       try {
-        await OrganizerApplicationService.submitApplication(formData);
-        toastSuccess("Application submitted! We'll review it shortly.");
+        const data =
+          await OrganizerApplicationService.submitApplication(formData);
+        toastSuccess(
+          data.message_hint ?? "Application submitted! We'll review it shortly."
+        );
+
         // Re-fetch so the pending state screen appears
         await fetchMyApplication();
         return true;
       } catch (err) {
-        const data = err?.response?.data;
-        if (data?.errors) setFieldErrors(data.errors);
-        const msg = data?.message ?? 'Failed to submit application.';
-        setError(msg);
-        toastError(msg);
+        toastError(extractError(err));
         return false;
       } finally {
         setSubmitting(false);
+        setLoading(false);
       }
     },
     [fetchMyApplication]
@@ -119,9 +120,8 @@ export function useOrganizerApplication() {
       setApplications(data.applications);
       setApplicationsPagination(data.pagination);
     } catch (err) {
-      toastError(
-        err?.response?.data?.message ?? 'Failed to load applications.'
-      );
+      const msg = err?.response?.data?.message ?? 'Failed to load applications.';
+      toastError(msg);
     } finally {
       setApplicationsLoading(false);
     }
@@ -136,27 +136,29 @@ export function useOrganizerApplication() {
 
   // ── Admin: approve ────────────────────────────────────────────
   const approveApplication = useCallback(async (id) => {
+    setLoading(true);
     setMutating(true);
     try {
-      await OrganizerApplicationService.approveApplication(id);
-      toastSuccess('Application approved. User is now an organizer.');
+      const data = await OrganizerApplicationService.approveApplication(id);
+      toastSuccess(data.message_hint ?? 'Application approved. User is now an organizer.');
       // Remove from pending list
       setApplications((prev) => prev.filter((a) => a.id !== id));
     } catch (err) {
-      toastError(
-        err?.response?.data?.message ?? 'Failed to approve application.'
-      );
+      const msg = err?.response?.data?.message ?? 'Failed to approve application.';
+      toastError(msg);
     } finally {
       setMutating(false);
+      setLoading(false);
     }
   }, []);
 
   // ── Admin: reject ─────────────────────────────────────────────
   const rejectApplication = useCallback(async (id) => {
+    setLoading(true)
     setMutating(true);
     try {
-      await OrganizerApplicationService.rejectApplication(id);
-      toastSuccess('Application rejected.');
+       const data = await OrganizerApplicationService.rejectApplication(id);
+      toastSuccess(data.message_hint ?? 'Application rejected.');
       setApplications((prev) => prev.filter((a) => a.id !== id));
     } catch (err) {
       toastError(
@@ -164,6 +166,7 @@ export function useOrganizerApplication() {
       );
     } finally {
       setMutating(false);
+      setLoading(false)
     }
   }, []);
 
@@ -204,6 +207,7 @@ export function useOrganizerApplication() {
 
     // ── Submission
     submitting,
+    loading,
     error,
     fieldErrors,
     submitApplication,
