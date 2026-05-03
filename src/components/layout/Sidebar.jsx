@@ -241,6 +241,13 @@ export default function Sidebar({ isOpen, onClose }) {
                 active={isActive('/my-bookings')}
               />
               <NavItem
+                to="/become-organizer"
+                icon={BookOpen}
+                label="Become Organizer"
+                onClick={onClose}
+                active={isActive('/become-organizer')}
+              />
+              <NavItem
                 to="/my-tickets"
                 icon={Ticket}
                 label="My Tickets"

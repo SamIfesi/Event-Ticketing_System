@@ -71,6 +71,7 @@ export function useOrganizerApplication() {
       const data = await OrganizerApplicationService.getMyApplication();
       setMyApplication(data.application ?? null);
     } catch (err) {
+      console.log(err)
       const msg =
         err?.response?.data?.message ?? 'Failed to load your application.';
       toastError(msg);
