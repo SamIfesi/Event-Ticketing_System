@@ -25,7 +25,7 @@ export function useOrganizerApplication() {
 
   // ── Attendee: my application ──────────────────────────────────
   const [myApplication, setMyApplication] = useState(null);
-  const [myApplicationLoading, setMyApplicationLoading] = useState(false);
+  const [myApplicationLoading, setMyApplicationLoading] = useState(true);
   const [myApplicationChecked, setMyApplicationChecked] = useState(false);
 
   // ── Submission form state ─────────────────────────────────────
@@ -82,10 +82,11 @@ export function useOrganizerApplication() {
       const data = await OrganizerApplicationService.getMyApplication();
       setMyApplication(data.application ?? null);
     } catch (err) {
-      console.log(err)
-      const msg =
-        err?.response?.data?.message ?? 'Failed to load your application.';
-      toastError(msg);
+      const status = err?.response?.status;
+      if (status !== 404) {
+        const msg = err?.response?.data?.message ?? 'Failed to load your application.';
+        toastError(msg);
+      }
       setMyApplication(null);
     } finally {
       setMyApplicationLoading(false);
