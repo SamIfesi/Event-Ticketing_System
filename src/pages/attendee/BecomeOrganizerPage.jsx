@@ -114,7 +114,7 @@ function PendingScreen({ application }) {
             <div className="flex items-center justify-between">
               <span className="text-xs text-muted">Event types</span>
               <span className="text-xs font-semibold text-primary">
-                {application.event_types}
+                {application.event_type}
               </span>
             </div>
             <div className="flex items-center justify-between">
@@ -211,7 +211,7 @@ function RejectedScreen({ onReapply }) {
 function ApplicationForm({ onSubmit, loading, fieldErrors, submitError }) {
   const [form, setForm] = useState({
     org_name: '',
-    event_types: '',
+    event_type: '',
     phone: '',
     reason: '',
   });
@@ -227,7 +227,7 @@ function ApplicationForm({ onSubmit, loading, fieldErrors, submitError }) {
 
   const isValid =
     form.org_name.trim().length >= 2 &&
-    form.event_types.trim().length >= 2 &&
+    form.event_type.trim().length >= 2 &&
     form.phone.trim().length >= 7;
 
   return (
@@ -255,12 +255,12 @@ function ApplicationForm({ onSubmit, loading, fieldErrors, submitError }) {
           What type of events will you host?
         </label>
         <select
-          value={form.event_types}
-          onChange={(e) => handleChange('event_types', e.target.value)}
+          value={form.event_type}
+          onChange={(e) => handleChange('event_type', e.target.value)}
           disabled={loading}
           className={`w-full h-12 pl-4 pr-4 bg-card text-primary border rounded-card text-sm focus:outline-none focus:ring-2 focus:ring-offset-0 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-180
             ${
-              fieldErrors?.event_types
+              fieldErrors?.event_type
                 ? 'border-error focus:ring-error/30'
                 : 'border-border focus:ring-accent/30 focus:border-accent'
             }`}
@@ -272,8 +272,8 @@ function ApplicationForm({ onSubmit, loading, fieldErrors, submitError }) {
             </option>
           ))}
         </select>
-        {fieldErrors?.event_types && (
-          <p className="text-xs text-error">{fieldErrors.event_types}</p>
+        {fieldErrors?.event_type && (
+          <p className="text-xs text-error">{fieldErrors.event_type}</p>
         )}
       </div>
 
