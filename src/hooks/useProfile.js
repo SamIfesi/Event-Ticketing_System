@@ -52,8 +52,22 @@ export function useProfile() {
 
   function extractError(err) {
     const data = err?.response?.data;
-    if (data?.errors) setFieldErrors(data.errors);
-    const msg = data?.message ?? 'Something went wrong.';
+  
+    if (data?.errors) {
+      setFieldErrors(data.errors);
+  
+      // Extract real messages
+      const messages = Object.values(data.errors);
+      const combined = messages.join("\n");
+  
+      setError(combined);
+      return combined;
+    }
+  
+    const msg =
+      data?.message ??
+      'Something went wrong. Please try again.';
+  
     setError(msg);
     return msg;
   }

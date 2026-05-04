@@ -55,11 +55,22 @@ export function useOrganizerApplication() {
 
   function extractError(err) {
     const data = err?.response?.data;
-
-    if (data?.errors) setFieldErrors(data.errors);
+  
+    if (data?.errors) {
+      setFieldErrors(data.errors);
+  
+      // Extract real messages
+      const messages = Object.values(data.errors);
+      const combined = messages.join("\n");
+  
+      setError(combined);
+      return combined;
+    }
+  
     const msg =
       data?.message ??
       'Something went wrong. Failed to submit application, please try again.';
+  
     setError(msg);
     return msg;
   }
