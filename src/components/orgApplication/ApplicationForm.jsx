@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Mic2, Phone, XCircle, ArrowRight } from 'lucide-react';
-import Input from '../../../components/ui/Input';
-import Button from '../../../components/ui/Button';
+import Input from '../ui/Input';
+import Button from '../ui/Button';
 
 const EVENT_TYPE_OPTIONS = [
   'Music & Concerts',

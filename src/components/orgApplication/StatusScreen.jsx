@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
-import Button from '../../../components/ui/Button';
+import Button from '../ui/Button';
 
 export function ApprovedScreen() {
   const navigate = useNavigate();
