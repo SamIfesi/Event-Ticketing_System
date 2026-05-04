@@ -38,8 +38,8 @@ import NotFoundPage      from './pages/public/NotFoundPage';
 import AttendeeDashboard      from './pages/attendee/AttendeeDashboard';
 import MyBookingsPage         from './pages/attendee/MyBookingsPage';
 import BecomeOrganizerPage    from './pages/attendee/BecomeOrganizerPage';
-// import MyTicketsPage       from './pages/attendee/MyTicketsPage';
-// import ProfilePage         from './pages/attendee/ProfilePage';
+import MyTicketsPage from './pages/attendee/MyTicketsPage';
+import ProfilePage         from './pages/attendee/ProfilePage';
 
 // organizer
 // import OrganizerDashboard  from './pages/organizer/OrganizerDashboard';
@@ -205,7 +205,7 @@ function AppRoutes() {
         path="/my-tickets"
         element={
           <ProtectedRoute>
-            <div>My tickets (todo)</div>
+           <MyTicketsPage/>
           </ProtectedRoute>
         }
       />
@@ -213,7 +213,7 @@ function AppRoutes() {
         path="/profile"
         element={
           <ProtectedRoute>
-            <div>Profile (todo)</div>
+            <ProfilePage/>
           </ProtectedRoute>
         }
       />
