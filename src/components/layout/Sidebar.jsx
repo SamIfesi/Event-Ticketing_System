@@ -4,14 +4,11 @@
 // Features:
 //   - Backdrop overlay closes sidebar on click
 //   - Escape key closes sidebar
-//   - Role-aware nav links — only shows sections the user can access
+//   - Role-aware nav links
 //   - Smooth slide-in/out animation
-//   - User card at the top
-//   - theme toggle at the bottom
+//   - User card at top
+//   - Theme toggle at the bottom (quick toggle + link to full ThemePage)
 //   - Logout at the bottom
-//
-// Usage:
-//   <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
 import { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
@@ -31,6 +28,8 @@ import {
   ChevronRight,
   Moon,
   Sun,
+  Monitor,
+  ShieldUser,
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useAuth } from '../../hooks/useAuth';
@@ -53,7 +52,9 @@ function NavItem({ to, icon: Icon, label, onClick, active }) {
       <Icon
         size={17}
         strokeWidth={active ? 2.5 : 2}
-        className={`shrink-0 transition-colors ${active ? 'text-accent' : 'text-muted group-hover:text-primary'}`}
+        className={`shrink-0 transition-colors ${
+          active ? 'text-accent' : 'text-muted group-hover:text-primary'
+        }`}
       />
       <span className="flex-1">{label}</span>
       {active && <ChevronRight size={14} className="text-accent/60" />}
@@ -75,26 +76,46 @@ function Divider() {
   return <div className="my-2 border-t border-border" />;
 }
 
-function ThemeToggle() {
-  const { theme, toggleTheme } = useThemeStore();
+// ── Theme toggle — quick switch + chevron that goes to ThemePage ──
+function ThemeToggle({ onClose }) {
+  const { resolvedTheme, theme, toggleTheme } = useThemeStore();
+
+  const isDark = resolvedTheme === 'dark';
+
+  // Icon reflects what is currently ACTIVE
+  const Icon = isDark ? Sun : Moon;
+  const label = isDark ? 'Light Mode' : 'Dark Mode';
+
+  // Sub-label shows the chosen mode
+  const modeLabel =
+    theme === 'system' ? 'System default' : theme === 'dark' ? 'Dark' : 'Light';
 
   return (
-    <button
-      onClick={toggleTheme}
-      className="w-full flex items-center gap-3 px-4 py-3 rounded-btn text-sm font-medium text-secondary hover:bg-border transition-colors duration-150 mb-2"
-    >
-      {theme === 'dark' ? (
-        <>
-          <Sun size={17} className="shrink-0" />
-          Light Mode
-        </>
-      ) : (
-        <>
-          <Moon size={17} className="shrink-0" />
-          Dark Mode
-        </>
-      )}
-    </button>
+    <div className="flex items-center gap-1 px-2">
+      {/* Quick toggle button */}
+      <button
+        onClick={toggleTheme}
+        className="flex-1 flex items-center gap-3 px-3 py-3 rounded-btn text-sm font-medium text-secondary hover:bg-border transition-colors duration-150"
+      >
+        <Icon size={17} className="shrink-0 text-muted" />
+        <div className="flex flex-col items-start">
+          <span className="leading-snug">{label}</span>
+          <span className="text-[10px] text-muted font-normal">
+            {modeLabel}
+          </span>
+        </div>
+      </button>
+
+      {/* Link to full ThemePage */}
+      <Link
+        to="/profile/theme"
+        onClick={onClose}
+        title="More theme options"
+        className="w-9 h-9 flex items-center justify-center rounded-btn text-muted hover:text-primary hover:bg-border transition-colors"
+      >
+        <Monitor size={15} strokeWidth={2} />
+      </Link>
+    </div>
   );
 }
 
@@ -121,11 +142,7 @@ export default function Sidebar({ isOpen, onClose }) {
 
   // Body scroll lock while open
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
+    document.body.style.overflow = isOpen ? 'hidden' : '';
     return () => {
       document.body.style.overflow = '';
     };
@@ -205,7 +222,6 @@ export default function Sidebar({ isOpen, onClose }) {
 
         {/* ── Scrollable nav ────────────────────────────────── */}
         <nav className="flex-1 overflow-y-auto px-2 py-2">
-          {/* General */}
           <SectionLabel label="Discover" />
           <NavItem
             to="/home"
@@ -242,7 +258,7 @@ export default function Sidebar({ isOpen, onClose }) {
               />
               <NavItem
                 to="/become-organizer"
-                icon={BookOpen}
+                icon={ShieldUser}
                 label="Become Organizer"
                 onClick={onClose}
                 active={isActive('/become-organizer')}
@@ -323,33 +339,37 @@ export default function Sidebar({ isOpen, onClose }) {
 
         {/* ── Footer ────────────────────────────────────────── */}
         <div className="px-2 py-4 border-t border-border shrink-0">
-          <ThemeToggle />
-          {isLoggedIn ? (
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-btn text-sm font-medium text-error hover:bg-[var(--color-error)]/10 transition-colors duration-150 touch-manipulation"
-            >
-              <LogOut size={17} strokeWidth={2} className="shrink-0" />
-              Sign out
-            </button>
-          ) : (
-            <div className="flex flex-col gap-2 px-2">
-              <Link
-                to="/login"
-                onClick={onClose}
-                className="flex items-center justify-center h-11 rounded-btn border border-border text-sm font-semibold text-primary hover:bg-border transition-colors duration-150"
+          {/* Theme toggle — quick switch + link to ThemePage */}
+          <ThemeToggle onClose={onClose} />
+
+          <div className="mt-2">
+            {isLoggedIn ? (
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-btn text-sm font-medium text-error hover:bg-[var(--color-error)]/10 transition-colors duration-150 touch-manipulation"
               >
-                Sign in
-              </Link>
-              <Link
-                to="/register"
-                onClick={onClose}
-                className="flex items-center justify-center h-11 rounded-btn bg-accent hover:bg-accent-hover text-white text-sm font-semibold transition-colors duration-180"
-              >
-                Get started
-              </Link>
-            </div>
-          )}
+                <LogOut size={17} strokeWidth={2} className="shrink-0" />
+                Sign out
+              </button>
+            ) : (
+              <div className="flex flex-col gap-2 px-2">
+                <Link
+                  to="/login"
+                  onClick={onClose}
+                  className="flex items-center justify-center h-11 rounded-btn border border-border text-sm font-semibold text-primary hover:bg-border transition-colors duration-150"
+                >
+                  Sign in
+                </Link>
+                <Link
+                  to="/register"
+                  onClick={onClose}
+                  className="flex items-center justify-center h-11 rounded-btn bg-accent hover:bg-accent-hover text-white text-sm font-semibold transition-colors duration-180"
+                >
+                  Get started
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       </aside>
     </>
