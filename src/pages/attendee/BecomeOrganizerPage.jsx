@@ -44,6 +44,8 @@ export default function BecomeOrganizerPage() {
     fetchMyApplication();
   }, []);
 
+  const isShowingForm = !hasPendingApplication && !hasApprovedApplication && (!hasRejectedApplication || showForm);
+
   async function handleSubmit(formData) {
     const success = await submitApplication(formData);
     if (success) setShowForm(false);
@@ -53,8 +55,10 @@ export default function BecomeOrganizerPage() {
     <div className="flex flex-col min-h-screen bg-main-bg">
       <Navbar onMenuClick={() => setSidebarOpen(true)} />
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <main className="flex-1 w-full max-w-5xl mx-auto px-6 py-10">{children}</main>
-      <Footer />
+      <main className="flex-1 w-full max-w-5xl mx-auto px-6 py-10">
+        {children}
+      </main>
+      {isShowingForm && <Footer /> }
     </div>
   );
 
@@ -79,9 +83,12 @@ export default function BecomeOrganizerPage() {
       <OrganizerPitch user={user} />
 
       <div className="bg-card border border-border rounded-card p-6 lg:sticky lg:top-24">
-        <h2 className="text-lg font-bold text-primary mb-1">Organizer application</h2>
+        <h2 className="text-lg font-bold text-primary mb-1">
+          Organizer application
+        </h2>
         <p className="text-sm text-secondary mb-6">
-          Fill in your details and we'll review your application within 24–48 hours.
+          Fill in your details and we'll review your application within 24–48
+          hours.
         </p>
 
         <ApplicationForm
