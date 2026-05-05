@@ -291,19 +291,19 @@ export default function UsersPage() {
           <MiniStat
             icon={UserCheck}
             label="Attendees"
-            value={users.filter((u) => u.role === ROLES.ATTENDEE).length}
+            value={attendeeCount}
             color="#2563eb"
           />
           <MiniStat
             icon={Mic2}
             label="Organizers"
-            value={users.filter((u) => u.role === ROLES.ORGANIZER).length}
+            value={organizerCount}
             color="#10b981"
           />
           <MiniStat
             icon={UserX}
             label="Suspended"
-            value={users.filter((u) => !u.is_active).length}
+            value={suspendedCount}
             color="#ef4444"
           />
         </div>
