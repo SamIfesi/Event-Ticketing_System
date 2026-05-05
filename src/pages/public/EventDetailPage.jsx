@@ -6,7 +6,7 @@
 // useBookings and will be wired here once the payment pages are built.
 // For now the "Buy ticket" button is rendered but shows a coming-soon toast.
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -31,8 +31,12 @@ import {
 } from '../../utils/formatDate';
 import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
-import logo from '/assets/icons/logo.svg';
-import TicketTypeSelector from '../../components/events/TicketTypeSelector';
+import Sidebar from '../../components/layout/Sidebar';
+import Navbar from '../../components/layout/Navbar';
+import {
+  TicketTypeSelector,
+  TicketTypeSkeleton,
+} from '../../components/events/TicketTypeSelector';
 
 // ── Page skeleton while the event loads ──────────────────────────────────────
 function PageSkeleton() {
@@ -50,8 +54,8 @@ function PageSkeleton() {
           </div>
         </div>
         <div className="flex flex-col gap-4">
-          <TicketSkeleton />
-          <TicketSkeleton />
+          <TicketTypeSkeleton />
+          <TicketTypeSkeleton />
         </div>
       </div>
     </div>
@@ -62,11 +66,11 @@ function PageSkeleton() {
 export default function EventDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const token = useAuthStore((s) => s.token);
-  const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((state) => state.token);
   const isLoggedIn = Boolean(token);
-  const toastInfo = useUiStore((s) => s.toastInfo);
+  const toastInfo = useUiStore((state) => state.toastInfo);
 
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const { event, eventLoading, eventError, fetchEvent } = useEvents();
 
   // Load the event when the page mounts or the URL id changes
@@ -130,63 +134,8 @@ export default function EventDetailPage() {
   return (
     <div className="flex flex-col min-h-screen bg-main-bg">
       {/* Navbar */}
-      <header className="sticky top-0 z-50 bg-card/80 backdrop-blur-md border-b border-border">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
-          <Link to="/home" className="shrink-0">
-            <img src={logo} alt="Ticketer" className="h-6" />
-          </Link>
-          <nav className="hidden md:flex items-center gap-6">
-            <Link
-              to="/events"
-              className="text-sm font-medium text-secondary hover:text-primary transition-colors duration-150"
-            >
-              Browse Events
-            </Link>
-            {isLoggedIn && (
-              <>
-                <Link
-                  to="/my-bookings"
-                  className="text-sm font-medium text-secondary hover:text-primary transition-colors duration-150"
-                >
-                  My Bookings
-                </Link>
-                <Link
-                  to="/my-tickets"
-                  className="text-sm font-medium text-secondary hover:text-primary transition-colors duration-150"
-                >
-                  My Tickets
-                </Link>
-              </>
-            )}
-          </nav>
-          <div className="flex items-center gap-2 shrink-0">
-            {isLoggedIn ? (
-              <Link to="/profile" className="flex items-center gap-2 px-3">
-                <div className="w-10 h-10 rounded-full bg-accent-text flex items-center justify-center">
-                  <span className="font-bold text-accent text-sm">
-                    {user?.name?.charAt(0)?.toUpperCase()}
-                  </span>
-                </div>
-              </Link>
-            ) : (
-              <>
-                <Link
-                  to="/login"
-                  className="px-4 text-sm font-semibold text-secondary hover:text-primary transition-colors duration-150"
-                >
-                  Sign in
-                </Link>
-                <Link
-                  to="/register"
-                  className="h-9 px-4 bg-accent hover:bg-accent-hover text-white text-sm font-semibold rounded-btn transition-colors duration-180 flex items-center"
-                >
-                  Get started
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
-      </header>
+      <Navbar onMenuClick={() => setSidebarOpen(true)} />
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       {/* Breadcrumb */}
       {!eventLoading && event && (
