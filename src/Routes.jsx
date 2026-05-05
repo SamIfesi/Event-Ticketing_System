@@ -1,12 +1,7 @@
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Navigate,
-} from 'react-router-dom';
-import { useAuthStore }   from './store/authStore';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useAuthStore } from './store/authStore';
 import { getDefaultPath } from './utils/roleGuard';
-import { ROLES }          from './config/constants';
+import { ROLES } from './config/constants';
 
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import RoleRoute from './components/auth/RoleRoute';
@@ -29,14 +24,15 @@ import UnauthorizedPage from './pages/public/UnauthorizedPage';
 import NotFoundPage from './pages/public/NotFoundPage';
 
 // attendee
-import AttendeeDashboard   from './pages/attendee/AttendeeDashboard';
-import MyBookingsPage      from './pages/attendee/MyBookingsPage';
+import AttendeeDashboard from './pages/attendee/AttendeeDashboard';
+import MyBookingsPage from './pages/attendee/MyBookingsPage';
 import BecomeOrganizerPage from './pages/attendee/BecomeOrganizerPage';
-import MyTicketsPage       from './pages/attendee/MyTicketsPage';
-import ProfilePage         from './pages/profile/ProfilePage';
-import EditProfilePage     from './pages/profile/EditProfilePage';
-import ChangePasswordPage  from './pages/profile/ChangePasswordPage';
-import ChangeEmailPage     from './pages/profile/ChangeEmailPage';
+import MyTicketsPage from './pages/attendee/MyTicketsPage';
+import ProfilePage from './pages/profile/ProfilePage';
+import EditProfilePage from './pages/profile/EditProfilePage';
+import ChangePasswordPage from './pages/profile/ChangePasswordPage';
+import ChangeEmailPage from './pages/profile/ChangeEmailPage';
+import ThemePage from './pages/public/ThemePage';
 
 // organizer
 // import OrganizerDashboard  from './pages/organizer/OrganizerDashboard';
@@ -53,7 +49,6 @@ import ChangeEmailPage     from './pages/profile/ChangeEmailPage';
 
 // payment
 // import PaymentCallbackPage from './pages/payment/PaymentCallbackPage';
-
 
 function RootRedirect() {
   const token = useAuthStore((state) => state.token);
@@ -165,7 +160,7 @@ export default function AppRoutes() {
         path="/my-bookings"
         element={
           <ProtectedRoute>
-          <MyBookingsPage />
+            <MyBookingsPage />
           </ProtectedRoute>
         }
       />
@@ -173,7 +168,7 @@ export default function AppRoutes() {
         path="/become-organizer"
         element={
           <ProtectedRoute>
-          <BecomeOrganizerPage />
+            <BecomeOrganizerPage />
           </ProtectedRoute>
         }
       />
@@ -181,7 +176,7 @@ export default function AppRoutes() {
         path="/my-tickets"
         element={
           <ProtectedRoute>
-           <MyTicketsPage/>
+            <MyTicketsPage />
           </ProtectedRoute>
         }
       />
@@ -189,7 +184,39 @@ export default function AppRoutes() {
         path="/profile"
         element={
           <ProtectedRoute>
-            <ProfilePage/>
+            <ProfilePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile/edit"
+        element={
+          <ProtectedRoute>
+            <EditProfilePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile/change-password"
+        element={
+          <ProtectedRoute>
+            <ChangePasswordPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile/change-email"
+        element={
+          <ProtectedRoute>
+            <ChangeEmailPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile/theme"
+        element={
+          <ProtectedRoute>
+            <ThemePage />
           </ProtectedRoute>
         }
       />
