@@ -127,7 +127,7 @@ function QuantityStepper({ value, min = 1, max = 10, onChange }) {
 }
 
 // ── Skeleton ──────────────────────────────────────────────────
-function TicketTypeSkeleton() {
+export function TicketTypeSkeleton() {
   return (
     <div className="border border-border rounded-card p-4 animate-pulse">
       <div className="flex justify-between mb-3">
@@ -143,7 +143,7 @@ function TicketTypeSkeleton() {
 }
 
 // ── Main component ────────────────────────────────────────────
-export default function TicketTypeSelector({
+export function TicketTypeSelector({
   ticketTypes = [],
   disabled = false,
   loading = false,
