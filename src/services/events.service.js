@@ -2,7 +2,7 @@ import api from './api'
 
 const EventsService = {
   async getEvents(param = {}) {
-    const response = await api.get('/events', { params });
+    const response = await api.get('/events', { param });
     return response.data.data; // returns {events: [], pagination: {}}
   },
 
