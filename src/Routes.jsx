@@ -45,7 +45,7 @@ import ThemePage from './pages/public/ThemePage';
 // admin
 import AdminDashboard    from './pages/admin/AdminDashboard';
 import UsersPage         from './pages/admin/UsersPage';
-// import AdminEventsPage   from './pages/admin/AdminEventsPage';
+import AdminEventsPage   from './pages/admin/AdminEventsPage';
 
 // payment
 // import PaymentCallbackPage from './pages/payment/PaymentCallbackPage';
@@ -96,7 +96,6 @@ export default function AppRoutes() {
       <Route path="/events" element={<EventsPage />} />
       <Route path="/events/:id" element={<EventDetailPage />} />
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
-      <Route path="/404" element={<NotFoundPage />} />
       {/* Auth - guest only (logged-in users are redirected away) */}
       <Route
         path="/login"
@@ -307,7 +306,7 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <RoleRoute allowed={[ROLES.ADMIN, ROLES.DEV]}>
-              <div>Admin events (todo)</div>
+              <AdminEventsPage />
             </RoleRoute>
           </ProtectedRoute>
         }
@@ -321,7 +320,9 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       />
-      <Route path="*" element={<div>404 (todo)</div>} />
+      {/* <Route path="*" element={<div>404 (todo)</div>} /> */}
+      <Route path="*" element={<NotFoundPage />} />
+
     </Routes>
   );
 }
