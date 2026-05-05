@@ -43,8 +43,8 @@ import ThemePage from './pages/public/ThemePage';
 // import CheckinPage         from './pages/organizer/CheckinPage';
 
 // admin
-// import AdminDashboard    from './pages/admin/AdminDashboard';
-// import UsersPage         from './pages/admin/UsersPage';
+import AdminDashboard    from './pages/admin/AdminDashboard';
+import UsersPage         from './pages/admin/UsersPage';
 // import AdminEventsPage   from './pages/admin/AdminEventsPage';
 
 // payment
@@ -287,7 +287,7 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <RoleRoute allowed={[ROLES.ADMIN, ROLES.DEV]}>
-              <div>Admin dashboard (todo)</div>
+            <AdminDashboard />
             </RoleRoute>
           </ProtectedRoute>
         }
@@ -297,7 +297,7 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <RoleRoute allowed={[ROLES.ADMIN, ROLES.DEV]}>
-              <div>Users (todo)</div>
+              <UsersPage/>
             </RoleRoute>
           </ProtectedRoute>
         }
