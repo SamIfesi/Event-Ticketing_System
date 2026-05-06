@@ -1,11 +1,3 @@
-// Single event detail page. Uses useEvents().fetchEvent(id) which calls
-// GET /api/events/:id — this endpoint returns the full event object
-// including ticket_types[] with price, quantity, quantity_sold, etc.
-//
-// The booking flow (selecting a ticket type → Paystack popup) lives in
-// useBookings and will be wired here once the payment pages are built.
-// For now the "Buy ticket" button is rendered but shows a coming-soon toast.
-
 import { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import {
@@ -15,11 +7,12 @@ import {
   Clock,
   Users,
   Ticket,
-  CheckCircle,
   AlertCircle,
   Share2,
-  ExternalLink,
   ChevronRight,
+  TrendingUp,
+  DollarSign,
+  BarChart3,
 } from 'lucide-react';
 import { useEvents } from '../../hooks/useEvents';
 import { useAuthStore } from '../../store/authStore';
@@ -29,16 +22,15 @@ import {
   formatTime,
   isEventPast,
 } from '../../utils/formatDate';
+import { formatCurrency } from '../../utils/formatCurrency';
 import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
 import Sidebar from '../../components/layout/Sidebar';
 import Navbar from '../../components/layout/Navbar';
-import {
-  TicketTypeSelector,
-  TicketTypeSkeleton,
-} from '../../components/events/TicketTypeSelector';
+import { TicketTypeSelector } from '../../components/events/TicketTypeSelector';
+import {ROLES} from '../../config/constants'
 
-// ── Page skeleton while the event loads ──────────────────────────────────────
+// ── Page skeleton ─────────────────────────────────────────────
 function PageSkeleton() {
   return (
     <div className="animate-pulse">
@@ -47,58 +39,160 @@ function PageSkeleton() {
         <div className="lg:col-span-2 flex flex-col gap-5">
           <div className="h-8 bg-border rounded w-3/4" />
           <div className="h-4 bg-border rounded w-1/3" />
-          <div className="space-y-2 mt-4">
+          <div className="flex flex-col gap-2 mt-4">
             <div className="h-3 bg-border rounded" />
             <div className="h-3 bg-border rounded" />
             <div className="h-3 bg-border rounded w-4/5" />
           </div>
         </div>
         <div className="flex flex-col gap-4">
-          <TicketTypeSkeleton />
-          <TicketTypeSkeleton />
+          <div className="h-40 bg-border rounded-card" />
+          <div className="h-40 bg-border rounded-card" />
         </div>
       </div>
     </div>
   );
 }
 
-// ── Main component ───────────────────────────────────────────────────────────
+// ── Revenue panel (admin + organizer only) ────────────────────
+function RevenuePannel({ event, ticketTypes }) {
+  // Calculate total revenue: sum of (price × quantity_sold) per ticket type
+  const revenue = (ticketTypes ?? []).reduce(
+    (acc, tt) =>
+      acc + parseFloat(tt.price ?? 0) * parseInt(tt.quantity_sold ?? 0, 10),
+    0
+  );
+
+  const totalSold = (ticketTypes ?? []).reduce(
+    (acc, tt) => acc + parseInt(tt.quantity_sold ?? 0, 10),
+    0
+  );
+
+  const totalCapacity = (ticketTypes ?? []).reduce(
+    (acc, tt) => acc + parseInt(tt.quantity ?? 0, 10),
+    0
+  );
+
+  const soldPct =
+    totalCapacity > 0 ? Math.round((totalSold / totalCapacity) * 100) : 0;
+
+  return (
+    <div className="bg-card border border-border rounded-card p-4">
+      {/* Header */}
+      <div className="flex items-center gap-2 mb-4 pb-3 border-b border-border">
+        <div className="w-7 h-7 rounded-btn bg-success/10 flex items-center justify-center">
+          <TrendingUp size={13} className="text-success" strokeWidth={2} />
+        </div>
+        <h3 className="text-sm font-bold text-primary">Revenue Summary</h3>
+        <span className="ml-auto text-[10px] font-bold uppercase tracking-widest text-muted bg-border px-2 py-0.5 rounded-full">
+          Organizer View
+        </span>
+      </div>
+
+      {/* Main revenue figure */}
+      <div className="mb-4">
+        <p className="text-xs text-muted mb-1">Total Revenue</p>
+        <p className="text-3xl font-black text-primary tracking-tight">
+          {formatCurrency(revenue)}
+        </p>
+      </div>
+
+      {/* Sales progress */}
+      <div className="mb-4">
+        <div className="flex items-center justify-between mb-1.5">
+          <p className="text-xs text-muted">Ticket Sales</p>
+          <p className="text-xs font-semibold text-primary">
+            {totalSold.toLocaleString()} / {totalCapacity.toLocaleString()}
+            <span className="text-muted font-normal ml-1">({soldPct}%)</span>
+          </p>
+        </div>
+        <div className="h-2 bg-border rounded-full overflow-hidden">
+          <div
+            className="h-full bg-accent rounded-full transition-all duration-500"
+            style={{ width: `${Math.min(soldPct, 100)}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Per ticket-type breakdown */}
+      {(ticketTypes ?? []).length > 0 && (
+        <div className="flex flex-col gap-0 divide-y divide-border">
+          {ticketTypes.map((tt) => {
+            const typeRevenue =
+              parseFloat(tt.price ?? 0) * parseInt(tt.quantity_sold ?? 0, 10);
+            const available =
+              parseInt(tt.quantity ?? 0, 10) -
+              parseInt(tt.quantity_sold ?? 0, 10);
+            const isFree = parseFloat(tt.price) === 0;
+
+            return (
+              <div key={tt.id} className="py-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold text-primary truncate">
+                      {tt.name}
+                    </p>
+                    <p className="text-[11px] text-muted mt-0.5">
+                      {parseInt(tt.quantity_sold ?? 0, 10).toLocaleString()}{' '}
+                      sold
+                      {' · '}
+                      {available.toLocaleString()} left
+                    </p>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className="text-xs font-bold text-primary">
+                      {isFree ? 'Free' : formatCurrency(typeRevenue)}
+                    </p>
+                    <p className="text-[11px] text-muted">
+                      {isFree ? '—' : `@ ${formatCurrency(tt.price)}`}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Main component ────────────────────────────────────────────
 export default function EventDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const token = useAuthStore((state) => state.token);
+  const token = useAuthStore((s) => s.token);
+  const user = useAuthStore((s) => s.user);
+  const role = user?.role;
   const isLoggedIn = Boolean(token);
-  const toastInfo = useUiStore((state) => state.toastInfo);
+  const isOrganizerOrAbove = [ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV].includes(
+    role
+  );
 
+  const toastInfo = useUiStore((s) => s.toastInfo);  
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { event, eventLoading, eventError, fetchEvent } = useEvents();
 
-  // Load the event when the page mounts or the URL id changes
   useEffect(() => {
     if (id) fetchEvent(id);
   }, [id]);
 
-  // ── Derived state ────────────────────────────────────────────────────────
   const isPast = event
     ? isEventPast(event.end_date ?? event.start_date)
     : false;
+
   const isFullySoldOut =
     event?.ticket_types?.length > 0 &&
     event.ticket_types.every((tt) => tt.quantity - tt.quantity_sold <= 0);
 
-  // ── Ticket selection ─────────────────────────────────────────────────────
-  // Once the booking / payment pages are wired, this will navigate to checkout.
-  // For now it shows a toast explaining the feature is coming.
   function handleSelectTicket(ticketType) {
     if (!isLoggedIn) {
       navigate('/login', { state: { from: `/events/${id}` } });
       return;
     }
-    // TODO: navigate(`/payment/checkout?event=${id}&ticket_type=${ticketType.id}`)
     toastInfo(`Booking flow coming soon! You selected: ${ticketType.name}`);
   }
 
-  // ── Share button ─────────────────────────────────────────────────────────
   function handleShare() {
     if (navigator.share) {
       navigator
@@ -110,7 +204,6 @@ export default function EventDetailPage() {
     }
   }
 
-  // ── Error state ──────────────────────────────────────────────────────────
   if (eventError && !eventLoading) {
     return (
       <div className="min-h-screen bg-main-bg flex flex-col items-center justify-center gap-5 px-6 text-center">
@@ -137,7 +230,7 @@ export default function EventDetailPage() {
       <Navbar onMenuClick={() => setSidebarOpen(true)} />
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-      {/* Breadcrumb */}
+      {/* ── Breadcrumb ────────────────────────────────────── */}
       {!eventLoading && event && (
         <nav className="bg-card border-b border-border">
           <div className="max-w-6xl mx-auto px-6 h-10 flex items-center gap-2 text-xs text-secondary">
@@ -163,12 +256,12 @@ export default function EventDetailPage() {
         </nav>
       )}
 
-      {/* Main content */}
+      {/* ── Main content ──────────────────────────────────── */}
       {eventLoading ? (
         <PageSkeleton />
       ) : event ? (
         <>
-          {/* ── Hero banner ─────────────────────────────────────────────── */}
+          {/* Hero banner */}
           <div
             className="relative w-full bg-gradient-to-br from-blue-600 to-indigo-800 overflow-hidden"
             style={{ height: '360px' }}
@@ -180,7 +273,6 @@ export default function EventDetailPage() {
                 className="w-full h-full object-cover"
               />
             ) : (
-              // No banner: show the first letter as a giant decorative mark
               <div className="absolute inset-0 flex items-center justify-center">
                 <span
                   className="text-white/10 font-black select-none"
@@ -193,13 +285,9 @@ export default function EventDetailPage() {
                 </span>
               </div>
             )}
-
-            {/* Dark overlay so text is readable if there is a banner */}
             {event.banner_image && (
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
             )}
-
-            {/* Status badges overlaid on the banner */}
             <div className="absolute top-4 left-4 flex items-center gap-2">
               {event.category_name && (
                 <span className="px-2.5 py-1 bg-black/50 backdrop-blur-sm text-white text-xs font-semibold rounded-full">
@@ -212,23 +300,20 @@ export default function EventDetailPage() {
                 </span>
               )}
             </div>
-
-            {/* Share button */}
             <button
               onClick={handleShare}
               aria-label="Share this event"
-              className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/60 transition-colors touch-manipulation"
+              className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/60 transition-colors"
             >
               <Share2 size={16} strokeWidth={2} />
             </button>
           </div>
 
-          {/* ── Body: info + ticket sidebar ─────────────────────────────── */}
+          {/* Body */}
           <div className="max-w-6xl mx-auto px-6 py-10 w-full">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-              {/* Left column: event details */}
+              {/* ── Left: event details ────────────────────── */}
               <div className="lg:col-span-2 flex flex-col gap-6">
-                {/* Title + status */}
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     <Badge status={event.status} size="sm" dot />
@@ -246,9 +331,8 @@ export default function EventDetailPage() {
                   )}
                 </div>
 
-                {/* Key details strip */}
+                {/* Key detail cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* Date */}
                   <div className="flex items-start gap-3 p-4 bg-card border border-border rounded-card">
                     <div className="w-9 h-9 rounded-btn bg-accent-text flex items-center justify-center shrink-0">
                       <Calendar
@@ -271,7 +355,6 @@ export default function EventDetailPage() {
                     </div>
                   </div>
 
-                  {/* Location */}
                   {event.location && (
                     <div className="flex items-start gap-3 p-4 bg-card border border-border rounded-card">
                       <div className="w-9 h-9 rounded-btn bg-accent-text flex items-center justify-center shrink-0">
@@ -292,7 +375,6 @@ export default function EventDetailPage() {
                     </div>
                   )}
 
-                  {/* Tickets */}
                   {event.total_tickets > 0 && (
                     <div className="flex items-start gap-3 p-4 bg-card border border-border rounded-card">
                       <div className="w-9 h-9 rounded-btn bg-accent-text flex items-center justify-center shrink-0">
@@ -319,7 +401,6 @@ export default function EventDetailPage() {
                     </div>
                   )}
 
-                  {/* Attendees (just tickets_sold as a proxy) */}
                   {event.tickets_sold > 0 && (
                     <div className="flex items-start gap-3 p-4 bg-card border border-border rounded-card">
                       <div className="w-9 h-9 rounded-btn bg-accent-text flex items-center justify-center shrink-0">
@@ -347,18 +428,16 @@ export default function EventDetailPage() {
                     <h2 className="text-base font-bold text-primary mb-3">
                       About this event
                     </h2>
-                    {/* Render the description as-is; in production you'd sanitize HTML */}
                     <div className="text-sm text-secondary leading-relaxed whitespace-pre-wrap">
                       {event.description}
                     </div>
                   </div>
                 )}
 
-                {/* Back link */}
                 <div className="pt-4 border-t border-border">
                   <button
                     onClick={() => navigate(-1)}
-                    className="inline-flex items-center gap-1.5 text-sm font-medium text-secondary hover:text-primary transition-colors duration-150"
+                    className="inline-flex items-center gap-1.5 text-sm font-medium text-secondary hover:text-primary transition-colors"
                   >
                     <ArrowLeft size={15} strokeWidth={2.5} />
                     Back
@@ -366,13 +445,20 @@ export default function EventDetailPage() {
                 </div>
               </div>
 
-              {/* Right column: sticky ticket panel */}
+              {/* ── Right: ticket panel + revenue (if privileged) ── */}
               <div className="flex flex-col gap-4 lg:sticky lg:top-24 lg:self-start">
-                {/* Panel header */}
+                {/* Revenue panel — organizer / admin / dev only */}
+                {isOrganizerOrAbove && (
+                  <RevenuePannel
+                    event={event}
+                    ticketTypes={event.ticket_types ?? []}
+                  />
+                )}
+
+                {/* Ticket purchase panel */}
                 <div className="bg-card border border-border rounded-card p-4">
                   <h2 className="font-bold text-primary mb-1">Get tickets</h2>
 
-                  {/* Past event warning */}
                   {isPast && (
                     <div className="flex items-start gap-2 p-3 bg-border rounded-btn mb-3 mt-2">
                       <AlertCircle
@@ -385,7 +471,6 @@ export default function EventDetailPage() {
                     </div>
                   )}
 
-                  {/* Fully sold out warning */}
                   {!isPast && isFullySoldOut && (
                     <div className="flex items-start gap-2 p-3 bg-border rounded-btn mb-3 mt-2">
                       <AlertCircle
@@ -398,21 +483,16 @@ export default function EventDetailPage() {
                     </div>
                   )}
 
-                  {/* Ticket type cards */}
                   <div className="flex flex-col gap-3 mt-3">
                     {event.ticket_types && event.ticket_types.length > 0 ? (
-                      event.ticket_types.map((tt) => (
-                        <TicketTypeSelector
-                          key={tt.id}
-                          ticketTypes={event.ticket_types ?? []}
-                          disabled={isPast || event.status !== 'published'}
-                          onSelect={({ ticketType, quantity }) =>
-                            handleSelectTicket(ticketType, quantity)
-                          }
-                        />
-                      ))
+                      <TicketTypeSelector
+                        ticketTypes={event.ticket_types}
+                        disabled={isPast || event.status !== 'published'}
+                        onSelect={({ ticketType, quantity }) =>
+                          handleSelectTicket(ticketType, quantity)
+                        }
+                      />
                     ) : (
-                      // No ticket types configured yet
                       <div className="text-center py-6">
                         <Ticket
                           size={24}
@@ -441,7 +521,7 @@ export default function EventDetailPage() {
                       bookings.
                     </p>
                     <Link
-                      to={`/register`}
+                      to="/register"
                       state={{ from: `/events/${id}` }}
                       className="mt-1 text-xs font-semibold text-accent hover:text-accent-hover transition-colors"
                     >
@@ -450,10 +530,10 @@ export default function EventDetailPage() {
                   </div>
                 )}
 
-                {/* Share */}
+                {/* Share button */}
                 <button
                   onClick={handleShare}
-                  className="flex items-center justify-center gap-2 h-10 border border-border rounded-btn text-sm font-medium text-secondary hover:text-primary hover:border-accent/40 transition-all duration-150 touch-manipulation"
+                  className="flex items-center justify-center gap-2 h-10 border border-border rounded-btn text-sm font-medium text-secondary hover:text-primary hover:border-accent/40 transition-all duration-150"
                 >
                   <Share2 size={15} strokeWidth={2} />
                   Share event
