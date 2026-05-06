@@ -178,7 +178,7 @@ export default function Sidebar({ isOpen, onClose }) {
         aria-modal="true"
         aria-label="Navigation menu"
         className={`fixed top-0 right-0 h-full z-[9981] w-72 max-w-[85vw] bg-card border-l border-border flex flex-col shadow-2xl transition-transform duration-300 ease-out ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
+          isOpen ? 'translate-x-0' : 'translate-x-full pointer-events-none'
         }`}
       >
         {/* ── Header ───────────────────────────────────────── */}
