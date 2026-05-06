@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   Search,
   X,
@@ -6,9 +7,10 @@ import {
   UserCheck,
   Mic2,
   ShieldCheck,
-  Filter,
   UserX,
+  UserPlus,
   RefreshCw,
+  ChevronDown,
 } from 'lucide-react';
 import { useAdmin } from '../../hooks/useAdmin';
 import { formatShortDate } from '../../utils/formatDate';
@@ -16,12 +18,10 @@ import { ROLES } from '../../config/constants';
 import Navbar from '../../components/layout/Navbar';
 import Sidebar from '../../components/layout/Sidebar';
 import Footer from '../../components/layout/Footer';
-import Badge from '../../components/ui/Badge';
 import Pagination from '../../components/ui/Pagination';
 import { ConfirmModal } from '../../components/ui/Modal';
-import { useUiStore } from '../../store/uiStore';
 
-// ── Role filter config ────────────────────────────────────────
+// ── Constants ─────────────────────────────────────────────────
 const ROLE_FILTERS = [
   { value: '', label: 'All Roles' },
   { value: ROLES.ATTENDEE, label: 'Attendees' },
@@ -29,7 +29,8 @@ const ROLE_FILTERS = [
   { value: ROLES.ADMIN, label: 'Admins' },
 ];
 
-// ── Role color map ────────────────────────────────────────────
+const PER_PAGE_OPTIONS = [20, 50, 100];
+
 const ROLE_COLORS = {
   [ROLES.DEV]: '#8b5cf6',
   [ROLES.ADMIN]: '#ef4444',
@@ -37,29 +38,92 @@ const ROLE_COLORS = {
   [ROLES.ATTENDEE]: '#2563eb',
 };
 
-// ── User row ──────────────────────────────────────────────────
-function UserRow({ user, onRoleChange, onStatusChange, mutating }) {
-  const [confirmModal, setConfirmModal] = useState(null);
-  // confirmModal: { type: 'suspend'|'activate'|'role', newRole? }
+// ── Mini stat card ────────────────────────────────────────────
+// Values here come from the stats API (platform-wide, not per-page)
+function MiniStat({ icon: Icon, label, value, color }) {
+  return (
+    <div className="bg-card border border-border rounded-card px-4 py-3.5 flex items-center gap-3">
+      <div
+        className="w-9 h-9 rounded-btn flex items-center justify-center shrink-0"
+        style={{ background: `${color}15` }}
+      >
+        <Icon size={16} strokeWidth={1.75} style={{ color }} />
+      </div>
+      <div>
+        <p className="text-lg font-black text-primary leading-none">
+          {value ?? '—'}
+        </p>
+        <p className="text-xs text-muted mt-0.5">{label}</p>
+      </div>
+    </div>
+  );
+}
 
+// ── Per-page selector ─────────────────────────────────────────
+function PerPageSelector({ value, onChange }) {
+  return (
+    <div className="flex items-center gap-2 shrink-0">
+      <span className="text-xs text-muted whitespace-nowrap">
+        Rows per page:
+      </span>
+      <div className="relative">
+        <select
+          value={value}
+          onChange={(e) => onChange(Number(e.target.value))}
+          className="h-9 pl-3 pr-7 bg-card border border-border rounded-btn text-xs font-semibold text-primary focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent appearance-none cursor-pointer"
+        >
+          {PER_PAGE_OPTIONS.map((n) => (
+            <option key={n} value={n}>
+              {n} per page
+            </option>
+          ))}
+        </select>
+        <ChevronDown
+          size={12}
+          className="absolute right-2 top-1/2 -translate-y-1/2 text-muted pointer-events-none"
+        />
+      </div>
+    </div>
+  );
+}
+
+// ── Skeleton row ──────────────────────────────────────────────
+function SkeletonRow() {
+  return (
+    <tr className="animate-pulse border-t border-border">
+      <td className="px-4 py-3.5">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-full bg-border shrink-0" />
+          <div className="flex flex-col gap-1.5">
+            <div className="h-3 bg-border rounded w-28" />
+            <div className="h-2.5 bg-border rounded w-36" />
+          </div>
+        </div>
+      </td>
+      {[80, 72, 80, 64].map((w, i) => (
+        <td key={i} className="px-4 py-3.5">
+          <div className="h-5 bg-border rounded" style={{ width: w }} />
+        </td>
+      ))}
+    </tr>
+  );
+}
+
+// ── Single user row ───────────────────────────────────────────
+function UserRow({ user, onStatusChange, mutating }) {
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const isActive = user.is_active !== 0;
   const roleColor = ROLE_COLORS[user.role] ?? '#94a3b8';
 
-  function handleStatusClick() {
-    setConfirmModal({ type: isActive ? 'suspend' : 'activate' });
-  }
-
   function handleConfirm() {
-    if (confirmModal?.type === 'suspend' || confirmModal?.type === 'activate') {
-      onStatusChange(user.id, !isActive);
-    }
-    setConfirmModal(null);
+    onStatusChange(user.id, !isActive);
+    setConfirmOpen(false);
   }
 
   return (
     <>
-      <tr className="border-t border-border hover:bg-main-bg transition-colors duration-150 group">
-        {/* User info */}
+      <tr className="border-t border-border hover:bg-main-bg transition-colors duration-150">
+        {/* Name + email */}
         <td className="px-4 py-3.5">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-full bg-accent-text flex items-center justify-center shrink-0">
@@ -71,7 +135,7 @@ function UserRow({ user, onRoleChange, onStatusChange, mutating }) {
               <p className="text-sm font-semibold text-primary truncate max-w-[160px]">
                 {user.name}
               </p>
-              <p className="text-xs text-muted truncate max-w-[180px]">
+              <p className="text-xs text-muted truncate max-w-[200px]">
                 {user.email}
               </p>
             </div>
@@ -102,131 +166,94 @@ function UserRow({ user, onRoleChange, onStatusChange, mutating }) {
           </span>
         </td>
 
-        {/* Joined */}
+        {/* Date joined */}
         <td className="px-4 py-3.5">
           <span className="text-xs text-muted">
             {user.created_at ? formatShortDate(user.created_at) : '—'}
           </span>
         </td>
 
-        {/* Actions */}
+        {/* Suspend / Activate button */}
         <td className="px-4 py-3.5">
           <button
-            onClick={handleStatusClick}
+            onClick={() => setConfirmOpen(true)}
             disabled={mutating}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-btn text-xs font-semibold transition-colors duration-150 disabled:opacity-50 ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-btn text-xs font-semibold border transition-colors duration-150 disabled:opacity-50 ${
               isActive
-                ? 'text-error hover:bg-error/10 border border-error/20 hover:border-error/40'
-                : 'text-success hover:bg-success/10 border border-success/20 hover:border-success/40'
+                ? 'text-error border-error/20 hover:bg-error/10 hover:border-error/40'
+                : 'text-success border-success/20 hover:bg-success/10 hover:border-success/40'
             }`}
           >
             {isActive ? (
               <>
-                <UserX size={12} strokeWidth={2.5} />
-                Suspend
+                <UserX size={12} strokeWidth={2.5} /> Suspend
               </>
             ) : (
               <>
-                <UserCheck size={12} strokeWidth={2.5} />
-                Activate
+                <UserCheck size={12} strokeWidth={2.5} /> Activate
               </>
             )}
           </button>
         </td>
       </tr>
 
-      {/* Confirm modal */}
       <ConfirmModal
-        isOpen={Boolean(confirmModal)}
-        onClose={() => setConfirmModal(null)}
+        isOpen={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
         onConfirm={handleConfirm}
         loading={mutating}
-        title={
-          confirmModal?.type === 'suspend'
-            ? `Suspend ${user.name}?`
-            : `Activate ${user.name}?`
-        }
+        title={isActive ? `Suspend ${user.name}?` : `Activate ${user.name}?`}
         description={
-          confirmModal?.type === 'suspend'
-            ? 'This user will lose access to their account immediately. You can reactivate anytime.'
+          isActive
+            ? 'This user will immediately lose access to their account. You can reactivate at any time.'
             : 'This user will regain full access to their account.'
         }
-        confirmLabel={
-          confirmModal?.type === 'suspend' ? 'Yes, suspend' : 'Yes, activate'
-        }
-        danger={confirmModal?.type === 'suspend'}
+        confirmLabel={isActive ? 'Yes, suspend' : 'Yes, activate'}
+        danger={isActive}
       />
     </>
   );
 }
 
-// ── Skeleton row ──────────────────────────────────────────────
-function SkeletonRow() {
-  return (
-    <tr className="animate-pulse border-t border-border">
-      {[140, 80, 72, 72, 60].map((w, i) => (
-        <td key={i} className="px-4 py-3.5">
-          {i === 0 ? (
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-border shrink-0" />
-              <div className="flex flex-col gap-1.5">
-                <div className="h-3 bg-border rounded w-28" />
-                <div className="h-2.5 bg-border rounded w-36" />
-              </div>
-            </div>
-          ) : (
-            <div className="h-5 bg-border rounded" style={{ width: w }} />
-          )}
-        </td>
-      ))}
-    </tr>
-  );
-}
-
-// ── Summary stat mini card ────────────────────────────────────
-function MiniStat({ icon: Icon, label, value, color }) {
-  return (
-    <div className="bg-card border border-border rounded-card px-4 py-3.5 flex items-center gap-3">
-      <div
-        className="w-9 h-9 rounded-btn flex items-center justify-center shrink-0"
-        style={{ background: `${color}15` }}
-      >
-        <Icon size={16} strokeWidth={1.75} style={{ color }} />
-      </div>
-      <div>
-        <p className="text-lg font-black text-primary leading-none">{value}</p>
-        <p className="text-xs text-muted mt-0.5">{label}</p>
-      </div>
-    </div>
-  );
-}
-
+// ── Main page ─────────────────────────────────────────────────
 export default function UsersPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchInput, setSearchInput] = useState('');
+  const [, setSearchParams] = useSearchParams();
 
   const {
+    // stats — used for platform-wide role counts in MiniStat cards
+    stats,
+    statsLoading,
+    fetchStats,
+    // users list
     users,
     usersPagination,
     usersLoading,
     usersPage,
     usersSearch,
     usersRole,
+    usersLimit,
     setUsersPage,
     setUsersSearch,
     setUsersRoleFilter,
     fetchUsers,
     mutating,
-    updateUserRole,
     updateUserStatus,
   } = useAdmin();
 
-  // Sync local input with URL state
+  // Fetch both on mount: stats for the MiniStat cards,
+  // users for the table (uses URL params automatically)
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  // Keep local search input in sync with URL
   useEffect(() => {
     setSearchInput(usersSearch);
   }, [usersSearch]);
 
-  // Debounce search
+  // Debounce: push local input to URL after 500 ms idle
   useEffect(() => {
     const t = setTimeout(() => {
       if (searchInput !== usersSearch) setUsersSearch(searchInput);
@@ -234,6 +261,27 @@ export default function UsersPage() {
     return () => clearTimeout(t);
   }, [searchInput]);
 
+  // Per-page: update URL param directly so useAdmin re-fetches automatically
+  function handlePerPageChange(newLimit) {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set('limit', String(newLimit));
+      next.set('page', '1'); // reset to first page on limit change
+      return next;
+    });
+  }
+
+  const currentLimit = usersLimit ?? 20;
+  const total = usersPagination?.total ?? 0;
+  const totalPages = usersPagination?.total_pages ?? 1;
+
+  // Platform-wide counts from stats API — accurate regardless of current page
+  const s = stats?.users ?? {};
+
+  // Range label e.g. "Showing 21–40 of 183"
+  const rangeStart = Math.min((usersPage - 1) * currentLimit + 1, total);
+  const rangeEnd = Math.min(usersPage * currentLimit, total);
+  
   const totalUsers = usersPagination?.total ?? 0;
   const attendeeCount = (users ?? []).filter(
     (u) => u.role === ROLES.ATTENDEE
@@ -241,15 +289,16 @@ export default function UsersPage() {
   const organizerCount = (users ?? []).filter(
     (u) => u.role === ROLES.ORGANIZER
   ).length;
+  const activeCount = (users ?? []).filter((u) => u.is_active).length;
   const suspendedCount = (users ?? []).filter((u) => !u.is_active).length;
-
+  const adminCount = (users ?? []).filter((u) => u.role === ROLES.ADMIN).length;
   return (
     <div className="flex flex-col min-h-screen bg-main-bg">
       <Navbar onMenuClick={() => setSidebarOpen(true)} />
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <main className="flex-1 max-w-6xl mx-auto w-full px-6 py-8">
-        {/* Header */}
+        {/* ── Header ───────────────────────────────────────── */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
           <div>
             <div className="flex items-center gap-2 mb-1">
@@ -263,8 +312,8 @@ export default function UsersPage() {
             </h1>
             <p className="text-sm text-secondary mt-1">
               {usersLoading
-                ? 'Loading users…'
-                : `${totalUsers.toLocaleString()} user${totalUsers !== 1 ? 's' : ''} registered`}
+                ? 'Loading…'
+                : `${total.toLocaleString()} total user${total !== 1 ? 's' : ''} registered`}
             </p>
           </div>
           <button
@@ -280,37 +329,49 @@ export default function UsersPage() {
           </button>
         </div>
 
-        {/* Summary stats */}
+        {/* ── Platform-wide mini stats ──────────────────────
+            Sourced from fetchStats() — not filtered by page  */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
           <MiniStat
             icon={Users}
             label="Total Users"
-            value={totalUsers.toLocaleString()}
+            value={statsLoading ? '—' : totalUsers.toLocaleString()}
             color="#2563eb"
           />
           <MiniStat
             icon={UserCheck}
             label="Attendees"
-            value={attendeeCount}
-            color="#2563eb"
+            value={statsLoading ? '—' : attendeeCount.toLocaleString()}
+            color="#eb7e25"
           />
           <MiniStat
             icon={Mic2}
             label="Organizers"
-            value={organizerCount}
+            value={statsLoading ? '—' : organizerCount.toLocaleString()}
             color="#10b981"
           />
           <MiniStat
-            icon={UserX}
-            label="Suspended"
-            value={suspendedCount}
-            color="#ef4444"
+            icon={UserPlus}
+            label="Admins"
+            value={statsLoading ? '—' : adminCount.toLocaleString()}
+            color="#8b5cf6"
+          />
+          <MiniStat
+            icon={UserPlus}
+            label="Admins"
+            value={statsLoading ? '—' : activeCount.toLocaleString()}
+            color="#16ddd3"
+          />
+          <MiniStat
+            icon={UserPlus}
+            label="Admins"
+            value={statsLoading ? '—' : suspendedCount.toLocaleString()}
+            color="#e41d1d"
           />
         </div>
 
-        {/* Search + filter row */}
-        <div className="flex flex-col sm:flex-row gap-3 mb-6">
-          {/* Search */}
+        {/* ── Search + role filter ──────────────────────────── */}
+        <div className="flex flex-col sm:flex-row gap-3 mb-4">
           <div className="relative flex-1">
             <Search
               size={15}
@@ -336,7 +397,6 @@ export default function UsersPage() {
             )}
           </div>
 
-          {/* Role filter pills */}
           <div className="flex items-center gap-2 flex-wrap">
             {ROLE_FILTERS.map((f) => (
               <button
@@ -354,10 +414,10 @@ export default function UsersPage() {
           </div>
         </div>
 
-        {/* Table */}
-        <div className="bg-card border border-border rounded-card overflow-hidden mb-6">
+        {/* ── Table ────────────────────────────────────────── */}
+        <div className="bg-card border border-border rounded-card overflow-hidden mb-4">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[640px]">
+            <table className="w-full min-w-[680px]">
               <thead>
                 <tr className="bg-main-bg">
                   {['User', 'Role', 'Status', 'Date Joined', 'Action'].map(
@@ -382,7 +442,6 @@ export default function UsersPage() {
                     <UserRow
                       key={user.id}
                       user={user}
-                      onRoleChange={updateUserRole}
                       onStatusChange={updateUserStatus}
                       mutating={mutating}
                     />
@@ -415,14 +474,26 @@ export default function UsersPage() {
           </div>
         </div>
 
-        {/* Pagination */}
-        <Pagination
-          currentPage={usersPage}
-          totalPages={usersPagination?.total_pages ?? 1}
-          onPageChange={setUsersPage}
-        />
+        {/* ── Footer: per-page selector + range + pagination ─ */}
+        <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
+          <PerPageSelector
+            value={currentLimit}
+            onChange={handlePerPageChange}
+          />
+          <div className="flex items-center gap-4">
+            {!usersLoading && total > 0 && (
+              <span className="text-xs text-muted hidden sm:block">
+                Showing {rangeStart}–{rangeEnd} of {total.toLocaleString()}
+              </span>
+            )}
+            <Pagination
+              currentPage={usersPage}
+              totalPages={totalPages}
+              onPageChange={setUsersPage}
+            />
+          </div>
+        </div>
       </main>
-
       <Footer />
     </div>
   );
