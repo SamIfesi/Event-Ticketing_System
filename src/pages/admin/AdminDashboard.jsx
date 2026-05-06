@@ -13,9 +13,7 @@ import {
   BarChart3,
 } from 'lucide-react';
 import { useAdmin } from '../../hooks/useAdmin';
-// import { useAuthStore } from '../../store/authStore';
 import { formatCurrency } from '../../utils/formatCurrency';
-// import { formatShortDate } from '../../utils/formatDate';
 import Navbar from '../../components/layout/Navbar';
 import Sidebar from '../../components/layout/Sidebar';
 import Footer from '../../components/layout/Footer';
@@ -24,7 +22,7 @@ import RevenueChart from '../../components/dashboard/RevenueChart';
 import UserTable from '../../components/dashboard/UserTable';
 import EventTable from '../../components/dashboard/EventTable';
 
-// ── Mini section header ───────────────────────────────────────
+// ── Section header ────────────────────────────────────────────
 function SectionHeader({ title, linkTo, linkLabel }) {
   return (
     <div className="flex items-center justify-between mb-4">
@@ -41,10 +39,9 @@ function SectionHeader({ title, linkTo, linkLabel }) {
   );
 }
 
-// ── Activity item ─────────────────────────────────────────────
+// ── 7-day activity row ────────────────────────────────────────
 function ActivityItem({ item }) {
-  const date = new Date(item.date);
-  const day = date.toLocaleDateString('en-NG', {
+  const day = new Date(item.date).toLocaleDateString('en-NG', {
     weekday: 'short',
     day: 'numeric',
     month: 'short',
@@ -62,20 +59,14 @@ function ActivityItem({ item }) {
         </p>
       </div>
       <span className="text-sm font-black text-primary shrink-0">
-        {formatCurrency(item.revenue ?? 0)}
+        {formatCurrency(parseFloat(item.revenue ?? 0))}
       </span>
     </div>
   );
 }
 
-// ── Skeleton ───────────────────────────────────────────────────
-function SkeletonBlock({ className = '' }) {
-  return <div className={`bg-border rounded animate-pulse ${className}`} />;
-}
-
 export default function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  // const user = useAuthStore((s) => s.user);
 
   const {
     stats,
@@ -99,22 +90,21 @@ export default function AdminDashboard() {
     fetchAdminEvents();
   }, []);
 
-  // Build chart data from recent_activity
-  const chartData = (stats?.recent_activity ?? []).map((item) => ({
+  const s = stats ?? {};
+
+  const revenueChartData = (s.recent_activity ?? []).map((item) => ({
     label: new Date(item.date).toLocaleDateString('en-NG', {
       weekday: 'short',
     }),
     value: parseFloat(item.revenue ?? 0),
   }));
 
-  const bookingChartData = (stats?.recent_activity ?? []).map((item) => ({
+  const bookingChartData = (s.recent_activity ?? []).map((item) => ({
     label: new Date(item.date).toLocaleDateString('en-NG', {
       weekday: 'short',
     }),
-    value: parseInt(item.bookings ?? 0),
+    value: parseInt(item.bookings ?? 0, 10),
   }));
-
-  const s = stats ?? {};
 
   return (
     <div className="flex flex-col min-h-screen bg-main-bg">
@@ -122,7 +112,7 @@ export default function AdminDashboard() {
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <main className="flex-1 max-w-6xl mx-auto w-full px-6 py-8">
-        {/* Header */}
+        {/* ── Page header ──────────────────────────────────── */}
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-1">
             <ShieldCheck size={14} className="text-accent" />
@@ -138,7 +128,7 @@ export default function AdminDashboard() {
           </p>
         </div>
 
-        {/* ── Stat cards ──────────────────────────────────────── */}
+        {/* ── Top stat cards ───────────────────────────────── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <StatCard
             icon={Users}
@@ -188,32 +178,28 @@ export default function AdminDashboard() {
           />
         </div>
 
-        {/* ── Role breakdown + activity ────────────────────────── */}
+        {/* ── Three info cards ──────────────────────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          {/* Role breakdown */}
+          {/* Users by role */}
           <div className="bg-card border border-border rounded-card p-5">
             <h3 className="text-sm font-bold text-primary mb-4">
               Users by Role
             </h3>
-
             {statsLoading ? (
               <div className="flex flex-col gap-3">
                 {[0, 1, 2].map((i) => (
                   <div
                     key={i}
-                    className="animate-pulse flex items-center gap-3"
+                    className="animate-pulse flex items-center gap-3 py-1"
                   >
-                    <div className="w-8 h-8 rounded-btn bg-border" />
-                    <div className="flex-1">
-                      <div className="h-3 bg-border rounded w-20 mb-1" />
-                      <div className="h-2 bg-border rounded w-12" />
-                    </div>
-                    <div className="h-5 bg-border rounded w-10" />
+                    <div className="w-8 h-8 rounded-btn bg-border shrink-0" />
+                    <div className="flex-1 h-3 bg-border rounded" />
+                    <div className="h-4 bg-border rounded w-8" />
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col gap-0 divide-y divide-border">
+              <div className="flex flex-col divide-y divide-border">
                 {[
                   {
                     label: 'Attendees',
@@ -241,11 +227,9 @@ export default function AdminDashboard() {
                     >
                       <Icon size={14} strokeWidth={1.75} style={{ color }} />
                     </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-semibold text-primary">
-                        {label}
-                      </p>
-                    </div>
+                    <p className="flex-1 text-sm font-semibold text-primary">
+                      {label}
+                    </p>
                     <span className="text-sm font-black text-primary">
                       {count.toLocaleString()}
                     </span>
@@ -253,7 +237,6 @@ export default function AdminDashboard() {
                 ))}
               </div>
             )}
-
             <div className="mt-4 pt-4 border-t border-border">
               <Link
                 to="/admin/users"
@@ -264,21 +247,20 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* Event breakdown */}
+          {/* Events breakdown */}
           <div className="bg-card border border-border rounded-card p-5">
             <h3 className="text-sm font-bold text-primary mb-4">
               Events Breakdown
             </h3>
-
             {statsLoading ? (
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-1">
                 {[0, 1, 2, 3].map((i) => (
                   <div
                     key={i}
-                    className="animate-pulse flex items-center justify-between py-2"
+                    className="animate-pulse flex items-center justify-between py-3"
                   >
                     <div className="h-3 bg-border rounded w-24" />
-                    <div className="h-5 bg-border rounded w-10" />
+                    <div className="h-4 bg-border rounded w-8" />
                   </div>
                 ))}
               </div>
@@ -324,7 +306,6 @@ export default function AdminDashboard() {
                 ))}
               </div>
             )}
-
             <div className="mt-4 pt-4 border-t border-border">
               <Link
                 to="/admin/events"
@@ -335,13 +316,12 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* Recent 7-day activity */}
+          {/* Last 7-day activity */}
           <div className="bg-card border border-border rounded-card p-5">
             <div className="flex items-center gap-2 mb-4">
               <Clock size={14} className="text-muted" />
               <h3 className="text-sm font-bold text-primary">Last 7 Days</h3>
             </div>
-
             {statsLoading ? (
               <div className="flex flex-col gap-1">
                 {[0, 1, 2, 3, 4].map((i) => (
@@ -350,23 +330,19 @@ export default function AdminDashboard() {
                     className="animate-pulse flex items-center gap-3 py-3 border-b border-border"
                   >
                     <div className="w-9 h-9 rounded-btn bg-border shrink-0" />
-                    <div className="flex-1">
-                      <div className="h-3 bg-border rounded w-24 mb-1" />
+                    <div className="flex-1 flex flex-col gap-1.5">
+                      <div className="h-3 bg-border rounded w-24" />
                       <div className="h-2 bg-border rounded w-16" />
                     </div>
                     <div className="h-4 bg-border rounded w-16" />
                   </div>
                 ))}
               </div>
-            ) : (stats?.recent_activity ?? []).length > 0 ? (
-              <div>
-                {[...(stats.recent_activity ?? [])]
-                  .reverse()
-                  .slice(0, 5)
-                  .map((item, i) => (
-                    <ActivityItem key={i} item={item} index={i} />
-                  ))}
-              </div>
+            ) : (s.recent_activity ?? []).length > 0 ? (
+              [...(s.recent_activity ?? [])]
+                .reverse()
+                .slice(0, 5)
+                .map((item, i) => <ActivityItem key={i} item={item} />)
             ) : (
               <div className="flex items-center justify-center py-8">
                 <p className="text-sm text-muted">No activity data yet.</p>
@@ -375,10 +351,10 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* ── Revenue chart ─────────────────────────────────────── */}
+        {/* ── Revenue + booking charts ──────────────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <RevenueChart
-            data={chartData}
+            data={revenueChartData}
             title="Revenue (Last 7 Days)"
             subtitle="Daily booking revenue"
             valuePrefix="₦"
@@ -394,7 +370,7 @@ export default function AdminDashboard() {
           />
         </div>
 
-        {/* ── Recent users ──────────────────────────────────────── */}
+        {/* ── Recent users table ────────────────────────────── */}
         <div className="mb-8">
           <SectionHeader
             title="Recent Users"
@@ -410,7 +386,7 @@ export default function AdminDashboard() {
           />
         </div>
 
-        {/* ── Recent events ─────────────────────────────────────── */}
+        {/* ── Recent events table ───────────────────────────── */}
         <div>
           <SectionHeader
             title="Recent Events"
@@ -426,7 +402,6 @@ export default function AdminDashboard() {
           />
         </div>
       </main>
-
       <Footer />
     </div>
   );
