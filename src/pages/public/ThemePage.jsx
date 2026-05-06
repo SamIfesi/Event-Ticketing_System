@@ -143,7 +143,7 @@ export default function ThemePage() {
 
   function handleSave() {
     setTheme(selected);
-    navigate('/profile');
+    navigate(-1);
   }
 
   return (
@@ -152,7 +152,7 @@ export default function ThemePage() {
         {/* Header row — mirrors PalmPay exactly */}
         <div className="flex items-center justify-between mb-8">
           <button
-            onClick={() => navigate('/profile')}
+            onClick={() => navigate(-1)}
             className="inline-flex items-center gap-1.5 text-sm font-medium text-secondary hover:text-primary transition-colors"
           >
             <ArrowLeft size={16} strokeWidth={2.5} />
