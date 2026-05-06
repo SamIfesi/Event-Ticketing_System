@@ -241,7 +241,7 @@ export default function EventTable({
 }) {
   return (
     <div
-      className={`bg-card border border-border rounded-card overflow-hidden ${className}`}
+      className={`bg-card border border-border rounded-card overflow-hidden min-w-0 ${className}`}
     >
       <div className="overflow-x-auto">
         <table className="w-full min-w-[620px]">

@@ -196,7 +196,7 @@ export default function UserTable({
 }) {
   return (
     <div
-      className={`bg-card border border-border rounded-card overflow-hidden ${className}`}
+      className={`bg-card border border-border rounded-card overflow-hidden min-w-0 ${className}`}
     >
       <div className="overflow-x-auto">
         <table className="w-full min-w-[560px]">
