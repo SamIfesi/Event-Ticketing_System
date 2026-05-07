@@ -88,7 +88,7 @@ export default function AdminDashboard() {
     fetchStats();
     fetchUsers();
     fetchAdminEvents();
-  }, []);
+  }, [fetchStats, fetchUsers, fetchAdminEvents]);
 
   const s = stats ?? {};
 
