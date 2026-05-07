@@ -11,104 +11,62 @@
 import { useState } from 'react';
 import { MoreHorizontal, ShieldCheck, UserX, UserCheck } from 'lucide-react';
 import Badge from '../ui/Badge';
-import { ROLES } from '../../config/constants';
+import {
+  ROLES,
+  ROLE_OPTIONS,
+  ROLE_COLORS,
+  USERTABLE_HEADS,
+} from '../../config/constants';
 import { formatShortDate } from '../../utils/formatDate';
-
-const ROLE_OPTIONS = [
-  { value: ROLES.ATTENDEE, label: 'Attendee' },
-  { value: ROLES.ORGANIZER, label: 'Organizer' },
-  { value: ROLES.ADMIN, label: 'Admin' },
-];
-
-const ROLE_COLORS = {
-  [ROLES.DEV]: '#8b5cf6',
-  [ROLES.ADMIN]: '#ef4444',
-  [ROLES.ORGANIZER]: '#f59e0b',
-  [ROLES.ATTENDEE]: '#2563eb',
-};
-
-function RoleBadge({ role }) {
-  const color = ROLE_COLORS[role] ?? '#94a3b8';
-  return (
-    <span
-      className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold capitalize"
-      style={{ background: `${color}18`, color }}
-    >
-      {role}
-    </span>
-  );
-}
-
-function SkeletonRow() {
-  return (
-    <tr className="animate-pulse">
-      <td className="px-4 py-3">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-border shrink-0" />
-          <div className="flex flex-col gap-1.5">
-            <div className="h-3 bg-border rounded w-24" />
-            <div className="h-2.5 bg-border rounded w-32" />
-          </div>
-        </div>
-      </td>
-      <td className="px-4 py-3">
-        <div className="h-5 bg-border rounded w-16" />
-      </td>
-      <td className="px-4 py-3">
-        <div className="h-5 bg-border rounded w-12" />
-      </td>
-      <td className="px-4 py-3">
-        <div className="h-3 bg-border rounded w-20" />
-      </td>
-      <td className="px-4 py-3">
-        <div className="h-8 bg-border rounded w-8" />
-      </td>
-    </tr>
-  );
-}
+import { SkeletonRow } from '../dashboard/EventTable';
 
 function UserRow({ user, onRoleChange, onStatusChange, mutating }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const isActive = user.is_active !== 0;
+  const color = ROLE_COLORS[user.role]?.toUpperCase() ?? '#94a3b8';
 
   return (
     <tr className="border-t border-border hover:bg-main-bg transition-colors duration-150">
-      {/* Name + email */}
+      {/* User + email */}
       <td className="px-4 py-3">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-accent-text flex items-center justify-center shrink-0">
-            <span className="text-xs font-bold text-accent">
-              {user.name?.charAt(0)?.toUpperCase()}
-            </span>
+          {/* Avatar Image or Placeholder */}
+          <div className="w-10 h-10 rounded-full bg-accent-text flex items-center justify-center shrink-0 overflow-hidden">
+            {user.avatar ? (
+              <img
+                src={user.avatar}
+                alt=""
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <span className="text-xs font-bold text-accent">
+                {user.name?.charAt(0)?.toUpperCase()}
+              </span>
+            )}
           </div>
+
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-primary truncate max-w-[140px]">
+            <p className="text-sm font-semibold text-primary hover:text-accent transition-colors truncate block max-w-45">
               {user.name}
             </p>
-            <p className="text-xs text-muted truncate max-w-[160px]">
-              {user.email}
-            </p>
+            <p className="text-xs text-muted truncate max-w-40">{user.email}</p>
           </div>
         </div>
       </td>
 
       {/* Role */}
       <td className="px-4 py-3">
-        <RoleBadge role={user.role} />
+        <Badge status={user.role} style={{ background: `${color}18, color` }} />
       </td>
 
       {/* Status */}
       <td className="px-4 py-3">
-        <span
-          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${
-            isActive ? 'bg-success/10 text-success' : 'bg-error/10 text-error'
-          }`}
-        >
-          <span
-            className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-success' : 'bg-error'}`}
-          />
-          {isActive ? 'Active' : 'Suspended'}
-        </span>
+        <Badge
+          status={isActive ? 'active' : 'suspended'}
+          size="sm"
+          dot
+          variant={isActive ? 'success' : 'error'}
+        />
       </td>
 
       {/* Joined */}
@@ -131,14 +89,12 @@ function UserRow({ user, onRoleChange, onStatusChange, mutating }) {
 
           {menuOpen && (
             <>
-              {/* Backdrop */}
               <div
                 className="fixed inset-0 z-10"
                 onClick={() => setMenuOpen(false)}
               />
-              {/* Dropdown */}
+
               <div className="absolute right-0 top-9 z-20 w-44 bg-card border border-border rounded-card shadow-lg py-1 overflow-hidden">
-                {/* Role options */}
                 {ROLE_OPTIONS.filter((r) => r.value !== user.role).map((r) => (
                   <button
                     key={r.value}
@@ -155,7 +111,6 @@ function UserRow({ user, onRoleChange, onStatusChange, mutating }) {
 
                 <div className="border-t border-border my-1" />
 
-                {/* Activate / deactivate */}
                 <button
                   onClick={() => {
                     onStatusChange?.(user.id, !isActive);
@@ -199,24 +154,17 @@ export default function UserTable({
       className={`bg-card border border-border rounded-card overflow-hidden min-w-0 ${className}`}
     >
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[560px]">
+        <table className="w-full min-w-155">
           <thead>
             <tr className="bg-main-bg">
-              <th className="px-4 py-3 text-left text-xs font-bold text-muted uppercase tracking-wider">
-                User
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-bold text-muted uppercase tracking-wider">
-                Role
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-bold text-muted uppercase tracking-wider">
-                Status
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-bold text-muted uppercase tracking-wider">
-                Joined
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-bold text-muted uppercase tracking-wider">
-                <span className="sr-only">Actions</span>
-              </th>
+              {USERTABLE_HEADS.map((header) => (
+                <th
+                  key={header}
+                  className="px-4 py-3 text-left text-xs font-bold text-muted uppercase tracking-wider"
+                >
+                  {header}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
