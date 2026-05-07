@@ -16,11 +16,11 @@ import { useState } from 'react';
 import Badge from '../ui/Badge';
 import { formatShortDate } from '../../utils/formatDate';
 import { formatCurrency } from '../../utils/formatCurrency';
-import { EVENT_STATUS } from '../../config/constants';
+import { EVENT_STATUS, EVENT_TABLE_HEADS } from '../../config/constants';
 
 const STATUS_OPTIONS = Object.values(EVENT_STATUS);
 
-function SkeletonRow() {
+export function SkeletonRow() {
   return (
     <tr className="animate-pulse border-t border-border">
       <td className="px-4 py-3">
@@ -53,7 +53,7 @@ function SkeletonRow() {
 
 function EventRow({
   event,
-  // onEdit,
+  onEdit,
   onDelete,
   onStatusChange,
   showActions,
@@ -79,19 +79,20 @@ function EventRow({
               />
             ) : (
               <span className="text-sm font-black text-accent">
-                {event.title?.charAt(0)}
+                {event.title?.charAt(0)?.toUpperCase()}
               </span>
             )}
           </div>
+
           <div className="min-w-0">
             <Link
               to={`/events/${event.id}`}
-              className="text-sm font-semibold text-primary hover:text-accent transition-colors truncate block max-w-[180px]"
+              className="text-sm font-semibold text-primary hover:text-accent transition-colors truncate block max-w-45"
             >
               {event.title}
             </Link>
             {event.organizer_name && (
-              <p className="text-xs text-muted truncate max-w-[160px]">
+              <p className="text-xs text-muted truncate max-w-40">
                 {event.organizer_name}
               </p>
             )}
@@ -102,13 +103,6 @@ function EventRow({
       {/* Status */}
       <td className="px-4 py-3">
         <Badge status={event.status} size="sm" dot />
-      </td>
-
-      {/* Date */}
-      <td className="px-4 py-3">
-        <span className="text-xs text-secondary">
-          {event.start_date ? formatShortDate(event.start_date) : '—'}
-        </span>
       </td>
 
       {/* Tickets sold */}
@@ -139,6 +133,13 @@ function EventRow({
           {event.revenue != null ? formatCurrency(event.revenue) : '—'}
         </span>
       </td>
+      
+      {/* Date */}
+      <td className="px-4 py-3">
+        <span className="text-xs text-secondary">
+          {event.start_date ? formatShortDate(event.start_date) : '—'}
+        </span>
+      </td>
 
       {/* Actions */}
       <td className="px-4 py-3">
@@ -163,39 +164,10 @@ function EventRow({
                   <Link
                     to={`/events/${event.id}`}
                     onClick={() => setMenuOpen(false)}
-                    className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-secondary hover:bg-main-bg hover:text-primary transition-colors"
+                    className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-secondary hover:bg-main-bg hover:text-primary transition-colors duration-150"
                   >
                     <Eye size={13} className="text-muted" /> View event
                   </Link>
-
-                  {showActions === 'organizer' && (
-                    <>
-                      <Link
-                        to={`/organizer/events/${event.id}/edit`}
-                        onClick={() => setMenuOpen(false)}
-                        className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-secondary hover:bg-main-bg hover:text-primary transition-colors"
-                      >
-                        <Pencil size={13} className="text-muted" /> Edit event
-                      </Link>
-                      <Link
-                        to={`/organizer/events/${event.id}/bookings`}
-                        onClick={() => setMenuOpen(false)}
-                        className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-secondary hover:bg-main-bg hover:text-primary transition-colors"
-                      >
-                        <Users size={13} className="text-muted" /> Bookings
-                      </Link>
-                      <div className="border-t border-border my-1" />
-                      <button
-                        onClick={() => {
-                          onDelete?.(event.id);
-                          setMenuOpen(false);
-                        }}
-                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-error hover:bg-error/5 transition-colors"
-                      >
-                        <Trash2 size={13} /> Cancel event
-                      </button>
-                    </>
-                  )}
 
                   {showActions === 'admin' && (
                     <>
@@ -217,6 +189,35 @@ function EventRow({
                           </button>
                         )
                       )}
+                    </>
+                  )}
+
+                  {(showActions === 'organizer' || showActions === 'admin') && (
+                    <>
+                      <Link
+                        to={`/organizer/events/${event.id}/edit`}
+                        onClick={() => setMenuOpen(false)}
+                        className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-secondary hover:bg-main-bg hover:text-primary transition-colors duration"
+                      >
+                        <Pencil size={13} className="text-muted" /> Edit event
+                      </Link>
+                      <Link
+                        to={`/organizer/events/${event.id}/bookings`}
+                        onClick={() => setMenuOpen(false)}
+                        className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-secondary hover:bg-main-bg hover:text-primary transition-colors"
+                      >
+                        <Users size={13} className="text-muted" /> Bookings
+                      </Link>
+                      <div className="border-t border-border my-1" />
+                      <button
+                        onClick={() => {
+                          onDelete?.(event.id);
+                          setMenuOpen(false);
+                        }}
+                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-error hover:bg-error/5 transition-colors"
+                      >
+                        <Trash2 size={13} /> Cancel event
+                      </button>
                     </>
                   )}
                 </div>
@@ -244,16 +245,16 @@ export default function EventTable({
       className={`bg-card border border-border rounded-card overflow-hidden min-w-0 ${className}`}
     >
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[620px]">
+        <table className="w-full min-w-155">
           <thead>
             <tr className="bg-main-bg">
-              {['Event', 'Status', 'Date', 'Tickets', 'Revenue', ''].map(
-                (h) => (
+              {EVENT_TABLE_HEADS.map(
+                (header) => (
                   <th
-                    key={h}
+                    key={header}
                     className="px-4 py-3 text-left text-xs font-bold text-muted uppercase tracking-wider"
                   >
-                    {h}
+                    {header}
                   </th>
                 )
               )}
