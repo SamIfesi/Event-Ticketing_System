@@ -2,7 +2,7 @@ import api from "./api";
 
 const OrganizerService = {
   async getMyEvents() {
-    const response = await api.get('/organizers/events');
+    const response = await api.get('/organizer/events');
     return response.data.data; // returns {events: []}
   },
 
