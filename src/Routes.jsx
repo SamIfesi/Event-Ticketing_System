@@ -35,7 +35,7 @@ import ChangeEmailPage from './pages/profile/ChangeEmailPage';
 import ThemePage from './pages/public/ThemePage';
 
 // organizer
-// import OrganizerDashboard  from './pages/organizer/OrganizerDashboard';
+import OrganizerDashboard  from './pages/organizer/OrganizerDashboard';
 // import ManageEventsPage    from './pages/organizer/ManageEventsPage';
 // import CreateEventPage     from './pages/organizer/CreateEventPage';
 // import EditEventPage       from './pages/organizer/EditEventPage';
@@ -225,7 +225,7 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
-              <div>Organizer dashboard (todo)</div>
+              <OrganizerDashboard />
             </RoleRoute>
           </ProtectedRoute>
         }
@@ -286,7 +286,7 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <RoleRoute allowed={[ROLES.ADMIN, ROLES.DEV]}>
-            <AdminDashboard />
+              <AdminDashboard />
             </RoleRoute>
           </ProtectedRoute>
         }
@@ -296,7 +296,7 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <RoleRoute allowed={[ROLES.ADMIN, ROLES.DEV]}>
-              <UsersPage/>
+              <UsersPage />
             </RoleRoute>
           </ProtectedRoute>
         }
@@ -322,7 +322,6 @@ export default function AppRoutes() {
       />
       {/* <Route path="*" element={<div>404 (todo)</div>} /> */}
       <Route path="*" element={<NotFoundPage />} />
-
     </Routes>
   );
 }
