@@ -133,9 +133,9 @@ function EventRow({
           {event.revenue != null ? formatCurrency(event.revenue) : '—'}
         </span>
       </td>
-      
+
       {/* Date */}
-      <td className="px-4 py-3">
+      <td className="px-4 py-3 min-w-30">
         <span className="text-xs text-secondary">
           {event.start_date ? formatShortDate(event.start_date) : '—'}
         </span>
