@@ -318,11 +318,11 @@ export default function Sidebar({ isOpen, onClose }) {
                 active={isActive('/admin/events')}
               />
               <NavItem
-                to="/admin/org-applications"
+                to="/admin/organizer-applications"
                 icon={ClipboardList}
                 label="Organizer Applications"
                 onClick={onClose}
-                active={isActive('/admin/org-applications')}
+                active={isActive('/admin/organizer-applications')}
               />
             </>
           )}
