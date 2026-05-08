@@ -23,7 +23,8 @@ import { SkeletonRow } from '../dashboard/EventTable';
 function UserRow({ user, onRoleChange, onStatusChange, mutating }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const isActive = user.is_active !== 0;
-  const color = ROLE_COLORS[user.role]?.toUpperCase() ?? '#94a3b8';
+  const role = user.role?.trim().toLowerCase();
+  const color = ROLE_COLORS[role] ?? '#ff0303';
 
   return (
     <tr className="border-t border-border hover:bg-main-bg transition-colors duration-150">
@@ -56,7 +57,13 @@ function UserRow({ user, onRoleChange, onStatusChange, mutating }) {
 
       {/* Role */}
       <td className="px-4 py-3">
-        <Badge status={user.role} style={{ background: `${color}18, color` }} />
+        <Badge
+          status={user.role}
+          style={{
+            background: `${color}18`,
+            color,
+          }}
+        />
       </td>
 
       {/* Status */}
