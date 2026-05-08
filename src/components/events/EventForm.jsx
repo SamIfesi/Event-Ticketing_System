@@ -74,7 +74,7 @@ function TicketTypeRow({ tt, index, onChange, onRemove, disabled }) {
               value={tt.price}
               onChange={(e) => onChange(index, 'price', e.target.value)}
               disabled={disabled}
-              className="w-full h-12 pl-8 pr-4 bg-bg text-primary border border-border rounded-card text-sm placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-colors disabled:opacity-50"
+              className="w-full h-12 pl-8 pr-4 bg-main-bg text-primary border border-border rounded-card text-sm placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-colors disabled:opacity-50"
             />
           </div>
           {tt.price > 0 && (
@@ -96,7 +96,7 @@ function TicketTypeRow({ tt, index, onChange, onRemove, disabled }) {
             value={tt.quantity}
             onChange={(e) => onChange(index, 'quantity', e.target.value)}
             disabled={disabled}
-            className="w-full h-12 px-4 bg-bg text-primary border border-border rounded-card text-sm placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-colors disabled:opacity-50"
+            className="w-full h-12 px-4 bg-main-bg text-primary border border-border rounded-card text-sm placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-colors disabled:opacity-50"
           />
         </div>
 
@@ -110,7 +110,7 @@ function TicketTypeRow({ tt, index, onChange, onRemove, disabled }) {
             value={tt.sales_end_at ?? ''}
             onChange={(e) => onChange(index, 'sales_end_at', e.target.value)}
             disabled={disabled}
-            className="w-full h-12 px-4 bg-bg text-primary border border-border rounded-card text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-colors disabled:opacity-50"
+            className="w-full h-12 px-4 bg-main-bg text-primary border border-border rounded-card text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-colors disabled:opacity-50"
           />
         </div>
       </div>
@@ -126,7 +126,7 @@ function TicketTypeRow({ tt, index, onChange, onRemove, disabled }) {
           value={tt.description ?? ''}
           onChange={(e) => onChange(index, 'description', e.target.value)}
           disabled={disabled}
-          className="w-full h-12 px-4 bg-bg text-primary border border-border rounded-card text-sm placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-colors disabled:opacity-50"
+          className="w-full h-12 px-4 bg-main-bg text-primary border border-border rounded-card text-sm placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-colors disabled:opacity-50"
         />
       </div>
     </div>
@@ -244,7 +244,7 @@ export default function EventForm({
             placeholder="Tell attendees what this event is about…"
             rows={4}
             disabled={loading}
-            className="w-full px-4 py-3 bg-bg text-primary border border-border rounded-card text-sm placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-colors resize-none disabled:opacity-50 leading-relaxed"
+            className="w-full px-4 py-3 bg-main-bg text-primary border border-border rounded-card text-sm placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-colors resize-none disabled:opacity-50 leading-relaxed"
           />
           {fieldErrors.description && (
             <p className="text-xs text-error">{fieldErrors.description}</p>
@@ -262,7 +262,7 @@ export default function EventForm({
               value={form.category_id}
               onChange={(e) => set('category_id', e.target.value)}
               disabled={loading}
-              className="w-full h-12 pl-10 pr-9 bg-bg text-primary border border-border rounded-card text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent appearance-none disabled:opacity-50 transition-colors"
+              className="w-full h-12 pl-10 pr-9 bg-main-bg text-primary border border-border rounded-card text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent appearance-none disabled:opacity-50 transition-colors"
             >
               <option value="">Select a category…</option>
               {categories.map((cat) => (
@@ -320,7 +320,7 @@ export default function EventForm({
               value={form.start_date}
               onChange={(e) => set('start_date', e.target.value)}
               disabled={loading}
-              className="w-full h-12 px-4 bg-bg text-primary border border-border rounded-card text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-colors disabled:opacity-50"
+              className="w-full h-12 px-4 bg-main-bg text-primary border border-border rounded-card text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-colors disabled:opacity-50"
             />
             {fieldErrors.start_date && (
               <p className="text-xs text-error">{fieldErrors.start_date}</p>
@@ -334,7 +334,7 @@ export default function EventForm({
               value={form.end_date}
               onChange={(e) => set('end_date', e.target.value)}
               disabled={loading}
-              className="w-full h-12 px-4 bg-bg text-primary border border-border rounded-card text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-colors disabled:opacity-50"
+              className="w-full h-12 px-4 bg-main-bg text-primary border border-border rounded-card text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-colors disabled:opacity-50"
             />
             {fieldErrors.end_date && (
               <p className="text-xs text-error">{fieldErrors.end_date}</p>
@@ -394,7 +394,7 @@ export default function EventForm({
               value={form.status}
               onChange={(e) => set('status', e.target.value)}
               disabled={loading}
-              className="w-full h-12 pl-4 pr-9 bg-bg text-primary border border-border rounded-card text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent appearance-none disabled:opacity-50 transition-colors"
+              className="w-full h-12 pl-4 pr-9 bg-main-bg text-primary border border-border rounded-card text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent appearance-none disabled:opacity-50 transition-colors"
             >
               <option value="draft">Draft — not visible to public</option>
               <option value="published">Published — live and bookable</option>
