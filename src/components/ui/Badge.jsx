@@ -20,32 +20,15 @@
 // ── Status → variant maps ─────────────────────────────────────
 // Matches your constants.js values exactly
 
-const EVENT_STATUS_MAP = {
-  draft: { variant: 'warning', label: 'Draft' },
-  published: { variant: 'success', label: 'Published' },
-  cancelled: { variant: 'error', label: 'Cancelled' },
-  completed: { variant: 'neutral', label: 'Completed' },
-};
-
-const PAYMENT_STATUS_MAP = {
-  pending: { variant: 'warning', label: 'Pending' },
-  paid: { variant: 'success', label: 'Paid' },
-  failed: { variant: 'error', label: 'Failed' },
-  refunded: { variant: 'neutral', label: 'Refunded' },
-};
-
-const BOOKING_STATUS_MAP = {
-  pending: { variant: 'warning', label: 'Pending' },
-  confirmed: { variant: 'success', label: 'Confirmed' },
-  cancelled: { variant: 'error', label: 'Cancelled' },
-};
-
-const TICKET_STATUS_MAP = {
-  valid: { variant: 'success', label: 'Valid' },
-  used: { variant: 'neutral', label: 'Used' },
-  cancelled: { variant: 'error', label: 'Cancelled' },
-  expired: { variant: 'neutral', label: 'Expired' },
-};
+import {
+  EVENT_STATUS_MAP,
+  PAYMENT_STATUS_MAP,
+  BOOKING_STATUS_MAP,
+  TICKET_STATUS_MAP,
+  VARIANT_STYLES,
+  SIZE_STYLES,
+  DOT_COLORS,
+} from '../../config/constants';
 
 // Merge all maps — Badge auto-detects the right one
 const ALL_STATUS_MAPS = {
@@ -53,36 +36,6 @@ const ALL_STATUS_MAPS = {
   ...PAYMENT_STATUS_MAP,
   ...BOOKING_STATUS_MAP,
   ...TICKET_STATUS_MAP,
-};
-
-// ── Variant → styles ──────────────────────────────────────────
-const VARIANT_STYLES = {
-  success:
-    'bg-[var(--color-success)]/10 text-[var(--color-success)] ring-[var(--color-success)]/20',
-  error:
-    'bg-[var(--color-error)]/10   text-[var(--color-error)]   ring-[var(--color-error)]/20',
-  warning:
-    'bg-[var(--color-warning)]/10 text-[var(--color-warning)] ring-[var(--color-warning)]/20',
-  info: 'bg-[var(--color-info)]/10    text-[var(--color-info)]    ring-[var(--color-info)]/20',
-  neutral:
-    'bg-[var(--color-border)]     text-[var(--color-secondary)]  ring-[var(--color-border)]',
-  accent:
-    'bg-[var(--color-accent-text)] text-[var(--color-accent)] ring-[var(--color-accent-border)]',
-};
-
-const SIZE_STYLES = {
-  sm: 'text-xs px-2 py-0.5 gap-1',
-  md: 'text-sm px-2.5 py-1 gap-1.5',
-};
-
-// ── Dot indicator ─────────────────────────────────────────────
-const DOT_COLORS = {
-  success: 'bg-[var(--color-success)]',
-  error: 'bg-[var(--color-error)]',
-  warning: 'bg-[var(--color-warning)]',
-  info: 'bg-[var(--color-info)]',
-  neutral: 'bg-[var(--color-muted)]',
-  accent: 'bg-[var(--color-accent)]',
 };
 
 export default function Badge({
@@ -116,7 +69,7 @@ export default function Badge({
 
   return (
     <span
-    style={style}
+      style={style}
       className={`
         inline-flex items-center font-medium
         rounded-full ring-1 ring-inset
