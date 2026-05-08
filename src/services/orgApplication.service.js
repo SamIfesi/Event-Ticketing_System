@@ -22,8 +22,8 @@ const OrgApplicationService = {
 
   // GET /api/admin/org_applications
   // Admin views all application with optional status filter
-  async getMyApplications() {
-    const response = await api.get('/admin/org_applications');
+  async getApplications(params = {}) {
+    const response = await api.get('/admin/org_applications', { params });
     return response.data.data; // { applications[], pagination }
   },
 
