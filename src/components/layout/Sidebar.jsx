@@ -1,15 +1,3 @@
-// Slide-in sidebar for mobile (and optionally desktop).
-// Appears when the user taps the hamburger in Navbar.
-//
-// Features:
-//   - Backdrop overlay closes sidebar on click
-//   - Escape key closes sidebar
-//   - Role-aware nav links
-//   - Smooth slide-in/out animation
-//   - User card at top
-//   - Theme toggle at the bottom (quick toggle + link to full ThemePage)
-//   - Logout at the bottom
-
 import { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
@@ -30,6 +18,7 @@ import {
   Sun,
   Monitor,
   ShieldUser,
+  ClipboardList,
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useAuth } from '../../hooks/useAuth';
@@ -37,7 +26,6 @@ import { ROLES } from '../../config/constants';
 import logo from '/assets/icons/logo.svg';
 import { useThemeStore } from '../../store/themeStore';
 
-// ── Nav link item ─────────────────────────────────────────────
 function NavItem({ to, icon: Icon, label, onClick, active }) {
   return (
     <Link
@@ -62,7 +50,6 @@ function NavItem({ to, icon: Icon, label, onClick, active }) {
   );
 }
 
-// ── Section header ─────────────────────────────────────────────
 function SectionLabel({ label }) {
   return (
     <p className="px-4 pt-4 pb-1 text-[11px] font-bold text-muted uppercase tracking-widest select-none">
@@ -71,7 +58,6 @@ function SectionLabel({ label }) {
   );
 }
 
-// ── Divider ────────────────────────────────────────────────────
 function Divider() {
   return <div className="my-2 border-t border-border" />;
 }
@@ -93,10 +79,10 @@ function ThemeToggle({ onClose }) {
   return (
     <div className="flex items-center gap-1 px-2">
       {/* Quick toggle button */}
-      <button
-        onClick={toggleTheme}
+    <button
+      onClick={toggleTheme}
         className="flex-1 flex items-center gap-3 px-3 py-3 rounded-btn text-sm font-medium text-secondary hover:bg-border transition-colors duration-150"
-      >
+    >
         <Icon size={17} className="shrink-0 text-muted" />
         <div className="flex flex-col items-start">
           <span className="leading-snug">{label}</span>
@@ -104,7 +90,7 @@ function ThemeToggle({ onClose }) {
             {modeLabel}
           </span>
         </div>
-      </button>
+    </button>
 
       {/* Link to full ThemePage */}
       <Link
@@ -131,7 +117,6 @@ export default function Sidebar({ isOpen, onClose }) {
 
   const { logout } = useAuth();
 
-  // Escape key to close
   useEffect(() => {
     function onKey(e) {
       if (e.key === 'Escape') onClose();
@@ -140,7 +125,6 @@ export default function Sidebar({ isOpen, onClose }) {
     return () => document.removeEventListener('keydown', onKey);
   }, [isOpen, onClose]);
 
-  // Body scroll lock while open
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : '';
     return () => {
@@ -161,7 +145,7 @@ export default function Sidebar({ isOpen, onClose }) {
 
   return (
     <>
-      {/* ── Backdrop ──────────────────────────────────────────── */}
+      {/* Backdrop */}
       <div
         aria-hidden="true"
         onClick={onClose}
@@ -172,7 +156,7 @@ export default function Sidebar({ isOpen, onClose }) {
         }`}
       />
 
-      {/* ── Drawer ────────────────────────────────────────────── */}
+      {/* Drawer */}
       <aside
         role="dialog"
         aria-modal="true"
@@ -181,7 +165,7 @@ export default function Sidebar({ isOpen, onClose }) {
           isOpen ? 'translate-x-0' : 'translate-x-full pointer-events-none'
         }`}
       >
-        {/* ── Header ───────────────────────────────────────── */}
+        {/* Header */}
         <div className="flex items-center justify-between px-4 h-16 border-b border-border shrink-0">
           <img src={logo} alt="Ticketer" className="h-5" />
           <button
@@ -193,7 +177,7 @@ export default function Sidebar({ isOpen, onClose }) {
           </button>
         </div>
 
-        {/* ── User card ─────────────────────────────────────── */}
+        {/* User card */}
         {isLoggedIn && user && (
           <div className="px-4 py-4 border-b border-border shrink-0">
             <Link
@@ -257,18 +241,18 @@ export default function Sidebar({ isOpen, onClose }) {
                 active={isActive('/my-bookings')}
               />
               <NavItem
-                to="/become-organizer"
-                icon={ShieldUser}
-                label="Become Organizer"
-                onClick={onClose}
-                active={isActive('/become-organizer')}
-              />
-              <NavItem
                 to="/my-tickets"
                 icon={Ticket}
                 label="My Tickets"
                 onClick={onClose}
                 active={isActive('/my-tickets')}
+              />
+              <NavItem
+                to="/become-organizer"
+                icon={ShieldUser}
+                label="Become Organizer"
+                onClick={onClose}
+                active={isActive('/become-organizer')}
               />
               <NavItem
                 to="/profile"
@@ -333,42 +317,49 @@ export default function Sidebar({ isOpen, onClose }) {
                 onClick={onClose}
                 active={isActive('/admin/events')}
               />
+              <NavItem
+                to="/admin/org-applications"
+                icon={ClipboardList}
+                label="Organizer Applications"
+                onClick={onClose}
+                active={isActive('/admin/org-applications')}
+              />
             </>
           )}
         </nav>
 
-        {/* ── Footer ────────────────────────────────────────── */}
+        {/* Footer */}
         <div className="px-2 py-4 border-t border-border shrink-0">
           {/* Theme toggle — quick switch + link to ThemePage */}
           <ThemeToggle onClose={onClose} />
 
           <div className="mt-2">
-            {isLoggedIn ? (
-              <button
-                onClick={handleLogout}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-btn text-sm font-medium text-error hover:bg-[var(--color-error)]/10 transition-colors duration-150 touch-manipulation"
+          {isLoggedIn ? (
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-btn text-sm font-medium text-error hover:bg-[var(--color-error)]/10 transition-colors duration-150 touch-manipulation"
+            >
+              <LogOut size={17} strokeWidth={2} className="shrink-0" />
+              Sign out
+            </button>
+          ) : (
+            <div className="flex flex-col gap-2 px-2">
+              <Link
+                to="/login"
+                onClick={onClose}
+                className="flex items-center justify-center h-11 rounded-btn border border-border text-sm font-semibold text-primary hover:bg-border transition-colors duration-150"
               >
-                <LogOut size={17} strokeWidth={2} className="shrink-0" />
-                Sign out
-              </button>
-            ) : (
-              <div className="flex flex-col gap-2 px-2">
-                <Link
-                  to="/login"
-                  onClick={onClose}
-                  className="flex items-center justify-center h-11 rounded-btn border border-border text-sm font-semibold text-primary hover:bg-border transition-colors duration-150"
-                >
-                  Sign in
-                </Link>
-                <Link
-                  to="/register"
-                  onClick={onClose}
-                  className="flex items-center justify-center h-11 rounded-btn bg-accent hover:bg-accent-hover text-white text-sm font-semibold transition-colors duration-180"
-                >
-                  Get started
-                </Link>
-              </div>
-            )}
+                Sign in
+              </Link>
+              <Link
+                to="/register"
+                onClick={onClose}
+                className="flex items-center justify-center h-11 rounded-btn bg-accent hover:bg-accent-hover text-white text-sm font-semibold transition-colors duration-180"
+              >
+                Get started
+              </Link>
+            </div>
+          )}
           </div>
         </div>
       </aside>
