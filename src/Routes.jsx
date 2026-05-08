@@ -35,18 +35,18 @@ import ChangeEmailPage from './pages/profile/ChangeEmailPage';
 import ThemePage from './pages/public/ThemePage';
 
 // organizer
-import OrganizerDashboard  from './pages/organizer/OrganizerDashboard';
-import ManageEventsPage    from './pages/organizer/ManageEventsPage';
-// import CreateEventPage     from './pages/organizer/CreateEventPage';
-// import EditEventPage       from './pages/organizer/EditEventPage';
-// import EventBookingsPage   from './pages/organizer/EventBookingsPage';
-// import CheckinPage         from './pages/organizer/CheckinPage';
+import OrganizerDashboard from './pages/organizer/OrganizerDashboard';
+import ManageEventsPage from './pages/organizer/ManageEventsPage';
+import CreateEventPage from './pages/organizer/CreateEventPage';
+import EditEventPage from './pages/organizer/EditEventPage';
+import EventBookingsPage from './pages/organizer/EventBookingsPage';
+import CheckinPage from './pages/organizer/CheckinPage';
 
 // admin
-import AdminDashboard    from './pages/admin/AdminDashboard';
-import UsersPage         from './pages/admin/UsersPage';
-import AdminEventsPage   from './pages/admin/AdminEventsPage';
-import OrgApplicationsPage   from './pages/admin/OrgApplicationsPage';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import UsersPage from './pages/admin/UsersPage';
+import AdminEventsPage from './pages/admin/AdminEventsPage';
+import OrgApplicationsPage from './pages/admin/OrgApplicationsPage';
 
 // payment
 // import PaymentCallbackPage from './pages/payment/PaymentCallbackPage';
@@ -236,17 +236,17 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
-            <ManageEventsPage />
+              <ManageEventsPage />
             </RoleRoute>
           </ProtectedRoute>
         }
       />
       <Route
-        path="/organizer/events/create"
+        path="/organizer/create/event"
         element={
           <ProtectedRoute>
             <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
-              <div>Create event (todo)</div>
+              <CreateEventPage />
             </RoleRoute>
           </ProtectedRoute>
         }
@@ -256,7 +256,7 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
-              <div>Edit event (todo)</div>
+              <EditEventPage />
             </RoleRoute>
           </ProtectedRoute>
         }
@@ -266,7 +266,7 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
-              <div>Event bookings (todo)</div>
+              <EventBookingsPage />
             </RoleRoute>
           </ProtectedRoute>
         }
@@ -276,7 +276,7 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
-              <div>Check-in (todo)</div>
+              <CheckinPage />
             </RoleRoute>
           </ProtectedRoute>
         }
@@ -331,7 +331,6 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       />
-      {/* <Route path="*" element={<div>404 (todo)</div>} /> */}
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
