@@ -139,3 +139,36 @@ export const DOT_COLORS = {
   accent: 'bg-[var(--color-accent)]',
 };
 // === END OF BADGE CONSTANTS ===
+
+// === FOR BUTTON CONSTANTS ===
+export const VARIANTS = {
+  primary: `
+  bg-accent text-white border-transparent hover:bg-accent-hover focus-visible:ring-accent
+  `,
+  secondary: `
+  bg-transparent text-primary border-border hover:bg-text-accent focus-visible:ring-accent
+  `,
+  ghost: `
+  bg-transparent text-secondary border-transparent hover:bg-border hover:text-primary focus-visible:ring-accent
+  `,
+  danger: `bg-error text-white border-transparent hover:opacity-90 focus-visible:ring-error
+  `,
+};
+
+export const SIZES = {
+  sm: 'h-11 px-4 text-sm gap-2 rounded-btn',
+  md: 'h-12 px-5 text-sm gap-2 rounded-btn',
+  lg: 'h-14 px-6 text-base gap-2.5 rounded-btn',
+};
+// === END OF BUTTON CONSTANTS ===
+
+// === FOR MODAL CONSTANTS ===
+  const SIZE_CLASSES = {
+    sm: 'max-w-sm',
+    md: 'max-w-md',
+    lg: 'max-w-lg',
+  };
+// === END OF MODAL CONSTANTS ===
+
+// === FOR BUTTON CONSTANTS ===
+// === END OF BUTTON CONSTANTS ===
