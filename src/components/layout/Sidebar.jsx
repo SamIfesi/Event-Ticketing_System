@@ -283,11 +283,11 @@ export default function Sidebar({ isOpen, onClose }) {
                 active={isActive('/organizer/events')}
               />
               <NavItem
-                to="/organizer/events/create"
+                to="/organizer/create/event"
                 icon={PlusCircle}
                 label="Create Event"
                 onClick={onClose}
-                active={isActive('/organizer/events/create')}
+                active={isActive('/organizer/create/event')}
               />
             </>
           )}
