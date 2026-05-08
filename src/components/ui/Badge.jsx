@@ -92,6 +92,7 @@ export default function Badge({
   dot = false, // show a colored dot before the label
   children, // override the label
   className = '',
+  style = {}, // for custom inline styles (e.g. dynamic colors)
 }) {
   // Resolve from status map if status is provided
   let resolvedVariant = variant;
@@ -115,6 +116,7 @@ export default function Badge({
 
   return (
     <span
+    style={style}
       className={`
         inline-flex items-center font-medium
         rounded-full ring-1 ring-inset
