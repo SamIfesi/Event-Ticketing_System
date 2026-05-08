@@ -325,7 +325,7 @@ export default function ManageEventsPage() {
               />
             </button>
             <Link
-              to="/organizer/events/create"
+              to="/organizer/create/event"
               className="flex items-center gap-2 h-10 px-4 bg-accent hover:bg-accent-hover text-white text-sm font-semibold rounded-btn transition-colors"
             >
               <PlusCircle size={15} strokeWidth={2.5} /> New Event
