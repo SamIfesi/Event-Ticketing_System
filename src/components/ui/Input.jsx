@@ -35,7 +35,10 @@ const Input = forwardRef(function Input(
   ref
 ) {
   const fieldId =
-    id ?? (label ? label.toLowerCase().replace(/\s+/g, '-') : undefined);
+    id ??
+    (typeof label === 'string'
+      ? label.toLowerCase().replace(/\s+/g, '-')
+      : undefined);
 
   const hasError = Boolean(error);
   const Tag = as;
@@ -44,7 +47,7 @@ const Input = forwardRef(function Input(
     <div className={`flex flex-col gap-1-5 ${className}`}>
       {label && (
         <label
-          htmlFor="fieldId"
+          htmlFor={fieldId}
           className="text-sm font-medium text-primary select-none mb-2"
         >
           {label}
