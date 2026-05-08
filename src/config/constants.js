@@ -2,7 +2,7 @@ export const BASE_URL = import.meta.env.VITE_API_URL;
 export const PAYSTACK_PUBLIC_KEY =
   import.meta.env.VITE_PAYSTACK_PUBLIC_KEY ?? '';
 
-  // ==== FOR USERTABLE AND EVENT-TABLE COMPONENT
+// ==== FOR USERTABLE AND EVENT-TABLE COMPONENT
 export const ROLES = {
   DEV: 'dev',
   ADMIN: 'admin',
@@ -163,11 +163,11 @@ export const SIZES = {
 // === END OF BUTTON CONSTANTS ===
 
 // === FOR MODAL CONSTANTS ===
-  const SIZE_CLASSES = {
-    sm: 'max-w-sm',
-    md: 'max-w-md',
-    lg: 'max-w-lg',
-  };
+export const SIZE_CLASSES = {
+  sm: 'max-w-sm',
+  md: 'max-w-md',
+  lg: 'max-w-lg',
+};
 // === END OF MODAL CONSTANTS ===
 
 // === FOR BUTTON CONSTANTS ===
