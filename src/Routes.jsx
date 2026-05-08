@@ -36,7 +36,7 @@ import ThemePage from './pages/public/ThemePage';
 
 // organizer
 import OrganizerDashboard  from './pages/organizer/OrganizerDashboard';
-// import ManageEventsPage    from './pages/organizer/ManageEventsPage';
+import ManageEventsPage    from './pages/organizer/ManageEventsPage';
 // import CreateEventPage     from './pages/organizer/CreateEventPage';
 // import EditEventPage       from './pages/organizer/EditEventPage';
 // import EventBookingsPage   from './pages/organizer/EventBookingsPage';
@@ -46,6 +46,7 @@ import OrganizerDashboard  from './pages/organizer/OrganizerDashboard';
 import AdminDashboard    from './pages/admin/AdminDashboard';
 import UsersPage         from './pages/admin/UsersPage';
 import AdminEventsPage   from './pages/admin/AdminEventsPage';
+import OrgApplicationsPage   from './pages/admin/OrgApplicationsPage';
 
 // payment
 // import PaymentCallbackPage from './pages/payment/PaymentCallbackPage';
@@ -235,7 +236,7 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
-              <div>Manage events (todo)</div>
+            <ManageEventsPage />
             </RoleRoute>
           </ProtectedRoute>
         }
@@ -307,6 +308,16 @@ export default function AppRoutes() {
           <ProtectedRoute>
             <RoleRoute allowed={[ROLES.ADMIN, ROLES.DEV]}>
               <AdminEventsPage />
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/organizer/applications"
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowed={[ROLES.ADMIN, ROLES.DEV]}>
+              <OrgApplicationsPage />
             </RoleRoute>
           </ProtectedRoute>
         }
