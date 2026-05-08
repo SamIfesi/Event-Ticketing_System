@@ -1,26 +1,8 @@
 import { forwardRef } from 'react';
 import Spinner from '../loaders/Spinner';
 import { Ghost } from 'lucide-react';
+import  {VARIANTS, SIZES}  from '../../config/constants';
 
-const VARIANTS = {
-  primary: `
-  bg-accent text-white border-transparent hover:bg-accent-hover focus-visible:ring-accent
-  `,
-  secondary: `
-  bg-transparent text-primary border-border hover:bg-text-accent focus-visible:ring-accent
-  `,
-  ghost: `
-  bg-transparent text-secondary border-transparent hover:bg-border hover:text-primary focus-visible:ring-accent
-  `,
-  danger: `bg-error text-white border-transparent hover:opacity-90 focus-visible:ring-error
-  `,
-};
-
-const SIZES = {
-  sm: 'h-11 px-4 text-sm gap-2 rounded-btn',
-  md: 'h-12 px-5 text-sm gap-2 rounded-btn',
-  lg: 'h-14 px-6 text-base gap-2.5 rounded-btn',
-};
 
 const Button = forwardRef(function Button(
   {

@@ -42,6 +42,7 @@ import { useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import Button from './Button';
+import { SIZE_CLASSES } from '../../config/constants';
 
 // ── Main Modal ────────────────────────────────────────────────
 export default function Modal({
@@ -77,12 +78,6 @@ export default function Modal({
   }, [isOpen, handleKeyDown]);
 
   if (!isOpen) return null;
-
-  const SIZE_CLASSES = {
-    sm: 'max-w-sm',
-    md: 'max-w-md',
-    lg: 'max-w-lg',
-  };
 
   const maxWidth = SIZE_CLASSES[size] ?? SIZE_CLASSES.md;
 
