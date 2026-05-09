@@ -133,7 +133,7 @@ export default function OrganizerDashboard() {
             </p>
           </div>
           <Link
-            to="/organizer/events/create"
+            to="/organizer/create/event"
             className="self-start sm:self-auto flex items-center gap-2 h-11 px-5 bg-accent hover:bg-accent-hover text-white text-sm font-semibold rounded-btn transition-colors duration-180 shrink-0"
           >
             <PlusCircle size={16} strokeWidth={2.5} /> New Event
