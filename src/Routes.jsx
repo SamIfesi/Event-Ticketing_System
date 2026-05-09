@@ -52,7 +52,7 @@ import AdminEventsPage from './pages/admin/AdminEventsPage';
 import OrgApplicationsPage from './pages/admin/OrgApplicationsPage';
 
 // payment
-// import PaymentCallbackPage from './pages/payment/PaymentCallbackPage';
+import PaymentCallbackPage from './pages/payment/PaymentCallbackPage';
 
 function RootRedirect() {
   const token = useAuthStore((state) => state.token);
@@ -340,7 +340,7 @@ export default function AppRoutes() {
         path="/payment/callback"
         element={
           <ProtectedRoute>
-            <div>Payment callback (todo)</div>
+            <PaymentCallbackPage />
           </ProtectedRoute>
         }
       />
