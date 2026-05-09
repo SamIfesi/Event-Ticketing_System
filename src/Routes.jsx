@@ -22,17 +22,20 @@ import EventsPage from './pages/public/EventsPage';
 import EventDetailPage from './pages/public/EventDetailPage';
 import UnauthorizedPage from './pages/public/UnauthorizedPage';
 import NotFoundPage from './pages/public/NotFoundPage';
+import ThemePage from './pages/public/ThemePage';
 
 // attendee
 import AttendeeDashboard from './pages/attendee/AttendeeDashboard';
 import MyBookingsPage from './pages/attendee/MyBookingsPage';
 import BecomeOrganizerPage from './pages/attendee/BecomeOrganizerPage';
 import MyTicketsPage from './pages/attendee/MyTicketsPage';
+
+//profile
 import ProfilePage from './pages/profile/ProfilePage';
 import EditProfilePage from './pages/profile/EditProfilePage';
 import ChangePasswordPage from './pages/profile/ChangePasswordPage';
 import ChangeEmailPage from './pages/profile/ChangeEmailPage';
-import ThemePage from './pages/public/ThemePage';
+import TicketDetailPage from './pages/attendee/TicketDetailPage';
 
 // organizer
 import OrganizerDashboard from './pages/organizer/OrganizerDashboard';
@@ -172,6 +175,7 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       />
+      {/* Ticket Page */}
       <Route
         path="/my-tickets"
         element={
@@ -180,6 +184,15 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/tickets/:id"
+        element={
+          <ProtectedRoute>
+            <TicketDetailPage />
+          </ProtectedRoute>
+        }
+      />
+      {/* Profile pages */}
       <Route
         path="/profile"
         element={
