@@ -170,5 +170,18 @@ export const SIZE_CLASSES = {
 };
 // === END OF MODAL CONSTANTS ===
 
-// === FOR BUTTON CONSTANTS ===
+// === FOR TICKET FILTER CONSTANTS ===
+export const STATUS_OPTIONS = [
+  { value: '', label: 'All' },
+  { value: 'valid', label: 'Valid' },
+  { value: 'used', label: 'Used' },
+  { value: 'cancelled', label: 'Cancelled' },
+  { value: 'expired', label: 'Expired' },
+];
+
+export const DATE_OPTIONS = [
+  { value: 'all', label: 'All time' },
+  { value: 'upcoming', label: 'Upcoming' },
+  { value: 'past', label: 'Past' },
+];
 // === END OF BUTTON CONSTANTS ===
