@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSearchParams, Link } from 'react-router-dom';
 import { useProfile } from '../../hooks/useProfile';
 import Navbar from '../../components/layout/Navbar';
 import Sidebar from '../../components/layout/Sidebar';
@@ -42,23 +43,42 @@ export default function MyTicketsPage() {
   const [dateFilter, setDate] = useState('all');
 
   const { tickets, ticketsLoading, fetchTickets } = useProfile();
+  const [searchParams] = useSearchParams();
+  const bookingIdFilter = searchParams.get('booking');
 
   useEffect(() => {
     fetchTickets({ filter: dateFilter !== 'all' ? dateFilter : undefined });
   }, [dateFilter]);
 
   const filtered = tickets.filter((t) => {
+    // Booking-specific filter (from ?booking= URL param)
+    if (bookingIdFilter) {
+      const ticketBookingId = t.booking_id ?? t.bookingId;
+      if (String(ticketBookingId) !== String(bookingIdFilter)) return false;
+    }
+
     const matchStatus = !statusFilter || t.status === statusFilter;
     const matchSearch =
       !search ||
       (t.event_title ?? t.event?.title ?? '')
         .toLowerCase()
         .includes(search.toLowerCase()) ||
-      (t.ticket_type_name ?? '').toLowerCase().includes(search.toLowerCase());
+      (t.ticket_type_name ?? t.ticket_type ?? '')
+        .toLowerCase()
+        .includes(search.toLowerCase());
     return matchStatus && matchSearch;
   });
 
-  const hasFilters = Boolean(search || statusFilter);
+  const hasFilters = Boolean(search || statusFilter || bookingIdFilter);
+
+  // page title changes when filtering by booking
+  const pageTitle = bookingIdFilter
+    ? `Tickets for Booking #${String(bookingIdFilter).padStart(6, '0')}`
+    : 'My Tickets';
+
+  const pageSubtitle = bookingIdFilter
+    ? 'Showing tickets for this specific booking.'
+    : 'Your QR-coded entry passes, ready to scan at the gate.';
 
   return (
     <div className="flex flex-col min-h-screen bg-main-bg">
@@ -69,31 +89,41 @@ export default function MyTicketsPage() {
         {/* Page title */}
         <div className="mb-8">
           <h1 className="text-2xl sm:text-3xl font-black text-primary tracking-tight">
-            My Tickets
+            {pageTitle}
           </h1>
-          <p className="text-sm text-secondary mt-1">
-            Your QR-coded entry passes, ready to scan at the gate.
-          </p>
+          <p className="text-sm text-secondary mt-1">{pageSubtitle}</p>
+
+          {/* Clear booking filter link */}
+          {bookingIdFilter && (
+            <Link
+              to="/my-tickets"
+              className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-accent hover:text-accent-hover transition-colors"
+            >
+              ← View all tickets
+            </Link>
+          )}
         </div>
 
         {/* Stats */}
-        {!ticketsLoading && tickets.length > 0 && (
+        {!ticketsLoading && tickets.length > 0 && !bookingIdFilter && (
           <div className="mb-6">
             <TicketsSummary tickets={tickets} />
           </div>
         )}
 
         {/* Filters */}
-        <div className="mb-6">
-          <TicketFilters
-            search={search}
-            onSearch={setSearch}
-            statusFilter={statusFilter}
-            onStatus={setStatus}
-            dateFilter={dateFilter}
-            onDate={setDate}
-          />
-        </div>
+        {!bookingIdFilter && (
+          <div className="mb-6">
+            <TicketFilters
+              search={search}
+              onSearch={setSearch}
+              statusFilter={statusFilter}
+              onStatus={setStatus}
+              dateFilter={dateFilter}
+              onDate={setDate}
+            />
+          </div>
+        )}
 
         {/* Grid */}
         {ticketsLoading ? (
