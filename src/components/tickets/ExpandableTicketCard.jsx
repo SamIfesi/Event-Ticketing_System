@@ -15,6 +15,7 @@ import {
   CheckCircle2,
   XCircle,
   Clock,
+  ExternalLink,
 } from 'lucide-react';
 import Badge from '../../components/ui/Badge';
 import QRCodeDisplay from '../../components/tickets/QRCodeDisplay';
@@ -51,18 +52,20 @@ export default function ExpandableTicketCard({ ticket }) {
 
   return (
     <div
-      className={`bg-card border border-border rounded-card overflow-hidden transition-all duration-200 hover:shadow-md ${
+      className={`bg-card border border-border rounded-card overflow-visible transition-all duration-200 hover:shadow-md ${
         isCancelled ? 'opacity-60' : 'hover:border-accent/20'
       }`}
     >
       {/* Status strip */}
-      <div className={`h-1 w-full ${stripColor}`} />
+      <div className="overflow-hidden rounded-t-card">
+        <div className={`h-1 w-full ${stripColor}`} />
+      </div>
 
       <div className="p-4">
         {/* Header row */}
         <div className="flex items-start gap-3">
           {/* Thumbnail */}
-          <div className="w-11 h-11 rounded-btn overflow-hidden bg-gradient-to-br from-blue-500 to-indigo-700 shrink-0 flex items-center justify-center">
+          <div className="w-11 h-11 rounded-btn overflow-hidden bg-linear-to-br from-blue-500 to-indigo-700 shrink-0 flex items-center justify-center">
             {event.banner_image ? (
               <img
                 src={event.banner_image}
@@ -97,35 +100,46 @@ export default function ExpandableTicketCard({ ticket }) {
 
         {/* Details */}
         <div className="flex flex-wrap gap-x-4 gap-y-1.5 mt-3">
-          {event.start_date && (
+          {(event.start_date ?? ticket?.event_start_date) && (
             <div className="flex items-center gap-1.5 text-xs text-secondary">
               <Calendar size={11} className="text-muted shrink-0" />
               <span>
-                {formatShortDate(event.start_date)} ·{' '}
-                {formatTime(event.start_date)}
+                {formatShortDate(event.start_date ?? ticket?.event_start_date)}{' '}
+                · {formatTime(event.start_date ?? ticket?.event_start_date)}
               </span>
             </div>
           )}
-          {event.location && (
+          {(event.location ?? ticket?.event_location) && (
             <div className="flex items-center gap-1.5 text-xs text-secondary">
               <MapPin size={11} className="text-muted shrink-0" />
-              <span className="truncate max-w-[160px]">{event.location}</span>
+              <span className="truncate max-w-40">
+                {event.location ?? ticket?.event_location}
+              </span>
             </div>
           )}
         </div>
 
         {/* Checked-in note */}
-        {isUsed && ticket?.checked_in_at && (
+        {isUsed && (ticket?.used_at ?? ticket?.checked_in_at) && (
           <p className="mt-2 text-xs text-muted flex items-center gap-1">
             <CheckCircle2 size={11} className="text-success" />
-            Checked in {formatShortDate(ticket.checked_in_at)}
+            Checked in{' '}
+            {formatShortDate(ticket?.used_at ?? ticket?.checked_in_at)}
           </p>
         )}
 
-        {/* Perforation divider */}
-        <div className="relative my-4 border-t border-dashed border-border">
-          <div className="absolute -left-7 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-main-bg border border-border" />
-          <div className="absolute -right-7 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-main-bg border border-border" />
+        {/* Perforation divider — overflow-visible so the circles show outside */}
+        <div className="relative my-4" style={{ overflow: 'visible' }}>
+          {/* Left notch */}
+          <div
+            className="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-main-bg border border-border"
+            style={{ left: '-24px' }}
+          />
+          <div className="border-t border-dashed border-border" />
+          <div
+            className="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-main-bg border border-border"
+            style={{ right: '-24px' }}
+          />
         </div>
 
         {/* Footer */}
@@ -153,10 +167,10 @@ export default function ExpandableTicketCard({ ticket }) {
               </button>
             )}
             <Link
-              to={`/events/${event?.id ?? ticket?.event_id}`}
-              className="text-xs font-semibold text-secondary hover:text-primary transition-colors"
+              to={`/ticket/${ticket?.id}`}
+              className="flex items-center gap-1 text-xs font-semibold text-secondary hover:text-primary transtion-colors"
             >
-              View event
+              Details <ExternalLink size={12} strokeWidth={2.5} />
             </Link>
           </div>
         </div>
@@ -175,6 +189,12 @@ export default function ExpandableTicketCard({ ticket }) {
             <p className="text-[10px] font-mono text-muted tracking-widest">
               #{String(ticket?.id ?? 0).padStart(8, '0')}
             </p>
+            <Link
+              to={`/tickets/${ticket?.id}`}
+              className="mt-1 text-xs font-semibold text-accent hover:text-accent-hover transition-colors flex items-center gap-1"
+            >
+              View full ticket <ExternalLink size={11} strokeWidth={2.5} />
+            </Link>
           </div>
         )}
       </div>
