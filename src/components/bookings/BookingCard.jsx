@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import Badge from '../../components/ui/Badge';
 import { formatShortDate } from '../../utils/formatDate';
 import { formatCurrency } from '../../utils/formatCurrency';
@@ -7,6 +8,9 @@ import {
   Calendar,
   MapPin,
   Ticket,
+  CheckCircle2,
+  XCircle,
+  Clock,
 } from 'lucide-react';
 
 function StatusIcon({ status }) {
@@ -29,6 +33,9 @@ export default function BookingCard({ booking }) {
   const isPaid = booking?.payment_status === 'paid';
   const isFailed = booking?.payment_status === 'failed';
 
+  const eventId = event?.id ?? booking?.event_id;
+  const bookingId = booking?.id;
+
   return (
     <div className="bg-card border border-border rounded-card overflow-hidden hover:border-accent/30 hover:shadow-md transition-all duration-200 group">
       {/* Color accent strip */}
@@ -39,7 +46,7 @@ export default function BookingCard({ booking }) {
       <div className="p-5">
         <div className="flex items-start gap-4">
           {/* Event thumbnail */}
-          <div className="w-16 h-16 rounded-btn overflow-hidden bg-gradient-to-br from-blue-500 to-indigo-700 shrink-0 flex items-center justify-center">
+          <div className="w-16 h-16 rounded-btn overflow-hidden bg-linear-to-br from-blue-500 to-indigo-700 shrink-0 flex items-center justify-center">
             {event.banner_image ? (
               <img
                 src={event.banner_image}
@@ -81,17 +88,21 @@ export default function BookingCard({ booking }) {
 
             {/* Details row */}
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-3">
-              {event.start_date && (
+              {(event.start_date ?? booking?.event_start_date) && (
                 <div className="flex items-center gap-1.5 text-xs text-secondary">
                   <Calendar size={11} className="text-muted shrink-0" />
-                  <span>{formatShortDate(event.start_date)}</span>
+                  <span>
+                    {formatShortDate(
+                      event.start_date ?? booking?.event_start_date
+                    )}
+                  </span>
                 </div>
               )}
-              {event.location && (
+              {(event.location ?? booking?.event_location) && (
                 <div className="flex items-center gap-1.5 text-xs text-secondary">
                   <MapPin size={11} className="text-muted shrink-0" />
-                  <span className="truncate max-w-[140px]">
-                    {event.location}
+                  <span className="truncate max-w-35">
+                    {event.location ?? booking?.event_location}
                   </span>
                 </div>
               )}
@@ -128,21 +139,23 @@ export default function BookingCard({ booking }) {
             </span>
           </div>
           <div className="flex items-center gap-2">
-            {booking?.payment_status === 'paid' && (
+            {isPaid && bookingId && (
               <Link
-                to="/my-tickets"
-                className="flex items-center gap-1 text-xs font-semibold text-accent hover:text-accent-hover transition-colors"
+                to={`/my-tickets?booking=${bookingId}`}
+                className="flexitems-center gap-1 text-xs font-semibold text-accent hover:text-accent-hover transition-colors"
               >
                 <Ticket size={12} strokeWidth={2.5} />
                 View tickets
               </Link>
             )}
-            <Link
-              to={`/events/${event.id ?? booking?.event_id}`}
-              className="flex items-center gap-1 text-xs font-semibold text-secondary hover:text-primary transition-colors"
-            >
-              Event <ArrowUpRight size={12} strokeWidth={2.5} />
-            </Link>
+            {eventId && (
+              <Link
+                to={`/events/${eventId}`}
+                className="flex items-center gap-1 text-xs font-semibold text-secondary hover:text-primary transition-colors"
+              >
+                Event <ArrowUpRight size={12} strokeWidth={2.5} />
+              </Link>
+            )}
           </div>
         </div>
       </div>
