@@ -79,10 +79,10 @@ function ThemeToggle({ onClose }) {
   return (
     <div className="flex items-center gap-1 px-2">
       {/* Quick toggle button */}
-    <button
-      onClick={toggleTheme}
+      <button
+        onClick={toggleTheme}
         className="flex-1 flex items-center gap-3 px-3 py-3 rounded-btn text-sm font-medium text-secondary hover:bg-border transition-colors duration-150"
-    >
+      >
         <Icon size={17} className="shrink-0 text-muted" />
         <div className="flex flex-col items-start">
           <span className="leading-snug">{label}</span>
@@ -90,11 +90,11 @@ function ThemeToggle({ onClose }) {
             {modeLabel}
           </span>
         </div>
-    </button>
+      </button>
 
       {/* Link to full ThemePage */}
       <Link
-        to="/profile/theme"
+        to="/page/theme"
         onClick={onClose}
         title="More theme options"
         className="w-9 h-9 flex items-center justify-center rounded-btn text-muted hover:text-primary hover:bg-border transition-colors"
@@ -149,7 +149,7 @@ export default function Sidebar({ isOpen, onClose }) {
       <div
         aria-hidden="true"
         onClick={onClose}
-        className={`fixed inset-0 z-[9980] backdrop-blur-[1.5px] transition-opacity duration-300 ${
+        className={`fixed inset-0 z-9980 backdrop-blur-[1.5px] transition-opacity duration-300 ${
           isOpen
             ? 'opacity-100 pointer-events-auto'
             : 'opacity-0 pointer-events-none'
@@ -161,7 +161,7 @@ export default function Sidebar({ isOpen, onClose }) {
         role="dialog"
         aria-modal="true"
         aria-label="Navigation menu"
-        className={`fixed top-0 right-0 h-full z-[9981] w-72 max-w-[85vw] bg-card border-l border-border flex flex-col shadow-2xl transition-transform duration-300 ease-out ${
+        className={`fixed top-0 right-0 h-full z-9981 w-72 max-w-[85vw] bg-card border-l border-border flex flex-col shadow-2xl transition-transform duration-300 ease-out ${
           isOpen ? 'translate-x-0' : 'translate-x-full pointer-events-none'
         }`}
       >
