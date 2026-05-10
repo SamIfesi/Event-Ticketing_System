@@ -115,7 +115,7 @@ export default function ProfilePage() {
               iconColor={themeIconColor}
               label="Theme"
               subtitle={themeSubtitle}
-              to="/profile/theme"
+              to="/page/theme"
             />
           </SettingsGroup>
 
