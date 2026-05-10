@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShieldOff, LogIn } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { getDefaultPath } from '../../utils/roleGuard';
+import { ROLES } from '../../config/constants';
 
 export default function UnauthorizedPage() {
   const navigate = useNavigate();
@@ -11,6 +12,8 @@ export default function UnauthorizedPage() {
   const isLoggedIn = Boolean(token);
 
   const containerRef = useRef(null);
+  const isAdmin = user?.role === ROLES.ADMIN || user?.role === ROLES.DEV;
+  const isOrganizer = user?.role === ROLES.ORGANIZER;
 
   useEffect(() => {
     const el = containerRef.current;
@@ -41,11 +44,11 @@ export default function UnauthorizedPage() {
           {/* Outer ring */}
           <div className="w-24 h-24 rounded-full border-2 border-dashed border-error/30 flex items-center justify-center">
             {/* Inner circle */}
-            <div className="w-16 h-16 rounded-full bg-[var(--color-error)]/10 border border-[var(--color-error)]/20 flex items-center justify-center">
+            <div className="w-16 h-16 rounded-full bg-error/10 border border-error/20 flex items-center justify-center">
               <ShieldOff
                 size={28}
                 strokeWidth={1.75}
-                className="text-[var(--color-error)]"
+                className="text-error"
               />
             </div>
           </div>
@@ -58,8 +61,8 @@ export default function UnauthorizedPage() {
         </div>
 
         {/* ── Error code pill ───────────────────────────────────────────────── */}
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[var(--color-error)]/10 border border-[var(--color-error)]/20 rounded-full mb-5">
-          <span className="text-xs font-bold text-[var(--color-error)] tracking-widest uppercase">
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-error/10 border border-error/20 rounded-full mb-5">
+          <span className="text-xs font-bold text-error tracking-widest uppercase">
             403 — Access Denied
           </span>
         </div>
@@ -86,7 +89,7 @@ export default function UnauthorizedPage() {
 
           {isLoggedIn ? (
             <Link
-              to={getDefaultPath(user?.role)}
+              to={isAdmin || isOrganizer ? getDefaultPath(user?.role) : '/dashboard'}
               className="flex items-center justify-center gap-2 h-12 px-6 bg-accent hover:bg-accent-hover text-white text-sm font-semibold rounded-btn transition-colors duration-180 active:scale-95 touch-manipulation w-full sm:w-40"
             >
               My Dashboard
