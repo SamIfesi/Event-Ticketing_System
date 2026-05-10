@@ -141,6 +141,14 @@ export default function AppRoutes() {
           </GuestOnly>
         }
       />
+      <Route
+        path="/page/theme"
+        element={
+          <GuestOnly>
+            <ThemePage />
+          </GuestOnly>
+        }
+      />
       {/* verify email - needs token but Not verified */}
       <Route
         path="/verify-email"
@@ -222,14 +230,6 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <ChangeEmailPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/profile/theme"
-        element={
-          <ProtectedRoute>
-            <ThemePage />
           </ProtectedRoute>
         }
       />
