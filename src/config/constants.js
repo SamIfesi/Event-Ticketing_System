@@ -185,3 +185,154 @@ export const DATE_OPTIONS = [
   { value: 'past', label: 'Past' },
 ];
 // === END OF BUTTON CONSTANTS ===
+
+
+import {
+  Home,
+  Search,
+  LayoutDashboard,
+  BookOpen,
+  Ticket,
+  ShieldUser,
+  User,
+  CalendarDays,
+  PlusCircle,
+  ShieldCheck,
+  Users,
+  ClipboardList,
+} from 'lucide-react';
+
+/**
+ * NAV_GROUPS — top-level dropdown groups shown in the desktop navbar.
+ *
+ * Each group:
+ *   label       — display name in the navbar tab
+ *   roles       — which roles can see this group.
+ *                 [] = everyone (including guests)
+ *                 null / omit = logged-in users only (any role)
+ *   requireAuth — if true, only shown when logged in
+ *   items       — links inside the dropdown
+ */
+export const NAV_GROUPS = [
+  {
+    id: 'discover',
+    label: 'Discover',
+    requireAuth: false,
+    roles: [], // everyone
+    items: [
+      {
+        to: '/home',
+        icon: Home,
+        label: 'Home',
+        description: 'Back to the homepage',
+      },
+      {
+        to: '/events',
+        icon: Search,
+        label: 'Browse Events',
+        description: 'Find and explore events',
+      },
+    ],
+  },
+  {
+    id: 'activity',
+    label: 'My Activity',
+    requireAuth: true,
+    roles: [ROLES.ATTENDEE, ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV],
+    items: [
+      {
+        to: '/dashboard',
+        icon: LayoutDashboard,
+        label: 'Dashboard',
+        description: 'Your personal overview',
+      },
+      {
+        to: '/my-bookings',
+        icon: BookOpen,
+        label: 'My Bookings',
+        description: 'View and manage bookings',
+      },
+      {
+        to: '/my-tickets',
+        icon: Ticket,
+        label: 'My Tickets',
+        description: 'Access your tickets',
+      },
+      {
+        to: '/become-organizer',
+        icon: ShieldUser,
+        label: 'Become Organizer',
+        description: 'Apply for organizer status',
+      },
+      {
+        to: '/profile',
+        icon: User,
+        label: 'Profile',
+        description: 'Edit your profile',
+      },
+    ],
+  },
+  {
+    id: 'organizer',
+    label: 'Organizer',
+    requireAuth: true,
+    roles: [ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV],
+    items: [
+      {
+        to: '/organizer/dashboard',
+        icon: LayoutDashboard,
+        label: 'Organiser Dashboard',
+        description: 'Overview of your events',
+      },
+      {
+        to: '/organizer/events',
+        icon: CalendarDays,
+        label: 'My Events',
+        description: 'Manage your events',
+      },
+      {
+        to: '/organizer/create/event',
+        icon: PlusCircle,
+        label: 'Create Event',
+        description: 'Publish a new event',
+      },
+    ],
+  },
+  {
+    id: 'admin',
+    label: 'Admin',
+    requireAuth: true,
+    roles: [ROLES.ADMIN, ROLES.DEV],
+    items: [
+      {
+        to: '/admin/dashboard',
+        icon: ShieldCheck,
+        label: 'Admin Dashboard',
+        description: 'Full platform overview',
+      },
+      {
+        to: '/admin/users',
+        icon: Users,
+        label: 'Manage Users',
+        description: 'View and manage users',
+      },
+      {
+        to: '/admin/events',
+        icon: CalendarDays,
+        label: 'All Events',
+        description: 'Browse all platform events',
+      },
+      {
+        to: '/admin/organizer/applications',
+        icon: ClipboardList,
+        label: 'Organizer Applications',
+        description: 'Review pending applications',
+      },
+    ],
+  },
+];
+
+/**
+ * PROFILE_MENU — items shown in the avatar dropdown.
+ */
+export const PROFILE_MENU = [{ to: '/profile', icon: User, label: 'Profile' }];
