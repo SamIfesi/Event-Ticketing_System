@@ -24,6 +24,7 @@ export function useAuth() {
   const isVerified = useAuthStore((state) => state.isVerified);
   const setAuth = useAuthStore((state) => state.setAuth);
   const clearAuth = useAuthStore((state) => state.clearAuth);
+  const setLoggingOut = useAuthStore((state) => state.setLoggingOut);
   const setEmailVerified = useAuthStore((state) => state.setEmailVerified);
 
   const toastSuccess = useUiStore((state) => state.toastSuccess);
@@ -47,22 +48,20 @@ export function useAuth() {
 
   function extractError(err) {
     const data = err?.response?.data;
-  
+
     if (data?.errors) {
       setFieldErrors(data.errors);
-  
+
       // Extract real messages
       const messages = Object.values(data.errors);
-      const combined = messages.join("\n");
-  
+      const combined = messages.join('\n');
+
       setError(combined);
       return combined;
     }
-  
-    const msg =
-      data?.message ??
-      'Something went wrong. Please try again.';
-  
+
+    const msg = data?.message ?? 'Something went wrong. Please try again.';
+
     setError(msg);
     return msg;
   }
@@ -146,13 +145,10 @@ export function useAuth() {
   }, []);
 
   const logout = useCallback(async () => {
-    try {
-      await AuthService.logout();
-    } catch {
-    } finally {
-      clearAuth();
-      navigate('/home');
-    }
+    setLoggingOut();
+    navigate('/home');
+    clearAuth();
+    AuthService.logout().catch(() => {});
   }, []);
 
   const rehydrate = useCallback(async () => {
