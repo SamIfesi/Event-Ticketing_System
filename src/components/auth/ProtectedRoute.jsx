@@ -8,13 +8,16 @@
 // The `requireVerified` prop (default true) lets you opt out for the
 // /verify-email page itself — it needs to be reachable while unverified.
 
-import {Navigate, useLocation} from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 
 export default function ProtectedRoute({ children, requireVerified = true }) {
   const token = useAuthStore((state) => state.token);
   const isVerified = useAuthStore((state) => state.isVerified);
+  const isLoggingOut = useAuthStore((state) => state.isLoggingOut);
   const location = useLocation();
+
+  if (isLoggingOut) return null;
 
   if (!token) {
     return <Navigate to="/login" state={{ from: location }} replace />;
@@ -25,5 +28,4 @@ export default function ProtectedRoute({ children, requireVerified = true }) {
   }
 
   return children;
-
 }
