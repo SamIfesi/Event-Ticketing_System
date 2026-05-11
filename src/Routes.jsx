@@ -58,7 +58,10 @@ function RootRedirect() {
   const token = useAuthStore((state) => state.token);
   const isVerified = useAuthStore((state) => state.isVerified);
   const user = useAuthStore((state) => state.user);
+  const _hasHydrated = useAuthStore((state) => state._hasHydrated); 
   const hasSeenOnboarding = localStorage.getItem('onboarding_seen');
+
+  if (!_hasHydrated) return null;
 
   if (!token) {
     return hasSeenOnboarding ? (

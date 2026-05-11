@@ -155,12 +155,13 @@ export function useAuth() {
   }, [navigate]);
 
   const rehydrate = useCallback(async () => {
-    if (!token || user) return;
+    if (!token) return;
+    if (user) return; // already have user, skip
     try {
       const data = await AuthService.me();
       setAuth({
         user: data.user,
-        token: data.token,
+        token: token, // keep existing token
         isVerified: Boolean(data.user?.email_verified),
       });
     } catch {

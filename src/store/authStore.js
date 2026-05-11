@@ -9,26 +9,22 @@ export const useAuthStore = create(
       token: null,
       isVerified: false,
       isLoggingOut: false,
+      _hasHydrated: false,
 
-      // Called after successful login or register
+      setHasHydrated: (val) => set({ _hasHydrated: val }),
+
       setAuth: ({ user, token, isVerified }) =>
         set({ user, token, isVerified: Boolean(isVerified) }),
 
-      // Called after email verified so UI updates immediately
       setEmailVerified: () =>
         set((state) => ({
           isVerified: true,
           user: state.user ? { ...state.user, email_verified: 1 } : null,
         })),
 
-      // Called on logout or 401 from api.js
       clearAuth: () => {
         localStorage.removeItem(STORAGE_KEY.AUTH);
-        set({
-          user: null,
-          token: null,
-          isVerified: false,
-        });
+        set({ user: null, token: null, isVerified: false });
       },
 
       setLoggingOut: () => set({ isLoggingOut: true }),
@@ -40,6 +36,9 @@ export const useAuthStore = create(
         token: state.token,
         isVerified: state.isVerified,
       }),
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      },
     }
   )
 );
