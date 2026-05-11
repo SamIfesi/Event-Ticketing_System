@@ -14,7 +14,7 @@ import { useLocation } from 'react-router-dom';
 export default function Dropdown({
   children,
   panel,
-  align = 'left',
+  align = 'center',
   className = '',
   hoverOpen = false,
 }) {
@@ -50,7 +50,12 @@ export default function Dropdown({
   const toggle = useCallback(() => setOpen((v) => !v), []);
   const close  = useCallback(() => setOpen(false), []);
 
-  const alignClass = align === 'right' ? 'right-0' : 'left-0';
+  const alignClass =
+    align === 'right'
+      ? 'right-0'
+      : align === 'left'
+        ? 'left-0'
+        : 'left-1/2 -translate-x-1/2'; // 'center' (default)
 
   return (
     <div
@@ -72,8 +77,8 @@ export default function Dropdown({
           absolute top-full ${alignClass} z-9990
           transition-all duration-200 origin-top
           ${open
-            ? 'opacity-100 scale-y-100 pointer-events-auto translate-y-0'
-            : 'opacity-0 scale-y-95 pointer-events-none -translate-y-1'
+              ? 'opacity-100 scale-y-100 pointer-events-auto translate-y-0'
+              : 'opacity-0 scale-y-95 pointer-events-none -translate-y-1'
           }
         `}
       >
