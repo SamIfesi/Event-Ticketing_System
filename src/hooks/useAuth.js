@@ -145,11 +145,14 @@ export function useAuth() {
   }, []);
 
   const logout = useCallback(async () => {
-    setLoggingOut();
-    navigate('/home');
-    clearAuth();
-    AuthService.logout().catch(() => {});
-  }, []);
+    try {
+      setLoggingOut();
+      await AuthService.logout().catch(() => {});
+    } finally {
+      clearAuth();
+      navigate('/home', { replace: true });
+    }
+  }, [navigate]);
 
   const rehydrate = useCallback(async () => {
     if (!token || user) return;
