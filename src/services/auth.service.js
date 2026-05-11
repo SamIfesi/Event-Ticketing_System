@@ -30,8 +30,12 @@ const AuthService = {
   },
 
   async logout() {
-    const response = await api.post('/auth/logout');
-    return response.data; // returns {success, message}
+    try {
+      const response = await api.post('/auth/logout');
+      return response.data; // returns {success, message}
+    } catch {
+      return null;
+    }
   },
 
   async me() {
