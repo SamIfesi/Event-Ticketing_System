@@ -20,7 +20,11 @@ export default function ProtectedRoute({ children, requireVerified = true }) {
   if (isLoggingOut) return null;
 
   if (!token) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return isLoggingOut ? (
+      <Navigate to="/home" replace />
+    ) : (
+      <Navigate to="/login" replace />
+    );
   }
 
   if (requireVerified && !isVerified) {
