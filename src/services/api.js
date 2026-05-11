@@ -77,10 +77,11 @@ api.interceptors.response.use(
     error.config?._isSlowRequest ? stopCenter() : stopTopBar();
 
     // 401 = expired or invalid token → force logout
-    if (error.response?.status === 401) {
-      const isLogoutRequest = error.config?.url?.includes('/auth/logout');
-      if (!isLogoutRequest) useAuthStore.getState().clearAuth();
-      // window.location.href = '/home';
+    let isHandling401 = false;
+    if (error.response?.status === 401 && !isHandling401) {
+      isHandling401 = true;
+      useAuthStore.getState().clearAuth();
+      window.location.href = '/login';
     }
 
     return Promise.reject(error);
