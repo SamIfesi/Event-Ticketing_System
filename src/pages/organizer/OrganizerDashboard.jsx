@@ -11,7 +11,6 @@ import {
   LayoutDashboard,
 } from 'lucide-react';
 import { useOrganizerEvents } from '../../hooks/useOrganizerEvents';
-import { useBookings } from '../../hooks/useBookings';
 import { useAuthStore } from '../../store/authStore';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { formatShortDate, isEventPast } from '../../utils/formatDate';
@@ -22,6 +21,29 @@ import StatCard from '../../components/dashboard/StatCard';
 import RevenueChart from '../../components/dashboard/RevenueChart';
 import Badge from '../../components/ui/Badge';
 import EventTable from '../../components/dashboard/EventTable';
+
+function SkeletonDashboard() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  return (
+    <div className="flex flex-col min-h-screen bg-main-bg">
+      <Navbar onMenuClick={() => setSidebarOpen(true)} />
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+
+      <div className="flex-1 max-w-6xl mx-auto w-full px-6 py-6">
+        <div className="animate-pulse flex flex-col gap-6">
+          <div className="h-8 bg-border rounded w-64" />
+          <div className="grid grid-cols-2nlg:grid-col-4 gap-4">
+            {[0, 1, 2, 3].map((i) => (
+              <div className="h-28 bg-border rounded-card" key={i} />
+            ))}
+          </div>
+          <div className="h-64 bg-border rounded-card" />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // ── Recent booking row ────────────────────────────────────────
 function BookingRow({ booking }) {
@@ -70,15 +92,9 @@ function SkeletonBookingRow() {
 export default function OrganizerDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((s) => s.token);
 
-  const {
-    myEvents,
-    myEventsLoading,
-    fetchMyEvents,
-    bookings: recentBookings,
-    bookingsLoading,
-    fetchEventBookings,
-  } = useOrganizerEvents();
+  const { myEvents, myEventsLoading, fetchMyEvents } = useOrganizerEvents();
 
   useEffect(() => {
     fetchMyEvents();
@@ -109,6 +125,8 @@ export default function OrganizerDashboard() {
       label: e.title?.slice(0, 12) + (e.title?.length > 12 ? '…' : ''),
       value: parseFloat(e.revenue ?? 0),
     }));
+
+  if (!user || !token) return <SkeletonDashboard />;
 
   return (
     <div className="flex flex-col min-h-screen bg-main-bg">
