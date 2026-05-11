@@ -19,7 +19,7 @@ export const ROLE_OPTIONS = [
 export const ROLE_COLORS = {
   [ROLES.DEV]: '#8b5cf6',
   [ROLES.ADMIN]: '#ef4444',
-  [ROLES.ORGANIZER]: '#f59e0b',
+  [ROLES.ORGANIZER]: '#10b981',
   [ROLES.ATTENDEE]: '#2563eb',
 };
 
@@ -336,3 +336,23 @@ export const NAV_GROUPS = [
  * PROFILE_MENU — items shown in the avatar dropdown.
  */
 export const PROFILE_MENU = [{ to: '/profile', icon: User, label: 'Profile' }];
+// ====== END OF NAVBAR CONSTANTS =====
+
+//==== START OF USERS PAGE CONSTANTS ====
+export const ROLE_FILTERS = [
+  { value: '', label: 'All Roles' },
+  { value: ROLES.ATTENDEE, label: 'Attendees' },
+  { value: ROLES.ORGANIZER, label: 'Organizers' },
+  { value: ROLES.ADMIN, label: 'Admins' },
+];
+
+export const PER_PAGE_OPTIONS = [20, 50, 100];
+//==== END USERS PAGE CONSTANTS ====
+
+
+export const GRADIENTS = [
+  'from-blue-600 to-indigo-700',
+  'from-amber-500 to-orange-600',
+  'from-emerald-500 to-teal-600',
+  'from-rose-500 to-pink-600',
+];
