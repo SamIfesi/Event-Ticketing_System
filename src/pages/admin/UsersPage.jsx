@@ -20,23 +20,11 @@ import Sidebar from '../../components/layout/Sidebar';
 import Footer from '../../components/layout/Footer';
 import Pagination from '../../components/ui/Pagination';
 import { ConfirmModal } from '../../components/ui/Modal';
-
-// ── Constants ─────────────────────────────────────────────────
-const ROLE_FILTERS = [
-  { value: '', label: 'All Roles' },
-  { value: ROLES.ATTENDEE, label: 'Attendees' },
-  { value: ROLES.ORGANIZER, label: 'Organizers' },
-  { value: ROLES.ADMIN, label: 'Admins' },
-];
-
-const PER_PAGE_OPTIONS = [20, 50, 100];
-
-const ROLE_COLORS = {
-  [ROLES.DEV]: '#8b5cf6',
-  [ROLES.ADMIN]: '#ef4444',
-  [ROLES.ORGANIZER]: '#10b981',
-  [ROLES.ATTENDEE]: '#2563eb',
-};
+import {
+  ROLE_COLORS,
+  ROLE_FILTERS,
+  PER_PAGE_OPTIONS,
+} from '../../config/constants';
 
 // ── Mini stat card ────────────────────────────────────────────
 // Values here come from the stats API (platform-wide, not per-page)
@@ -281,7 +269,7 @@ export default function UsersPage() {
   // Range label e.g. "Showing 21–40 of 183"
   const rangeStart = Math.min((usersPage - 1) * currentLimit + 1, total);
   const rangeEnd = Math.min(usersPage * currentLimit, total);
-  
+
   const totalUsers = usersPagination?.total ?? 0;
   const attendeeCount = (users ?? []).filter(
     (u) => u.role === ROLES.ATTENDEE
