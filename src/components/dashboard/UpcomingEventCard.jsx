@@ -1,17 +1,12 @@
+import { Link } from 'react-router-dom';
+import Badge from '../ui/Badge';
 import {
   formatShortDate,
   formatTime,
   isEventPast,
 } from '../../utils/formatDate';
 import { Clock, MapPin } from 'lucide-react';
-
-const GRADIENTS = [
-  'from-blue-600 to-indigo-700',
-  'from-amber-500 to-orange-600',
-  'from-emerald-500 to-teal-600',
-  'from-rose-500 to-pink-600',
-];
-
+import { GRADIENTS } from '../../constants';
 
 export default function UpcomingEventCard({ booking, index }) {
   const event = booking?.event ?? booking;
