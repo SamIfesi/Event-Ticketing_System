@@ -7,17 +7,17 @@ const OrganizerService = {
   },
 
   async createEvent(eventData){
-    const response = await api.post('events', eventData);
+    const response = await api.post('/events', eventData);
    return response.data.data; // returns {event} 
   },
 
   async updateEvent(id, eventData){
-    const response = await api.put(`events/${id}`, eventData);
+    const response = await api.put(`/events/${id}`, eventData);
     return response.data.data; // returns {event}
   },
 
   async deleteEvent(id){
-    const response = await api.delete(`events/${id}`);
+    const response = await api.delete(`/events/${id}`);
     return response.data; // returns {success, message: 'Event deleted successfully'}
   },
 
@@ -26,7 +26,7 @@ const OrganizerService = {
     return response.data.data; // returns {bookings: []}
   },
 
-  async getCheckList(eventId){
+  async getCheckinList(eventId){
     const response = await api.get(`/organizers/events/${eventId}/checkins`);
     return response.data.data; // returns {summary: {total, checked_in, remaining}, tickets: []}
   }
