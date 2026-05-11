@@ -8,6 +8,7 @@ export const useAuthStore = create(
       user: null,
       token: null,
       isVerified: false,
+      isLoggingOut: false,
 
       // Called after successful login or register
       setAuth: ({ user, token, isVerified }) =>
@@ -21,7 +22,16 @@ export const useAuthStore = create(
         })),
 
       // Called on logout or 401 from api.js
-      clearAuth: () => set({ user: null, token: null, isVerified: false }),
+      clearAuth: () => {
+        localStorage.removeItem(STORAGE_KEY.AUTH);
+        set({
+          user: null,
+          token: null,
+          isVerified: false,
+        });
+      },
+
+      setLoggingOut: () => set({ isLoggingOut: true }),
     }),
     {
       name: STORAGE_KEY.AUTH,
