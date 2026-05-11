@@ -6,7 +6,7 @@ import {
   isEventPast,
 } from '../../utils/formatDate';
 import { Clock, MapPin } from 'lucide-react';
-import { GRADIENTS } from '../../constants';
+import { GRADIENTS } from '../../config/constants';
 
 export default function UpcomingEventCard({ booking, index }) {
   const event = booking?.event ?? booking;
