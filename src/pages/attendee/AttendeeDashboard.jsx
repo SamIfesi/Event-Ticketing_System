@@ -241,7 +241,7 @@ export default function AttendeeDashboard() {
             ) : nextEvents.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {nextEvents.map((booking, index) => (
-                  <UpcomingEventCards
+                  <UpcomingEventCard
                     key={booking.id}
                     booking={booking}
                     index={index}
