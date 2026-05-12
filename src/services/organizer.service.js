@@ -22,7 +22,7 @@ const OrganizerService = {
   },
 
   async getEventBookings(eventId){
-    const response = await api.get(`/organizers/events/${eventId}/bookings`);
+    const response = await api.get(`/organizer/events/${eventId}/bookings`);
     return response.data.data; // returns {bookings: []}
   },
 
