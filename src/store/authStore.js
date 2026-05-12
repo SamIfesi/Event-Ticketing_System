@@ -14,7 +14,7 @@ export const useAuthStore = create(
       setHasHydrated: (val) => set({ _hasHydrated: val }),
 
       setAuth: ({ user, token, isVerified }) =>
-        set({ user, token, isVerified: Boolean(isVerified) }),
+        set({ user, token, isVerified: Boolean(isVerified), isLoggingOut: false}),
 
       setEmailVerified: () =>
         set((state) => ({
@@ -24,7 +24,7 @@ export const useAuthStore = create(
 
       clearAuth: () => {
         localStorage.removeItem(STORAGE_KEY.AUTH);
-        set({ user: null, token: null, isVerified: false });
+        set({ user: null, token: null, isVerified: false, isLoggingOut: false });
       },
 
       setLoggingOut: () => set({ isLoggingOut: true }),
