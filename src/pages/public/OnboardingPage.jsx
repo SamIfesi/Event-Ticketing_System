@@ -144,7 +144,7 @@ export default function OnboardingPage() {
       onTouchEnd={onTouchEnd}
     >
       {/* ── Phone frame wrapper (centered on desktop, full on mobile) */}
-      <div className="w-full flex flex-col relative overflow-hidden ">
+      <div className="w-full max-w-5xl flex flex-col relative overflow-hidden ">
         {/* ── Top bar */}
         <div className="flex items-center justify-between px-6 pt-8 pb-2 z-10">
           {/* Logo mark */}
