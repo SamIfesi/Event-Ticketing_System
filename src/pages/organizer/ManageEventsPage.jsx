@@ -257,7 +257,7 @@ function EmptyState({ filtered }) {
       </div>
       {!filtered && (
         <Link
-          to="/organizer/events/create"
+          to="/organizer/create/event"
           className="flex items-center gap-2 h-11 px-5 bg-accent hover:bg-accent-hover text-white text-sm font-semibold rounded-btn transition-colors"
         >
           <PlusCircle size={15} strokeWidth={2.5} /> Create Event
