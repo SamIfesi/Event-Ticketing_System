@@ -15,6 +15,7 @@ import {
   BarChart3,
 } from 'lucide-react';
 import { useEvents } from '../../hooks/useEvents';
+import { useBookings } from '../../hooks/useBookings';
 import { useAuthStore } from '../../store/authStore';
 import { useUiStore } from '../../store/uiStore';
 import {
@@ -28,7 +29,7 @@ import Button from '../../components/ui/Button';
 import Sidebar from '../../components/layout/Sidebar';
 import Navbar from '../../components/layout/Navbar';
 import { TicketTypeSelector } from '../../components/events/TicketTypeSelector';
-import {ROLES} from '../../config/constants'
+import { ROLES } from '../../config/constants';
 
 // ── Page skeleton ─────────────────────────────────────────────
 function PageSkeleton() {
@@ -169,9 +170,10 @@ export default function EventDetailPage() {
     role
   );
 
-  const toastInfo = useUiStore((s) => s.toastInfo);  
+  const toastInfo = useUiStore((s) => s.toastInfo);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { event, eventLoading, eventError, fetchEvent } = useEvents();
+  const { initiateBooking, payLoading } = useBookings();
 
   useEffect(() => {
     if (id) fetchEvent(id);
@@ -185,12 +187,13 @@ export default function EventDetailPage() {
     event?.ticket_types?.length > 0 &&
     event.ticket_types.every((tt) => tt.quantity - tt.quantity_sold <= 0);
 
-  function handleSelectTicket(ticketType) {
+  function handleSelectTicket({ ticketType, quantity }) {
     if (!isLoggedIn) {
       navigate('/login', { state: { from: `/events/${id}` } });
       return;
     }
-    toastInfo(`Booking flow coming soon! You selected: ${ticketType.name}`);
+    const data = initiateBooking({ ticketTypeId: ticketType.id, quantity });
+    if (data?.authorization_url) window.location.href = data.authorization_url;
   }
 
   function handleShare() {
@@ -487,10 +490,11 @@ export default function EventDetailPage() {
                     {event.ticket_types && event.ticket_types.length > 0 ? (
                       <TicketTypeSelector
                         ticketTypes={event.ticket_types}
-                        disabled={isPast || event.status !== 'published'}
-                        onSelect={({ ticketType, quantity }) =>
-                          handleSelectTicket(ticketType, quantity)
+                        disabled={
+                          isPast || event.status !== 'published' || payLoading
                         }
+                        onSelect={handleSelectTicket}
+                        loading={payLoading}
                       />
                     ) : (
                       <div className="text-center py-6">
