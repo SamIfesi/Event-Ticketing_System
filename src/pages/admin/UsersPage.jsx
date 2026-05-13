@@ -346,13 +346,13 @@ export default function UsersPage() {
           />
           <MiniStat
             icon={UserPlus}
-            label="Admins"
+            label="Active Users"
             value={statsLoading ? '—' : activeCount.toLocaleString()}
             color="#16ddd3"
           />
           <MiniStat
             icon={UserPlus}
-            label="Admins"
+            label="Suspended Users"
             value={statsLoading ? '—' : suspendedCount.toLocaleString()}
             color="#e41d1d"
           />
