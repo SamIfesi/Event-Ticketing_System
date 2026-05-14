@@ -13,7 +13,7 @@
 // The hook also syncs the auth store after approval so the Zustand user
 // object reflects the new role without requiring a page refresh.
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import OrganizerApplicationService from '../services/orgApplication.service';
 import { useUiStore } from '../store/uiStore';
@@ -48,6 +48,10 @@ export function useOrganizerApplication() {
   );
   const statusFilter = searchParams.get('status') || 'pending';
 
+  // Track whether we're in the middle of a mutation so the
+  // auto-fetch effect doesn't undo an optimistic removal.
+  const mutatingRef = useRef(false);
+
   function resetErrors() {
     setError(null);
     setFieldErrors({});
@@ -55,22 +59,18 @@ export function useOrganizerApplication() {
 
   function extractError(err) {
     const data = err?.response?.data;
-  
+
     if (data?.errors) {
       setFieldErrors(data.errors);
-  
-      // Extract real messages
       const messages = Object.values(data.errors);
-      const combined = messages.join("\n");
-  
+      const combined = messages.join('\n');
       setError(combined);
       return combined;
     }
-  
+
     const msg =
       data?.message ??
       'Something went wrong. Failed to submit application, please try again.';
-  
     setError(msg);
     return msg;
   }
@@ -84,7 +84,8 @@ export function useOrganizerApplication() {
     } catch (err) {
       const status = err?.response?.status;
       if (status !== 404) {
-        const msg = err?.response?.data?.message ?? 'Failed to load your application.';
+        const msg =
+          err?.response?.data?.message ?? 'Failed to load your application.';
         toastError(msg);
       }
       setMyApplication(null);
@@ -122,55 +123,78 @@ export function useOrganizerApplication() {
   );
 
   // ── Admin: fetch all applications ─────────────────────────────
+  // NOTE: this is intentionally NOT in a useCallback that changes with
+  // page/statusFilter — callers that need the latest data should call
+  // fetchApplications() explicitly.  The auto-fetch effect below
+  // reads page/statusFilter directly from the closure each time it runs.
   const fetchApplications = useCallback(async () => {
+    // Don't stomp on an in-flight mutation's optimistic update
+    if (mutatingRef.current) return;
+
     setApplicationsLoading(true);
     try {
+      const currentPage = parseInt(
+        new URLSearchParams(window.location.search).get('page') ||
+          PAGINATION.DEFAULT_PAGE,
+        10
+      );
+      const currentStatus =
+        new URLSearchParams(window.location.search).get('status') || 'pending';
+
       const data = await OrganizerApplicationService.getApplications({
-        page,
-        status: statusFilter,
+        page: currentPage,
+        status: currentStatus,
         limit: PAGINATION.DEFAULT_PER_PAGE,
       });
       setApplications(data.applications);
       setApplicationsPagination(data.pagination);
     } catch (err) {
-      const msg = err?.response?.data?.message ?? 'Failed to load applications.';
+      const msg =
+        err?.response?.data?.message ?? 'Failed to load applications.';
       toastError(msg);
     } finally {
       setApplicationsLoading(false);
     }
-  }, [page, statusFilter]);
+  }, []); // stable reference — never changes
 
+  // Auto-fetch when page or statusFilter URL params change.
+  // Using a separate effect that reads the params directly keeps
+  // fetchApplications's reference stable (avoids re-fetch loops).
   useEffect(() => {
-    // Only auto-fetch for admin when params are available
-    if (searchParams.has('status') || searchParams.has('page')) {
-      fetchApplications();
-    }
-  }, [fetchApplications]);
+    fetchApplications();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, statusFilter]);
 
   // ── Admin: approve ────────────────────────────────────────────
   const approveApplication = useCallback(async (id) => {
     setLoading(true);
     setMutating(true);
+    mutatingRef.current = true;
     try {
       const data = await OrganizerApplicationService.approveApplication(id);
-      toastSuccess(data.message_hint ?? 'Application approved. User is now an organizer.');
-      // Remove from pending list
+      toastSuccess(
+        data.message_hint ?? 'Application approved. User is now an organizer.'
+      );
+      // Optimistically remove from the list
       setApplications((prev) => prev.filter((a) => a.id !== id));
     } catch (err) {
-      const msg = err?.response?.data?.message ?? 'Failed to approve application.';
+      const msg =
+        err?.response?.data?.message ?? 'Failed to approve application.';
       toastError(msg);
     } finally {
       setMutating(false);
       setLoading(false);
+      mutatingRef.current = false;
     }
   }, []);
 
   // ── Admin: reject ─────────────────────────────────────────────
   const rejectApplication = useCallback(async (id) => {
-    setLoading(true)
+    setLoading(true);
     setMutating(true);
+    mutatingRef.current = true;
     try {
-       const data = await OrganizerApplicationService.rejectApplication(id);
+      const data = await OrganizerApplicationService.rejectApplication(id);
       toastSuccess(data.message_hint ?? 'Application rejected.');
       setApplications((prev) => prev.filter((a) => a.id !== id));
     } catch (err) {
@@ -179,7 +203,8 @@ export function useOrganizerApplication() {
       );
     } finally {
       setMutating(false);
-      setLoading(false)
+      setLoading(false);
+      mutatingRef.current = false;
     }
   }, []);
 
