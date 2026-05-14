@@ -36,6 +36,7 @@ function validateStep(step, form) {
   }
   if (step === 2) {
     if (!form.start_date) errors.push('Start date is required.');
+    if (!form.end_date) errors.push('End date is required.');
   }
   if (step === 3) {
     const hasInvalid = form.ticket_types.some(
@@ -126,7 +127,7 @@ export default function CreateEventPage() {
         <StepIndicator current={currentStep} />
 
         {/* Step content card */}
-        <div className="bg-card border border-border rounded-card p-2 sm:p-8 mb-6">
+        <div className="md:bg-card md:border md:border-border md:rounded-card  md:p-8 mb-6 p-2">
           {currentStep === 1 && (
             <StepBasicInfo
               form={form}
@@ -175,7 +176,7 @@ export default function CreateEventPage() {
             <button
               type="button"
               onClick={goNext}
-              className="flex items-center gap-2 h-12 px-5 bg-accent hover:bg-accent-hover text-white text-sm font-semibold rounded-btn transition-colors active:scale-[.98]"
+              className="flex items-center justify-center gap-2 h-12 w-full px-5 bg-accent hover:bg-accent-hover text-white text-sm  font-semibold rounded-btn transition-colors active:scale-[.98]"
             >
               Continue
               <ArrowRight size={15} strokeWidth={2.5} />
