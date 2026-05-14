@@ -24,7 +24,7 @@ export const useAuthStore = create(
 
       clearAuth: () => {
         localStorage.removeItem(STORAGE_KEY.AUTH);
-        set({ user: null, token: null, isVerified: false, isLoggingOut: false });
+        set({ user: null, token: null, isVerified: false });
       },
 
       setLoggingOut: () => set({ isLoggingOut: true }),
