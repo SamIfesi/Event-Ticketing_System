@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   CheckCircle2,
   XCircle,
@@ -6,11 +6,9 @@ import {
   Mic2,
   Phone,
   Calendar,
-  ChevronDown,
   ShieldCheck,
   RefreshCw,
   FileText,
-  Users,
   Eye,
   X,
 } from 'lucide-react';
@@ -31,15 +29,11 @@ const STATUS_TABS = [
 
 // ── Application Detail Modal ──────────────────────────────────
 function ApplicationDetailModal({ application, isOpen, onClose, onApprove, onReject, mutating }) {
-  const [confirmAction, setConfirmAction] = useState(null); // 'approve' | 'reject'
+  const [confirmAction, setConfirmAction] = useState(null);
 
   if (!application) return null;
 
   const isPending = application.status === 'pending';
-
-  function handleAction(action) {
-    setConfirmAction(action);
-  }
 
   function handleConfirm() {
     if (confirmAction === 'approve') onApprove(application.id);
@@ -100,24 +94,9 @@ function ApplicationDetailModal({ application, isOpen, onClose, onApprove, onRej
 
                 {/* Details grid */}
                 <div className="grid grid-cols-2 gap-3">
-                  <DetailItem
-                    icon={Mic2}
-                    label="Organisation"
-                    value={application.org_name}
-                    color="#2563eb"
-                  />
-                  <DetailItem
-                    icon={FileText}
-                    label="Event Type"
-                    value={application.event_type}
-                    color="#8b5cf6"
-                  />
-                  <DetailItem
-                    icon={Phone}
-                    label="Phone"
-                    value={application.phone}
-                    color="#10b981"
-                  />
+                  <DetailItem icon={Mic2} label="Organisation" value={application.org_name} color="#2563eb" />
+                  <DetailItem icon={FileText} label="Event Type" value={application.event_type} color="#8b5cf6" />
+                  <DetailItem icon={Phone} label="Phone" value={application.phone} color="#10b981" />
                   <DetailItem
                     icon={Calendar}
                     label="Applied"
@@ -141,7 +120,7 @@ function ApplicationDetailModal({ application, isOpen, onClose, onApprove, onRej
               {isPending && (
                 <div className="px-5 pb-5 pt-4 border-t border-border flex items-center gap-3">
                   <button
-                    onClick={() => handleAction('reject')}
+                    onClick={() => setConfirmAction('reject')}
                     disabled={mutating}
                     className="flex-1 h-10 flex items-center justify-center gap-2 border border-error/30 text-error text-sm font-semibold rounded-btn hover:bg-error/10 transition-colors disabled:opacity-50"
                   >
@@ -149,7 +128,7 @@ function ApplicationDetailModal({ application, isOpen, onClose, onApprove, onRej
                     Reject
                   </button>
                   <button
-                    onClick={() => handleAction('approve')}
+                    onClick={() => setConfirmAction('approve')}
                     disabled={mutating}
                     className="flex-1 h-10 flex items-center justify-center gap-2 bg-success text-white text-sm font-semibold rounded-btn hover:opacity-90 transition-opacity disabled:opacity-50"
                   >
@@ -188,9 +167,9 @@ function ApplicationDetailModal({ application, isOpen, onClose, onApprove, onRej
 // ── Status pill ───────────────────────────────────────────────
 function StatusPill({ status }) {
   const config = {
-    pending: { label: 'Pending', bg: 'bg-warning/10', text: 'text-warning', dot: 'bg-warning' },
+    pending:  { label: 'Pending',  bg: 'bg-warning/10', text: 'text-warning', dot: 'bg-warning' },
     approved: { label: 'Approved', bg: 'bg-success/10', text: 'text-success', dot: 'bg-success' },
-    rejected: { label: 'Rejected', bg: 'bg-error/10', text: 'text-error', dot: 'bg-error' },
+    rejected: { label: 'Rejected', bg: 'bg-error/10',   text: 'text-error',   dot: 'bg-error'   },
   };
   const c = config[status] ?? config.pending;
   return (
@@ -226,14 +205,12 @@ function ApplicationCard({ application, onView, onApprove, onReject, mutating })
   return (
     <div className="bg-card border border-border rounded-card p-5 hover:border-accent/30 hover:shadow-md transition-all duration-200">
       <div className="flex items-start gap-4">
-        {/* Avatar */}
         <div className="w-11 h-11 rounded-full bg-accent-text border border-accent-border flex items-center justify-center shrink-0">
           <span className="text-sm font-black text-accent">
             {application.user_name?.charAt(0)?.toUpperCase() ?? '?'}
           </span>
         </div>
 
-        {/* Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
@@ -260,14 +237,12 @@ function ApplicationCard({ application, onView, onApprove, onReject, mutating })
         </div>
       </div>
 
-      {/* Reason preview */}
       {application.reason && (
         <p className="mt-3 text-xs text-secondary leading-relaxed line-clamp-2 pl-[60px]">
           "{application.reason}"
         </p>
       )}
 
-      {/* Actions */}
       <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
         <button
           onClick={() => onView(application)}
@@ -338,9 +313,9 @@ function SkeletonCard() {
 // ── Empty state ───────────────────────────────────────────────
 function EmptyState({ status }) {
   const config = {
-    pending: { icon: Clock, label: 'No pending applications', sub: 'New organizer applications will appear here for review.' },
+    pending:  { icon: Clock,        label: 'No pending applications',  sub: 'New organizer applications will appear here for review.' },
     approved: { icon: CheckCircle2, label: 'No approved applications', sub: 'Approved applications will appear here.' },
-    rejected: { icon: XCircle, label: 'No rejected applications', sub: 'Rejected applications will appear here.' },
+    rejected: { icon: XCircle,      label: 'No rejected applications', sub: 'Rejected applications will appear here.' },
   };
   const c = config[status] ?? config.pending;
   const Icon = c.icon;
@@ -380,10 +355,9 @@ export default function OrgApplicationsPage() {
     rejectApplication,
   } = useOrganizerApplication();
 
-  // Trigger fetch when tab/page changes
-  useEffect(() => {
-    fetchApplications();
-  }, [fetchApplications]);
+  // ⚠️  No extra useEffect here — the hook's own effect handles fetching
+  // whenever page/statusFilter change. Adding another one here was the
+  // cause of the re-fetch loop that restored items after mutations.
 
   function handleView(app) {
     setSelectedApp(app);
@@ -400,11 +374,7 @@ export default function OrgApplicationsPage() {
     setConfirmReject(null);
   }
 
-  // Counts per tab from pagination (rough)
   const total = applicationsPagination?.total ?? 0;
-
-  const activeTab =
-    STATUS_TABS.find((t) => t.value === statusFilter) ?? STATUS_TABS[0];
 
   return (
     <div className="flex flex-col min-h-screen bg-main-bg">
@@ -417,9 +387,7 @@ export default function OrgApplicationsPage() {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <ShieldCheck size={14} className="text-accent" />
-              <span className="text-xs font-bold text-accent uppercase tracking-widest">
-                Admin
-              </span>
+              <span className="text-xs font-bold text-accent uppercase tracking-widest">Admin</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-black text-primary tracking-tight">
               Organizer Applications
@@ -435,10 +403,7 @@ export default function OrgApplicationsPage() {
             disabled={applicationsLoading}
             className="self-start sm:self-auto flex items-center gap-2 h-10 px-4 border border-border rounded-btn text-sm font-medium text-secondary hover:text-primary hover:border-accent/40 transition-colors disabled:opacity-50"
           >
-            <RefreshCw
-              size={14}
-              className={applicationsLoading ? 'animate-spin' : ''}
-            />
+            <RefreshCw size={14} className={applicationsLoading ? 'animate-spin' : ''} />
             Refresh
           </button>
         </div>
