@@ -20,7 +20,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-start justify-center bg-main-bg px-6 py-12">
-      <div className="w-full max-w-[26.25rem]">
+      <div className="w-full max-w-105">
         <div className="flex flex-col items-start mb-8">
           <img src={logo} alt="Ticketer Logo" className="mb-8 self-center" />
           <h1 className="text-3xl font-bold text-primary tracking-tight">
