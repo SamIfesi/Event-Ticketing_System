@@ -237,7 +237,7 @@ export function DateInfo({ form, setForm, fieldErrors }) {
 // ── Ticket type row ───────────────────────────────────────────
 export function TicketTypeRow({ tt, index, onChange, onRemove }) {
   return (
-    <div className="relative bg-main-bg border border-border rounded-card p-4 flex flex-col gap-3">
+    <div className="relative md:bg-main-bg border border-border rounded-card p-4 flex flex-col gap-3">
       {index > 0 && (
         <button
           type="button"
@@ -380,7 +380,7 @@ export function StepTickets({ form, setForm }) {
         </p>
       </div>
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-6">
         {form.ticket_types.map((tt, i) => (
           <TicketTypeRow
             key={i}
