@@ -186,7 +186,6 @@ export const DATE_OPTIONS = [
 ];
 // === END OF BUTTON CONSTANTS ===
 
-
 import {
   Home,
   Search,
@@ -200,6 +199,10 @@ import {
   ShieldCheck,
   Users,
   ClipboardList,
+  FileText,
+  Send,
+  Rocket,
+  ClipboardClock,
 } from 'lucide-react';
 
 /**
@@ -349,10 +352,54 @@ export const ROLE_FILTERS = [
 export const PER_PAGE_OPTIONS = [20, 50, 100];
 //==== END USERS PAGE CONSTANTS ====
 
-
+// === CREATE EVENT PAGE ====
 export const GRADIENTS = [
   'from-blue-600 to-indigo-700',
   'from-amber-500 to-orange-600',
   'from-emerald-500 to-teal-600',
   'from-rose-500 to-pink-600',
 ];
+
+export const STEPS = [
+  { id: 1, label: 'Basic Info', icon: FileText },
+  { id: 2, label: 'Date', icon: CalendarDays },
+  { id: 3, label: 'Tickets', icon: Ticket },
+  { id: 4, label: 'Publish', icon: Send },
+];
+
+export const EMPTY_TICKET = {
+  name: '',
+  price: 0,
+  quantity: '',
+  description: '',
+  sales_end_at: '',
+};
+
+export const DEFAULT_FORM = {
+  title: '',
+  description: '',
+  category_id: '',
+  location: '',
+  banner_image: '',
+  start_date: '',
+  end_date: '',
+  ticket_types: [{ ...EMPTY_TICKET }],
+  status: 'draft',
+};
+
+export const OPTIONS = [
+  {
+    value: 'draft',
+    label: 'Save as Draft',
+    description:
+      'Hidden from the public. You can publish later from your events list.',
+    icon: ClipboardClock,
+  },
+  {
+    value: 'published',
+    label: 'Publish Now',
+    description:
+      'Immediately visible to attendees and open for ticket purchases.',
+    icon: Rocket,
+  },
+]
