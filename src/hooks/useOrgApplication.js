@@ -16,10 +16,16 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import OrganizerApplicationService from '../services/orgApplication.service';
+import AuthService from '../services/auth.service';
 import { useUiStore } from '../store/uiStore';
+import { useAuthStore } from '../store/authStore';
 import { PAGINATION } from '../config/constants';
 
 export function useOrganizerApplication() {
+  const setAuth = useAuthStore((state) => state.setAuth);
+  const token = useAuthStore((state) => state.token);
+  const isVerified = useAuthStore((state) => state.isVerified);
+
   const toastSuccess = useUiStore((state) => state.toastSuccess);
   const toastError = useUiStore((state) => state.toastError);
 
@@ -80,20 +86,45 @@ export function useOrganizerApplication() {
     setMyApplicationLoading(true);
     try {
       const data = await OrganizerApplicationService.getMyApplication();
-      setMyApplication(data.application ?? null);
+      const application = data.application ?? null;
+      setMyApplication(application);
+
+      if (application?.status === 'approved') {
+        try {
+          const myData = await AuthService.me();
+          setAuth({
+            user: myData.user,
+            token,
+            isVerified: Boolean(myData.user?.email_verified),
+          });
+        } catch {}
+      }
     } catch (err) {
       const status = err?.response?.status;
-      if (status !== 404) {
-        const msg =
-          err?.response?.data?.message ?? 'Failed to load your application.';
-        toastError(msg);
+      if (status === 403) {
+        try {
+          const myData = await AuthService.me();
+          setAuth({
+            user: myData.user,
+            token,
+            isVerified: Boolean(myData.user?.email_verified),
+          });
+        } catch {
+          setMyApplication({ status: 'approved' });
+        }
+      } else if (status !== 404) {
+        toastError(
+          err?.response?.data?.message ?? 'Failed to load your application.'
+        );
+        setMyApplication(null);
+      } else {
+        setMyApplication(null);
       }
-      setMyApplication(null);
     } finally {
       setMyApplicationLoading(false);
       setMyApplicationChecked(true);
     }
-  }, []);
+  }, [token, isVerified]);
 
   // ── Submit application ────────────────────────────────────────
   const submitApplication = useCallback(
