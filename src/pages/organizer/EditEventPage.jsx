@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Pencil } from 'lucide-react';
 import { useOrganizerEvents } from '../../hooks/useOrganizerEvents';
@@ -32,27 +32,28 @@ export default function EditEventPage() {
   }, [id]);
 
   // Map the API event object to EventForm's expected shape
-  const initialValues = event
-    ? {
-        title: event.title ?? '',
-        description: event.description ?? '',
-        category_id: event.category_id ? String(event.category_id) : '',
-        location: event.location ?? '',
-        banner_image: event.banner_image ?? '',
-        start_date: toInputDate(event.start_date),
-        end_date: toInputDate(event.end_date),
-        total_tickets: event.total_tickets ?? '',
-        status: event.status ?? 'draft',
-        ticket_types: (event.ticket_types ?? []).map((tt) => ({
-          id: tt.id,
-          name: tt.name ?? '',
-          price: tt.price ?? 0,
-          quantity: tt.quantity ?? '',
-          description: tt.description ?? '',
-          sales_end_at: toInputDate(tt.sales_end_at),
-        })),
-      }
-    : undefined;
+  const initialValues = useMemo(() => {
+    if (!event) return undefined;
+    return {
+      title: event.title ?? '',
+      description: event.description ?? '',
+      category_id: event.category_id ? String(event.category_id) : '',
+      location: event.location ?? '',
+      banner_image: event.banner_image ?? '',
+      start_date: toInputDate(event.start_date),
+      end_date: toInputDate(event.end_date),
+      total_tickets: event.total_tickets ?? '',
+      status: event.status ?? 'draft',
+      ticket_types: (event.ticket_types ?? []).map((tt) => ({
+        id: tt.id,
+        name: tt.name ?? '',
+        price: tt.price ?? 0,
+        quantity: tt.quantity ?? '',
+        description: tt.description ?? '',
+        sales_end_at: toInputDate(tt.sales_end_at),
+      })),
+    };
+  }, [event]);
 
   async function handleSubmit(formData) {
     await updateEvent(id, formData, {
