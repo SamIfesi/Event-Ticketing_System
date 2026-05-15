@@ -134,7 +134,14 @@ function TicketTypeRow({ tt, index, onChange, onRemove, disabled }) {
 }
 
 // ── Defaults ──────────────────────────────────────────────────
-const EMPTY_TICKET = { name: '', price: 0, quantity: '', description: '', sales_end_at: '' };
+const EMPTY_TICKET = { 
+  id: null,
+  name: '', 
+  price: 0, 
+  quantity: '', 
+  description: '', 
+  sales_end_at: '' 
+};
 
 const DEFAULT_VALUES = {
   title: '',
@@ -211,7 +218,6 @@ export default function EventForm({
 
   return (
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-8">
-
       {/* Top-level error */}
       {error && (
         <div className="flex items-start gap-2 p-3.5 bg-error/10 border border-error/20 rounded-card">
@@ -237,7 +243,9 @@ export default function EventForm({
         />
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-primary select-none">Description</label>
+          <label className="text-sm font-medium text-primary select-none">
+            Description
+          </label>
           <textarea
             value={form.description}
             onChange={(e) => set('description', e.target.value)}
@@ -257,7 +265,10 @@ export default function EventForm({
             Category <span className="text-muted font-normal">(optional)</span>
           </label>
           <div className="relative">
-            <Tag size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
+            <Tag
+              size={15}
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted pointer-events-none"
+            />
             <select
               value={form.category_id}
               onChange={(e) => set('category_id', e.target.value)}
@@ -266,10 +277,15 @@ export default function EventForm({
             >
               <option value="">Select a category…</option>
               {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>{cat.name}</option>
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
               ))}
             </select>
-            <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
+            <ChevronDown
+              size={14}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none"
+            />
           </div>
         </div>
 
@@ -286,7 +302,12 @@ export default function EventForm({
 
         {/* Banner image URL */}
         <Input
-          label={<>Banner image URL <span className="text-muted font-normal">(optional)</span></>}
+          label={
+            <>
+              Banner image URL{' '}
+              <span className="text-muted font-normal">(optional)</span>
+            </>
+          }
           type="url"
           placeholder="https://… (image link)"
           value={form.banner_image}
@@ -300,7 +321,9 @@ export default function EventForm({
             src={form.banner_image}
             alt="Banner preview"
             className="w-full h-40 object-cover rounded-card border border-border"
-            onError={(e) => { e.target.style.display = 'none'; }}
+            onError={(e) => {
+              e.target.style.display = 'none';
+            }}
           />
         )}
       </section>
@@ -314,7 +337,9 @@ export default function EventForm({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-primary select-none">Start date & time</label>
+            <label className="text-sm font-medium text-primary select-none">
+              Start date & time
+            </label>
             <input
               type="datetime-local"
               value={form.start_date}
@@ -328,7 +353,9 @@ export default function EventForm({
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-primary select-none">End date & time</label>
+            <label className="text-sm font-medium text-primary select-none">
+              End date & time
+            </label>
             <input
               type="datetime-local"
               value={form.end_date}
@@ -363,7 +390,8 @@ export default function EventForm({
         <div className="flex items-start gap-1.5 p-3 bg-accent-text border border-accent-border rounded-btn">
           <Info size={13} className="text-accent shrink-0 mt-0.5" />
           <p className="text-xs text-accent/80 leading-relaxed">
-            Total ticket capacity is the sum of all ticket type quantities. Set price to 0 for free tickets.
+            Total ticket capacity is the sum of all ticket type quantities. Set
+            price to 0 for free tickets.
           </p>
         </div>
 
@@ -388,7 +416,9 @@ export default function EventForm({
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-primary select-none">Status</label>
+          <label className="text-sm font-medium text-primary select-none">
+            Status
+          </label>
           <div className="relative">
             <select
               value={form.status}
@@ -399,7 +429,10 @@ export default function EventForm({
               <option value="draft">Draft — not visible to public</option>
               <option value="published">Published — live and bookable</option>
             </select>
-            <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
+            <ChevronDown
+              size={14}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none"
+            />
           </div>
           <p className="text-xs text-muted">
             You can always publish later from your events list.
