@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Pencil } from 'lucide-react';
 import { useOrganizerEvents } from '../../hooks/useOrganizerEvents';
 import { useEvents } from '../../hooks/useEvents';
@@ -17,7 +17,7 @@ function toInputDate(str) {
 
 export default function EditEventPage() {
   const { id } = useParams();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [categories, setCategories] = useState([]);
 
@@ -56,7 +56,10 @@ export default function EditEventPage() {
 
   async function handleSubmit(formData) {
     await updateEvent(id, formData, {
-      onSuccess: () => navigate('/organizer/events'),
+      onSuccess: () => {
+        // navigate('/organizer/events'),
+        fetchEvent(id);
+      },
     });
   }
 
@@ -75,7 +78,7 @@ export default function EditEventPage() {
             <ArrowLeft size={13} strokeWidth={2.5} /> My Events
           </Link>
           <span className="text-muted">/</span>
-          <span className="text-primary font-medium truncate max-w-[200px]">
+          <span className="text-primary font-medium truncate max-w-50">
             {eventLoading ? 'Loading…' : (event?.title ?? 'Edit Event')}
           </span>
         </div>
