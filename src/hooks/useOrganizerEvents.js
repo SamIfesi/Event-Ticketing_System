@@ -84,8 +84,8 @@ export function useOrganizerEvents() {
       const data = await OrganizerService.createEvent(eventData);
       toastSuccess('Event created successfully!');
       // Refresh my events list so the new event appears immediately
-      await fetchMyEvents();
       onSuccess?.(data.event);
+      await fetchMyEvents();
     } catch (err) {
       toastError(extractError(err));
     } finally {
