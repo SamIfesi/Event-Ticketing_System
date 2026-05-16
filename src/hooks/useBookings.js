@@ -43,25 +43,33 @@ export function useBookings() {
   // Creates a pending booking on the backend and stores the Paystack
   // details for the popup. Does NOT open the popup — the component does that.
   const initiateBooking = useCallback(async ({ ticketTypeId, quantity }) => {
-    setPayLoading(true);
-    setPayError(null);
-    setPendingBooking(null);
-    try {
-      const data = await BookingsService.createBooking({
-        ticketTypeId,
-        quantity,
-      });
-      setPendingBooking(data);
-      return data; // Component needs access_code to open the popup
-    } catch (err) {
-      const msg = err?.response?.data?.message ?? 'Could not initiate booking.';
-      setPayError(msg);
-      toastError(msg);
+  setPayLoading(true);
+  setPayError(null);
+  setPendingBooking(null);
+  try {
+    const data = await BookingsService.createBooking({
+      ticketTypeId,
+      quantity,
+    });
+
+    // Free ticket — already issued, skip Paystack popup
+    if (data.free) {
+      toastSuccess('Your free ticket has been issued!');
+      navigate(`/my-tickets`);
       return null;
-    } finally {
-      setPayLoading(false);
     }
-  }, []);
+
+    setPendingBooking(data);
+    return data;
+  } catch (err) {
+    const msg = err?.response?.data?.message ?? 'Could not initiate booking.';
+    setPayError(msg);
+    toastError(msg);
+    return null;
+  } finally {
+    setPayLoading(false);
+  }
+}, []);
 
   // ── Step 2: Confirm payment ───────────────────────────────────
   // Called from the Paystack popup's onSuccess callback.
