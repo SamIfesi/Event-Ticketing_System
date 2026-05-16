@@ -196,7 +196,7 @@ export default function AppRoutes() {
         }
       />
       <Route
-        path="/tickets/:id"
+        path="/ticket/:id"
         element={
           <ProtectedRoute>
             <TicketDetailPage />

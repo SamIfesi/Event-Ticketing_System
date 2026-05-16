@@ -141,7 +141,7 @@ export default function TicketDetailPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const { ticket, ticketLoading, ticketError, fetchTicket } = useTickets();
-  const toastInfo = useUiStore((s) => s.toastInfo);
+  // const toastInfo = useUiStore((s) => s.toastInfo);
   const toastSuccess = useUiStore((s) => s.toastSuccess);
 
   useEffect(() => {
@@ -234,7 +234,7 @@ export default function TicketDetailPage() {
           <div className="flex flex-col gap-5">
             {/* ── Event banner ────────────────────────────────── */}
             <div
-              className={`relative h-48 rounded-card overflow-hidden bg-gradient-to-br ${GRADIENTS[gradientIndex]}`}
+              className={`relative h-48 rounded-card overflow-hidden bg-linear-to-br ${GRADIENTS[gradientIndex]}`}
             >
               {ticket.banner_image && (
                 <img
@@ -243,7 +243,7 @@ export default function TicketDetailPage() {
                   className="w-full h-full object-cover"
                 />
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
 
               {/* Status badge */}
               <div className="absolute top-3 right-3">
