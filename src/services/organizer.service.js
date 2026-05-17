@@ -27,7 +27,7 @@ const OrganizerService = {
   },
 
   async getCheckinList(eventId){
-    const response = await api.get(`/organizers/events/${eventId}/checkins`);
+    const response = await api.get(`/organizer/events/${eventId}/checkins`);
     return response.data.data; // returns {summary: {total, checked_in, remaining}, tickets: []}
   }
 }
