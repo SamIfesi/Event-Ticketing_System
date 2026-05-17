@@ -29,7 +29,7 @@ import Button from '../../components/ui/Button';
 import Sidebar from '../../components/layout/Sidebar';
 import Navbar from '../../components/layout/Navbar';
 import { TicketTypeSelector } from '../../components/events/TicketTypeSelector';
-import { ROLES } from '../../config/constants';
+import { ROLES, PAYSTACK_PUBLIC_KEY } from '../../config/constants';
 
 // ── Page skeleton ─────────────────────────────────────────────
 function PageSkeleton() {
@@ -171,6 +171,7 @@ export default function EventDetailPage() {
   );
 
   const toastInfo = useUiStore((s) => s.toastInfo);
+  const cancelPayment = () => {};
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { event, eventLoading, eventError, fetchEvent } = useEvents();
   const { initiateBooking, payLoading } = useBookings();
@@ -187,13 +188,32 @@ export default function EventDetailPage() {
     event?.ticket_types?.length > 0 &&
     event.ticket_types.every((tt) => tt.quantity - tt.quantity_sold <= 0);
 
-  function handleSelectTicket({ ticketType, quantity }) {
+  async function handleSelectTicket({ ticketType, quantity }) {
     if (!isLoggedIn) {
       navigate('/login', { state: { from: `/events/${id}` } });
       return;
     }
-    const data = initiateBooking({ ticketTypeId: ticketType.id, quantity });
-    if (data?.authorization_url) window.location.href = data.authorization_url;
+    const data = await initiateBooking({
+      ticketTypeId: ticketType.id,
+      quantity,
+    });
+    if (!data) return;
+
+    const handler = window.PaystackPop.setup({
+      key: PAYSTACK_PUBLIC_KEY,
+      email: user.email,
+      amount: data.amount * 100, // convert to kobo
+      ref: data.reference,
+      access_code: data.access_code,
+      onClose: () => {
+        cancelPayment();
+        toastInfo('Payment cancelled');
+      },
+      callback: (response) => {
+        navigate(`/payment/callback?reference=${response.reference}`);
+      },
+    });
+    handler.openIframe();
   }
 
   function handleShare() {
@@ -252,7 +272,7 @@ export default function EventDetailPage() {
                 <ChevronRight size={12} className="text-muted" />
               </>
             )}
-            <span className="text-primary font-medium truncate max-w-[200px]">
+            <span className="text-primary font-medium truncate max-w-50">
               {event.title}
             </span>
           </div>
@@ -266,7 +286,7 @@ export default function EventDetailPage() {
         <>
           {/* Hero banner */}
           <div
-            className="relative w-full bg-gradient-to-br from-blue-600 to-indigo-800 overflow-hidden"
+            className="relative w-full bg-linear-to-br from-blue-600 to-indigo-800 overflow-hidden"
             style={{ height: '360px' }}
           >
             {event.banner_image ? (
@@ -289,7 +309,7 @@ export default function EventDetailPage() {
               </div>
             )}
             {event.banner_image && (
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent" />
             )}
             <div className="absolute top-4 left-4 flex items-center gap-2">
               {event.category_name && (
