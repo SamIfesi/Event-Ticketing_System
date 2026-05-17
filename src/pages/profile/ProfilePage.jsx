@@ -141,7 +141,7 @@ export default function ProfilePage() {
           </SettingsGroup>
 
           <p className="text-center text-xs text-muted pb-4">
-            Ticketer · Version 1.0.0
+            Ticketer · Version 1.0.1
           </p>
         </div>
       </main>
