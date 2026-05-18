@@ -7,12 +7,12 @@
 //   size     — pixel size (default 160)
 //   disabled — grays out the QR when ticket is used/cancelled
 
-export default function QRCodeDisplay({ url, size = 160, disabled = false }) {
+export default function QRCodeDisplay({ url, size = 160, disabled = false, style={} }) {
   if (!url) {
     return (
       <div
         className="flex items-center justify-center bg-border rounded-card"
-        style={{ width: size, height: size }}
+        style={{ width: size, height: size, ...style, }}
       >
         <span className="text-xs text-muted text-center px-2">
           QR not available
