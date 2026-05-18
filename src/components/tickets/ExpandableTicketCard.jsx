@@ -1,5 +1,8 @@
-// ExpandableTicketCard — ticket card with a toggle to reveal the QR code.
-// Replaces the old monolithic TicketCard for the MyTicketsPage grid.
+// ExpandableTicketCard — redesigned to match premium ticket aesthetic.
+//
+// Compact row: rounded gradient icon swatch, bold title, muted sub, pill badge (image 1)
+// Expanded: full ticket with rich banner, category pill, 2-col meta grid,
+//           dashed perforation with side notches, QR stub (image 2)
 //
 // Props:
 //   ticket — ticket object from the API
@@ -9,195 +12,384 @@ import { Link } from 'react-router-dom';
 import {
   Calendar,
   MapPin,
+  Ticket,
   QrCode,
-  ChevronDown,
-  ChevronUp,
   CheckCircle2,
   XCircle,
   Clock,
+  ChevronDown,
+  ChevronUp,
   ExternalLink,
+  Music,
+  Cpu,
+  Trophy,
+  Briefcase,
+  Utensils,
+  BookOpen,
+  Heart,
+  Star,
 } from 'lucide-react';
-import Badge from '../../components/ui/Badge';
 import QRCodeDisplay from '../../components/tickets/QRCodeDisplay';
 import { formatShortDate, formatTime } from '../../utils/formatDate';
 
-function StatusIcon({ status }) {
-  if (status === 'valid')
-    return (
-      <CheckCircle2 size={13} className="text-success" strokeWidth={2.5} />
-    );
-  if (status === 'used')
-    return <CheckCircle2 size={13} className="text-muted" strokeWidth={2.5} />;
-  if (status === 'cancelled' || status === 'expired')
-    return <XCircle size={13} className="text-error" strokeWidth={2.5} />;
-  return <Clock size={13} className="text-warning" strokeWidth={2.5} />;
+// ── Category icon map ─────────────────────────────────────────
+const CATEGORY_ICONS = {
+  music: Music,
+  technology: Cpu,
+  sports: Trophy,
+  business: Briefcase,
+  food: Utensils,
+  education: BookOpen,
+  health: Heart,
+  entertainment: Star,
+};
+
+// ── Gradient swatches for compact row icon ────────────────────
+const ICON_GRADIENTS = [
+  'linear-gradient(135deg, #3b5bdb, #7048e8)',
+  'linear-gradient(135deg, #c0392b, #e67e22)',
+  'linear-gradient(135deg, #087f5b, #2f9e44)',
+  'linear-gradient(135deg, #c2255c, #e64980)',
+  'linear-gradient(135deg, #1864ab, #1c7ed6)',
+  'linear-gradient(135deg, #5f3dc4, #845ef7)',
+];
+
+// ── Banner gradients matching the event category feel ─────────
+const BANNER_GRADIENTS = [
+  'linear-gradient(135deg, #1a1f2e 0%, #2c3e6b 50%, #3b5bdb 100%)',
+  'linear-gradient(135deg, #2d0a00 0%, #7c2d12 50%, #c2410c 100%)',
+  'linear-gradient(135deg, #052e16 0%, #14532d 50%, #16a34a 100%)',
+  'linear-gradient(135deg, #2d1b69 0%, #6d28d9 50%, #a855f7 100%)',
+  'linear-gradient(135deg, #0c1445 0%, #1e3a8a 50%, #2563eb 100%)',
+  'linear-gradient(135deg, #1a0a2e 0%, #6b21a8 50%, #a855f7 100%)',
+];
+
+function getGradientIndex(id) {
+  return (
+    parseInt(String(id ?? '0').replace(/\D/g, '') || '0', 10) %
+    ICON_GRADIENTS.length
+  );
 }
 
-export default function ExpandableTicketCard({ ticket }) {
-  const [qrOpen, setQrOpen] = useState(false);
+// ── Status helpers ────────────────────────────────────────────
+function getStatusStyle(status) {
+  switch (status) {
+    case 'valid':
+      return {
+        bg: 'bg-success/10',
+        text: 'text-success',
+        border: 'border-success/20',
+        dot: 'bg-success',
+        label: 'Valid',
+      };
+    case 'used':
+      return {
+        bg: 'bg-border',
+        text: 'text-muted',
+        border: 'border-border',
+        dot: 'bg-muted',
+        label: 'Used',
+      };
+    case 'cancelled':
+      return {
+        bg: 'bg-error/10',
+        text: 'text-error',
+        border: 'border-error/20',
+        dot: 'bg-error',
+        label: 'Cancelled',
+      };
+    case 'expired':
+      return {
+        bg: 'bg-border',
+        text: 'text-muted',
+        border: 'border-border',
+        dot: 'bg-muted',
+        label: 'Expired',
+      };
+    default:
+      return {
+        bg: 'bg-border',
+        text: 'text-muted',
+        border: 'border-border',
+        dot: 'bg-muted',
+        label: status ?? 'Unknown',
+      };
+  }
+}
 
+// ── Status pill ───────────────────────────────────────────────
+function StatusPill({ status, size = 'sm' }) {
+  const s = getStatusStyle(status);
+  const sizeClass = size === 'sm' ? 'text-xs px-3 py-1' : 'text-sm px-4 py-1.5';
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full border font-medium ${sizeClass} ${s.bg} ${s.text} ${s.border}`}
+    >
+      <span className={`w-1.5 h-1.5 rounded-full ${s.dot}`} />
+      {s.label}
+    </span>
+  );
+}
+
+// ── Category pill for banner ──────────────────────────────────
+function CategoryPill({ categoryName }) {
+  if (!categoryName) return null;
+  const key = categoryName.toLowerCase().split(' ')[0];
+  const Icon = CATEGORY_ICONS[key] ?? Ticket;
+  return (
+    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/30 backdrop-blur-sm border border-white/20 text-white text-xs font-medium mb-2">
+      <Icon size={11} strokeWidth={2} />
+      {categoryName}
+    </span>
+  );
+}
+
+// ── Perforation divider ───────────────────────────────────────
+function Perforation({ className = '' }) {
+  return (
+    <div
+      className={`relative flex items-center ${className}`}
+      style={{ margin: '0 -1px' }}
+    >
+      {/* Left notch */}
+      <div
+        className="w-5 h-5 rounded-full flex-shrink-0 bg-main-bg border border-border"
+        style={{ marginLeft: '-10px', zIndex: 1 }}
+      />
+      {/* Dashed line */}
+      <div
+        className="flex-1 border-t-2 border-dashed border-border"
+        style={{ margin: '0 4px' }}
+      />
+      {/* Right notch */}
+      <div
+        className="w-5 h-5 rounded-full flex-shrink-0 bg-main-bg border border-border"
+        style={{ marginRight: '-10px', zIndex: 1 }}
+      />
+    </div>
+  );
+}
+
+// ── Compact row (collapsed state) ────────────────────────────
+function CompactRow({ ticket, gradientIndex, onExpand, expanded }) {
   const event = ticket?.event ?? {};
-  const isValid = ticket?.status === 'valid';
+  const title = ticket?.event_title ?? event?.title ?? 'Event';
+  const sub = [
+    ticket?.ticket_type_name ?? 'General',
+    ticket?.event_start_date || event?.start_date
+      ? formatShortDate(ticket?.event_start_date ?? event?.start_date)
+      : null,
+  ]
+    .filter(Boolean)
+    .join(' · ');
+
+  return (
+    <button
+      onClick={onExpand}
+      className="w-full text-left flex items-center gap-4 p-4 bg-card border border-border rounded-card hover:border-accent/30 hover:shadow-sm transition-all duration-200 touch-manipulation group"
+    >
+      {/* Gradient icon swatch */}
+      <div
+        className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 shadow-sm"
+        style={{ background: ICON_GRADIENTS[gradientIndex] }}
+      >
+        <Ticket size={24} className="text-white" strokeWidth={1.75} />
+      </div>
+
+      {/* Info */}
+      <div className="flex-1 min-w-0">
+        <p className="text-base font-bold text-primary leading-snug truncate">
+          {title}
+        </p>
+        <p className="text-sm text-secondary mt-0.5 truncate">{sub}</p>
+      </div>
+
+      {/* Status pill + chevron */}
+      <div className="flex items-center gap-2 shrink-0">
+        <StatusPill status={ticket?.status} />
+        <div className="text-muted transition-transform duration-200 group-hover:text-primary">
+          {expanded ? (
+            <ChevronUp size={16} strokeWidth={2} />
+          ) : (
+            <ChevronDown size={16} strokeWidth={2} />
+          )}
+        </div>
+      </div>
+    </button>
+  );
+}
+
+// ── Expanded ticket card (image 2 style) ──────────────────────
+function ExpandedCard({ ticket, gradientIndex, onCollapse }) {
+  const event = ticket?.event ?? {};
+  // const isValid = ticket?.status === 'valid';
   const isUsed = ticket?.status === 'used';
   const isCancelled =
     ticket?.status === 'cancelled' || ticket?.status === 'expired';
-
-  const stripColor = isValid
-    ? 'bg-success'
-    : isUsed
-      ? 'bg-border'
-      : isCancelled
-        ? 'bg-error'
-        : 'bg-warning';
+  const title = ticket?.event_title ?? event?.title ?? 'Event';
+  const startDate = ticket?.event_start_date ?? event?.start_date;
+  const location = ticket?.event_location ?? event?.location;
 
   return (
-    <div
-      className={`bg-card border border-border rounded-card overflow-visible transition-all duration-200 hover:shadow-md ${
-        isCancelled ? 'opacity-60' : 'hover:border-accent/20'
-      }`}
-    >
-      {/* Status strip */}
-      <div className="overflow-hidden rounded-t-card">
-        <div className={`h-1 w-full ${stripColor}`} />
+    <div className="bg-card border border-accent/20 rounded-card overflow-hidden shadow-lg transition-all duration-300">
+      {/* ── Banner ── */}
+      <div
+        className="relative h-44 overflow-hidden"
+        style={{ background: BANNER_GRADIENTS[gradientIndex] }}
+      >
+        {event.banner_image && (
+          <img
+            src={event.banner_image}
+            alt={title}
+            className="absolute inset-0 w-full h-full object-cover opacity-50"
+          />
+        )}
+        {/* Gradient overlay — bottom-heavy */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 55%, transparent 100%)',
+          }}
+        />
+
+        {/* Collapse button */}
+        <button
+          onClick={onCollapse}
+          className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center text-white/80 hover:text-white hover:bg-black/50 transition-colors touch-manipulation"
+        >
+          <ChevronUp size={16} strokeWidth={2.5} />
+        </button>
+
+        {/* Category + title */}
+        <div className="absolute bottom-0 left-0 right-0 p-4">
+          <CategoryPill
+            categoryName={event.category_name ?? ticket?.category_name}
+          />
+          <h3 className="text-xl font-bold text-white leading-tight line-clamp-2">
+            {title}
+          </h3>
+        </div>
       </div>
 
-      <div className="p-4">
-        {/* Header row */}
-        <div className="flex items-start gap-3">
-          {/* Thumbnail */}
-          <div className="w-11 h-11 rounded-btn overflow-hidden bg-linear-to-br from-blue-500 to-indigo-700 shrink-0 flex items-center justify-center">
-            {event.banner_image ? (
-              <img
-                src={event.banner_image}
-                alt=""
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <span className="text-sm font-black text-white/60">
-                {(ticket?.event_title ?? event?.title ?? 'E').charAt(0)}
-              </span>
-            )}
-          </div>
-
-          {/* Title + badge */}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-2">
-              <div className="min-w-0">
-                <p className="text-sm font-bold text-primary line-clamp-1 leading-snug">
-                  {ticket?.event_title ?? event?.title ?? 'Event'}
-                </p>
-                <p className="text-xs text-muted mt-0.5">
-                  {ticket?.ticket_type_name ?? 'General'} ·{' '}
-                  <span className="font-mono">
-                    #{String(ticket?.id ?? 0).padStart(6, '0')}
-                  </span>
-                </p>
-              </div>
-              <Badge status={ticket?.status} size="sm" />
-            </div>
-          </div>
-        </div>
-
-        {/* Details */}
-        <div className="flex flex-wrap gap-x-4 gap-y-1.5 mt-3">
-          {(event.start_date ?? ticket?.event_start_date) && (
-            <div className="flex items-center gap-1.5 text-xs text-secondary">
-              <Calendar size={11} className="text-muted shrink-0" />
-              <span>
-                {formatShortDate(event.start_date ?? ticket?.event_start_date)}{' '}
-                · {formatTime(event.start_date ?? ticket?.event_start_date)}
-              </span>
-            </div>
-          )}
-          {(event.location ?? ticket?.event_location) && (
-            <div className="flex items-center gap-1.5 text-xs text-secondary">
-              <MapPin size={11} className="text-muted shrink-0" />
-              <span className="truncate max-w-40">
-                {event.location ?? ticket?.event_location}
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* Checked-in note */}
-        {isUsed && (ticket?.used_at ?? ticket?.checked_in_at) && (
-          <p className="mt-2 text-xs text-muted flex items-center gap-1">
-            <CheckCircle2 size={11} className="text-success" />
-            Checked in{' '}
-            {formatShortDate(ticket?.used_at ?? ticket?.checked_in_at)}
+      {/* ── Meta grid ── */}
+      <div className="px-5 pt-5 pb-4 grid grid-cols-2 gap-x-6 gap-y-4">
+        {/* Date */}
+        <div>
+          <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">
+            Date
           </p>
-        )}
-
-        {/* Perforation divider — overflow-visible so the circles show outside */}
-        <div className="relative my-4" style={{ overflow: 'visible' }}>
-          {/* Left notch */}
-          <div
-            className="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-main-bg border border-border"
-            style={{ left: '-24px' }}
-          />
-          <div className="border-t border-dashed border-border" />
-          <div
-            className="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-main-bg border border-border"
-            style={{ right: '-24px' }}
-          />
+          <p className="text-base font-semibold text-primary leading-snug">
+            {startDate ? formatShortDate(startDate) : '—'}
+          </p>
+          {startDate && (
+            <p className="text-sm text-secondary mt-0.5">
+              {formatTime(startDate)}
+            </p>
+          )}
         </div>
 
-        {/* Footer */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5">
-            <StatusIcon status={ticket?.status} />
-            <span className="text-xs font-semibold text-secondary capitalize">
-              {ticket?.status ?? 'Unknown'}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-3">
-            {isValid && (
-              <button
-                onClick={() => setQrOpen((v) => !v)}
-                className="flex items-center gap-1 text-xs font-semibold text-accent hover:text-accent-hover transition-colors touch-manipulation"
-              >
-                <QrCode size={13} strokeWidth={2} />
-                {qrOpen ? 'Hide QR' : 'Show QR'}
-                {qrOpen ? (
-                  <ChevronUp size={12} strokeWidth={2.5} />
-                ) : (
-                  <ChevronDown size={12} strokeWidth={2.5} />
-                )}
-              </button>
-            )}
-            <Link
-              to={`/ticket/${ticket?.id}`}
-              className="flex items-center gap-1 text-xs font-semibold text-secondary hover:text-primary transtion-colors"
-            >
-              Details <ExternalLink size={12} strokeWidth={2.5} />
-            </Link>
-          </div>
+        {/* Venue */}
+        <div>
+          <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">
+            Venue
+          </p>
+          <p className="text-base font-semibold text-primary leading-snug line-clamp-2">
+            {location ?? '—'}
+          </p>
         </div>
 
-        {/* Expandable QR */}
-        {qrOpen && isValid && (
-          <div className="mt-4 pt-4 border-t border-border flex flex-col items-center gap-2">
-            <p className="text-xs text-muted">
-              Show this QR code at the gate for entry
-            </p>
-            <QRCodeDisplay
-              url={ticket?.qr_code_url}
-              size={160}
-              disabled={false}
-            />
-            <p className="text-[10px] font-mono text-muted tracking-widest">
-              #{String(ticket?.id ?? 0).padStart(8, '0')}
-            </p>
-            <Link
-              to={`/tickets/${ticket?.id}`}
-              className="mt-1 text-xs font-semibold text-accent hover:text-accent-hover transition-colors flex items-center gap-1"
-            >
-              View full ticket <ExternalLink size={11} strokeWidth={2.5} />
-            </Link>
-          </div>
-        )}
+        {/* Ticket type */}
+        <div>
+          <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">
+            Ticket type
+          </p>
+          <p className="text-base font-semibold text-primary leading-snug">
+            {ticket?.ticket_type_name ?? 'General Admission'}
+          </p>
+        </div>
+
+        {/* 4th field: holder or checked-in time */}
+        <div>
+          {isUsed && ticket?.checked_in_at ? (
+            <>
+              <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">
+                Checked in
+              </p>
+              <p className="text-base font-semibold text-primary leading-snug">
+                {formatShortDate(ticket.checked_in_at)},{' '}
+                {formatTime(ticket.checked_in_at)}
+              </p>
+            </>
+          ) : ticket?.holder_name ? (
+            <>
+              <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">
+                Holder
+              </p>
+              <p className="text-base font-semibold text-primary leading-snug truncate">
+                {ticket.holder_name}
+              </p>
+            </>
+          ) : null}
+        </div>
       </div>
+
+      {/* ── Perforation ── */}
+      <Perforation className="mx-0 my-1" />
+
+      {/* ── QR Stub ── */}
+      <div className="px-5 py-4 flex items-center gap-4">
+        <QRCodeDisplay
+          url={ticket?.qr_code_url}
+          size={80}
+          disabled={isUsed || isCancelled}
+        />
+        <div className="flex-1 min-w-0">
+          <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">
+            Ticket ID
+          </p>
+          <p className="font-mono text-base font-semibold text-primary tracking-wide">
+            {ticket?.id ? `#${String(ticket.id).padStart(6, '0')}` : '—'}
+          </p>
+          <div className="mt-2">
+            <StatusPill status={ticket?.status} />
+          </div>
+        </div>
+
+        {/* Details link */}
+        <Link
+          to={`/ticket/${ticket?.id}`}
+          className="flex flex-col items-center gap-1 text-muted hover:text-accent transition-colors shrink-0"
+        >
+          <ExternalLink size={16} strokeWidth={2} />
+          <span className="text-[10px] font-medium">Details</span>
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+// ── Main export ───────────────────────────────────────────────
+export default function ExpandableTicketCard({ ticket }) {
+  const [expanded, setExpanded] = useState(false);
+  const gradientIndex = getGradientIndex(ticket?.id);
+
+  return (
+    <div className="transition-all duration-300">
+      {expanded ? (
+        <ExpandedCard
+          ticket={ticket}
+          gradientIndex={gradientIndex}
+          onCollapse={() => setExpanded(false)}
+        />
+      ) : (
+        <CompactRow
+          ticket={ticket}
+          gradientIndex={gradientIndex}
+          expanded={false}
+          onExpand={() => setExpanded(true)}
+        />
+      )}
     </div>
   );
 }
