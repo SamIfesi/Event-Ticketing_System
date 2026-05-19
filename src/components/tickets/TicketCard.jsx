@@ -1,215 +1,314 @@
-// Renders a single ticket as a styled "physical ticket" card.
-// Shows event info, ticket type, holder name, status badge, and QR code.
+// TicketCard — premium full ticket card matching the image 2 design.
+//
+// Full layout: rich gradient banner with category pill + event title overlay,
+//              2-col meta grid with uppercase labels, dashed perforation with
+//              side notches, QR code stub with ticket ID + status pill.
+//
+// Compact layout: redesigned compact row matching image 1 style.
 //
 // Props:
-//   ticket      — ticket object from the API
-//   showQr      — whether to show the QR code (default true)
-//   compact     — smaller layout for lists (hides QR, collapses details)
+//   ticket  — ticket object from the API
+//   compact — smaller layout for lists (uses compact row style)
+//   showQr  — whether to show QR code (default true)
 
+import { Link } from 'react-router-dom';
 import {
-  Calendar,
-  MapPin,
   Ticket,
-  CheckCircle2,
-  XCircle,
-  Clock,
+  Music,
+  Cpu,
+  Trophy,
+  Briefcase,
+  Utensils,
+  BookOpen,
+  Heart,
+  Star,
 } from 'lucide-react';
-import Badge from '../ui/Badge';
-import { formatShortDate, formatTime } from '../../utils/formatDate';
 import QRCodeDisplay from './QRCodeDisplay';
+import { formatShortDate, formatTime } from '../../utils/formatDate';
 
-// ── Ticket perforation decoration ─────────────────────────────
+// ── Category icon map ─────────────────────────────────────────
+const CATEGORY_ICONS = {
+  music: Music,
+  technology: Cpu,
+  sports: Trophy,
+  business: Briefcase,
+  food: Utensils,
+  education: BookOpen,
+  health: Heart,
+  entertainment: Star,
+};
+
+const ICON_GRADIENTS = [
+  'linear-gradient(135deg, #3b5bdb, #7048e8)',
+  'linear-gradient(135deg, #c0392b, #e67e22)',
+  'linear-gradient(135deg, #087f5b, #2f9e44)',
+  'linear-gradient(135deg, #c2255c, #e64980)',
+  'linear-gradient(135deg, #1864ab, #1c7ed6)',
+  'linear-gradient(135deg, #5f3dc4, #845ef7)',
+];
+
+const BANNER_GRADIENTS = [
+  'linear-gradient(135deg, #1a1f2e 0%, #2c3e6b 50%, #3b5bdb 100%)',
+  'linear-gradient(135deg, #2d0a00 0%, #7c2d12 50%, #c2410c 100%)',
+  'linear-gradient(135deg, #052e16 0%, #14532d 50%, #16a34a 100%)',
+  'linear-gradient(135deg, #2d1b69 0%, #6d28d9 50%, #a855f7 100%)',
+  'linear-gradient(135deg, #0c1445 0%, #1e3a8a 50%, #2563eb 100%)',
+  'linear-gradient(135deg, #1a0a2e 0%, #6b21a8 50%, #a855f7 100%)',
+];
+
+function getGradientIndex(id) {
+  return (
+    parseInt(String(id ?? '0').replace(/\D/g, '') || '0', 10) %
+    ICON_GRADIENTS.length
+  );
+}
+
+function getStatusStyle(status) {
+  switch (status) {
+    case 'valid':
+      return {
+        bg: 'bg-success/10',
+        text: 'text-success',
+        border: 'border-success/20',
+        dot: 'bg-success',
+        label: 'Valid',
+      };
+    case 'used':
+      return {
+        bg: 'bg-border',
+        text: 'text-muted',
+        border: 'border-border',
+        dot: 'bg-muted',
+        label: 'Used',
+      };
+    case 'cancelled':
+      return {
+        bg: 'bg-error/10',
+        text: 'text-error',
+        border: 'border-error/20',
+        dot: 'bg-error',
+        label: 'Cancelled',
+      };
+    case 'expired':
+      return {
+        bg: 'bg-border',
+        text: 'text-muted',
+        border: 'border-border',
+        dot: 'bg-muted',
+        label: 'Expired',
+      };
+    default:
+      return {
+        bg: 'bg-border',
+        text: 'text-muted',
+        border: 'border-border',
+        dot: 'bg-muted',
+        label: status ?? 'Unknown',
+      };
+  }
+}
+
+function StatusPill({ status }) {
+  const s = getStatusStyle(status);
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full border text-xs font-medium px-3 py-1 ${s.bg} ${s.text} ${s.border}`}
+    >
+      <span className={`w-1.5 h-1.5 rounded-full ${s.dot}`} />
+      {s.label}
+    </span>
+  );
+}
+
+function CategoryPill({ categoryName }) {
+  if (!categoryName) return null;
+  const key = categoryName.toLowerCase().split(' ')[0];
+  const Icon = CATEGORY_ICONS[key] ?? Ticket;
+  return (
+    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/30 backdrop-blur-sm border border-white/20 text-white text-xs font-medium mb-2">
+      <Icon size={11} strokeWidth={2} />
+      {categoryName}
+    </span>
+  );
+}
+
 function Perforation() {
   return (
-    <div className="relative flex items-center my-0">
-      <div className="absolute -left-4 w-8 h-8 rounded-full bg-main-bg border border-border" />
-      <div className="flex-1 border-t-2 border-dashed border-border mx-4" />
-      <div className="absolute -right-4 w-8 h-8 rounded-full bg-main-bg border border-border" />
+    <div className="relative flex items-center" style={{ margin: '0 -1px' }}>
+      <div
+        className="w-5 h-5 rounded-full flex-shrink-0 bg-main-bg border border-border"
+        style={{ marginLeft: '-10px', zIndex: 1 }}
+      />
+      <div
+        className="flex-1 border-t-2 border-dashed border-border"
+        style={{ margin: '0 4px' }}
+      />
+      <div
+        className="w-5 h-5 rounded-full flex-shrink-0 bg-main-bg border border-border"
+        style={{ marginRight: '-10px', zIndex: 1 }}
+      />
     </div>
   );
 }
 
-// ── Status icon ───────────────────────────────────────────────
-function StatusIcon({ status }) {
-  switch (status) {
-    case 'valid':
-      return (
-        <CheckCircle2 size={16} className="text-success" strokeWidth={2} />
-      );
-    case 'used':
-      return <CheckCircle2 size={16} className="text-muted" strokeWidth={2} />;
-    case 'cancelled':
-    case 'expired':
-      return <XCircle size={16} className="text-error" strokeWidth={2} />;
-    default:
-      return <Clock size={16} className="text-warning" strokeWidth={2} />;
-  }
-}
-
 // ── Full ticket card ──────────────────────────────────────────
-function FullTicketCard({ ticket }) {
+function FullTicketCard({ ticket, showQr }) {
   const event = ticket?.event ?? {};
   const isUsed = ticket?.status === 'used';
   const isCancelled =
     ticket?.status === 'cancelled' || ticket?.status === 'expired';
+  const gradientIndex = getGradientIndex(ticket?.id);
+  const title = ticket?.event_title ?? event?.title ?? 'Event';
+  const startDate = ticket?.event_start_date ?? event?.start_date;
+  const location = ticket?.event_location ?? event?.location;
 
   return (
-    <div
-      className={`relative bg-card border border-border rounded-card overflow-hidden shadow-md transition-all duration-200 ${
-        isCancelled ? 'opacity-60' : ''
-      }`}
-    >
-      {/* Header strip — gradient banner */}
-      <div className="h-20 bg-gradient-to-r from-blue-600 to-indigo-700 relative overflow-hidden">
+    <div className="bg-card border border-border rounded-card overflow-hidden shadow-md">
+      {/* Banner */}
+      <div
+        className="relative h-44 overflow-hidden"
+        style={{ background: BANNER_GRADIENTS[gradientIndex] }}
+      >
         {event.banner_image && (
           <img
             src={event.banner_image}
-            alt={event.title}
-            className="w-full h-full object-cover opacity-60"
+            alt={title}
+            className="absolute inset-0 w-full h-full object-cover opacity-50"
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-
-        {/* Status badge */}
-        <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2 py-1 bg-black/40 backdrop-blur-sm rounded-full">
-          <StatusIcon status={ticket?.status} />
-          <Badge
-            status={ticket?.status}
-            size="sm"
-            className="bg-transparent ring-0 text-white"
-          />
-        </div>
-
-        {/* Ticket type tag */}
-        {ticket?.ticket_type_name && (
-          <div className="absolute bottom-2 left-3">
-            <span className="text-[10px] font-bold text-white/80 uppercase tracking-widest">
-              {ticket.ticket_type_name}
-            </span>
-          </div>
-        )}
-      </div>
-
-      {/* Body */}
-      <div className="px-4 pt-3 pb-4">
-        {/* Event name */}
-        <h3 className="font-black text-primary text-base leading-tight line-clamp-2 mb-2">
-          {event.title ?? ticket?.event_title ?? 'Event'}
-        </h3>
-
-        {/* Details grid */}
-        <div className="grid grid-cols-2 gap-x-4 gap-y-2 mb-3">
-          {event.start_date && (
-            <div className="flex items-start gap-1.5">
-              <Calendar size={12} className="text-muted shrink-0 mt-0.5" />
-              <div>
-                <p className="text-[10px] text-muted uppercase font-semibold tracking-wide">
-                  Date
-                </p>
-                <p className="text-xs font-semibold text-primary">
-                  {formatShortDate(event.start_date)}
-                </p>
-                <p className="text-[11px] text-secondary">
-                  {formatTime(event.start_date)}
-                </p>
-              </div>
-            </div>
-          )}
-          {event.location && (
-            <div className="flex items-start gap-1.5">
-              <MapPin size={12} className="text-muted shrink-0 mt-0.5" />
-              <div>
-                <p className="text-[10px] text-muted uppercase font-semibold tracking-wide">
-                  Venue
-                </p>
-                <p className="text-xs font-semibold text-primary line-clamp-2">
-                  {event.location}
-                </p>
-              </div>
-            </div>
-          )}
-          {ticket?.holder_name && (
-            <div className="col-span-2 flex items-start gap-1.5">
-              <Ticket size={12} className="text-muted shrink-0 mt-0.5" />
-              <div>
-                <p className="text-[10px] text-muted uppercase font-semibold tracking-wide">
-                  Holder
-                </p>
-                <p className="text-xs font-semibold text-primary">
-                  {ticket.holder_name}
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Perforated divider */}
-      <div className="px-0">
-        <Perforation />
-      </div>
-
-      {/* QR stub */}
-      <div className="px-4 py-4 flex items-center gap-4">
-        <QRCodeDisplay
-          url={ticket?.qr_code_url}
-          size={80}
-          disabled={isUsed || isCancelled}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 55%, transparent 100%)',
+          }}
         />
-        <div className="flex-1 min-w-0">
-          <p className="text-[10px] text-muted uppercase font-bold tracking-wider mb-1">
-            Ticket ID
+        <div className="absolute bottom-0 left-0 right-0 p-4">
+          <CategoryPill
+            categoryName={event.category_name ?? ticket?.category_name}
+          />
+          <h3 className="text-xl font-bold text-white leading-tight line-clamp-2">
+            {title}
+          </h3>
+        </div>
+      </div>
+
+      {/* Meta grid */}
+      <div className="px-5 pt-5 pb-4 grid grid-cols-2 gap-x-6 gap-y-4">
+        <div>
+          <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">
+            Date
           </p>
-          <p className="text-xs font-mono text-primary font-semibold tracking-wide break-all">
-            {ticket?.id ? `#${String(ticket.id).padStart(6, '0')}` : '—'}
+          <p className="text-base font-semibold text-primary">
+            {startDate ? formatShortDate(startDate) : '—'}
           </p>
-          {isUsed && (
-            <p className="text-xs text-muted mt-1">
-              Checked in{' '}
-              {ticket?.checked_in_at
-                ? formatShortDate(ticket.checked_in_at)
-                : ''}
+          {startDate && (
+            <p className="text-sm text-secondary mt-0.5">
+              {formatTime(startDate)}
             </p>
           )}
         </div>
+        <div>
+          <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">
+            Venue
+          </p>
+          <p className="text-base font-semibold text-primary line-clamp-2">
+            {location ?? '—'}
+          </p>
+        </div>
+        <div>
+          <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">
+            Ticket type
+          </p>
+          <p className="text-base font-semibold text-primary">
+            {ticket?.ticket_type_name ?? 'General Admission'}
+          </p>
+        </div>
+        <div>
+          {isUsed && ticket?.checked_in_at ? (
+            <>
+              <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">
+                Checked in
+              </p>
+              <p className="text-base font-semibold text-primary">
+                {formatShortDate(ticket.checked_in_at)},{' '}
+                {formatTime(ticket.checked_in_at)}
+              </p>
+            </>
+          ) : ticket?.holder_name ? (
+            <>
+              <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">
+                Holder
+              </p>
+              <p className="text-base font-semibold text-primary truncate">
+                {ticket.holder_name}
+              </p>
+            </>
+          ) : null}
+        </div>
       </div>
+
+      {/* Perforation */}
+      <Perforation />
+
+      {/* QR Stub */}
+      {showQr && (
+        <div className="px-5 py-4 flex items-center gap-4">
+          <QRCodeDisplay
+            url={ticket?.qr_code_url}
+            size={80}
+            disabled={isUsed || isCancelled}
+          />
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">
+              Ticket ID
+            </p>
+            <p className="font-mono text-base font-semibold text-primary tracking-wide">
+              {ticket?.id ? `#${String(ticket.id).padStart(6, '0')}` : '—'}
+            </p>
+            <div className="mt-2">
+              <StatusPill status={ticket?.status} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-// ── Compact ticket row ────────────────────────────────────────
+// ── Compact ticket row ── matches image 1 ─────────────────────
 function CompactTicketCard({ ticket }) {
   const event = ticket?.event ?? {};
+  const gradientIndex = getGradientIndex(ticket?.id);
+  const title = ticket?.event_title ?? event?.title ?? 'Ticket';
+  const startDate = ticket?.event_start_date ?? event?.start_date;
 
   return (
-    <div className="flex items-center gap-3 p-3 bg-card border border-border rounded-card hover:shadow-sm hover:border-accent/30 transition-all duration-150">
-      {/* Color swatch */}
-      <div className="w-10 h-10 rounded-btn bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center shrink-0 overflow-hidden">
-        {event.banner_image ? (
-          <img
-            src={event.banner_image}
-            alt=""
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <Ticket size={16} className="text-white" strokeWidth={1.75} />
-        )}
+    <Link
+      to={`/ticket/${ticket?.id}`}
+      className="flex items-center gap-4 p-4 bg-card border border-border rounded-card hover:border-accent/30 hover:shadow-sm transition-all duration-200 touch-manipulation"
+    >
+      <div
+        className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 shadow-sm"
+        style={{ background: ICON_GRADIENTS[gradientIndex] }}
+      >
+        <Ticket size={24} className="text-white" strokeWidth={1.75} />
       </div>
-
-      {/* Info */}
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-primary truncate">
-          {event.title ?? ticket?.event_title ?? 'Ticket'}
+        <p className="text-base font-bold text-primary leading-snug truncate">
+          {title}
         </p>
-        <p className="text-xs text-muted mt-0.5">
-          {ticket?.ticket_type_name ?? 'General'}
-          {event.start_date && ` · ${formatShortDate(event.start_date)}`}
+        <p className="text-sm text-secondary mt-0.5 truncate">
+          {[
+            ticket?.ticket_type_name ?? 'General',
+            startDate ? formatShortDate(startDate) : null,
+          ]
+            .filter(Boolean)
+            .join(' · ')}
         </p>
       </div>
-
-      {/* Status */}
-      <Badge status={ticket?.status} size="sm" />
-    </div>
+      <StatusPill status={ticket?.status} />
+    </Link>
   );
 }
 
