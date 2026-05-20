@@ -279,7 +279,7 @@ function FailedState({ reference, error, onRetry, retrying }) {
         <button
           onClick={onRetry}
           disabled={retrying}
-          className="flex-1 flex items-center justify-center gap-2 h-12 px-5 bg-accent hover:bg-accent-hover text-white text-sm font-semibold rounded-btn transition-colors disabled:opacity-50 active:scale-95"
+          className="flex-1 flex items-center justify-center gap-2 h-12 px-5 bg-accent hover:bg-accent-hover text-white text-sm font-semibold rounded-btn transition-colors disabled:opacity-50 active:scale-95 p-3"
         >
           {retrying ? (
             <RefreshCw size={15} className="animate-spin" />
