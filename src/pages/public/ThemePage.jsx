@@ -76,8 +76,6 @@ function ThemeOption({ option, selected, onSelect }) {
 
 // Live preview strip showing what the current selection looks like
 function ThemePreview({ selected }) {
-  const isDark = selected === 'dark' || (selected === 'system' && false);
-
   return (
     <div
       className={`rounded-card border border-border overflow-hidden ${
