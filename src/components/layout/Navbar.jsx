@@ -145,7 +145,7 @@ function ThemeToggleButton({ onNavigate }) {
 
       {/* Link to full theme page */}
       <Link
-        to="/profile/theme"
+        to="/theme"
         onClick={onNavigate}
         aria-label="Theme settings"
         title="More theme options"

@@ -94,7 +94,7 @@ function ThemeToggle({ onClose }) {
 
       {/* Link to full ThemePage */}
       <Link
-        to="/page/theme"
+        to="/theme"
         onClick={onClose}
         title="More theme options"
         className="w-9 h-9 flex items-center justify-center rounded-btn text-muted hover:text-primary hover:bg-border transition-colors"
