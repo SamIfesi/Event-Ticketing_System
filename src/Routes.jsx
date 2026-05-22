@@ -58,7 +58,7 @@ function RootRedirect() {
   const token = useAuthStore((state) => state.token);
   const isVerified = useAuthStore((state) => state.isVerified);
   const user = useAuthStore((state) => state.user);
-  const _hasHydrated = useAuthStore((state) => state._hasHydrated); 
+  const _hasHydrated = useAuthStore((state) => state._hasHydrated);
   const hasSeenOnboarding = localStorage.getItem('onboarding_seen');
 
   if (!_hasHydrated) return null;
@@ -103,6 +103,7 @@ export default function AppRoutes() {
       <Route path="/events" element={<EventsPage />} />
       <Route path="/events/:id" element={<EventDetailPage />} />
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
+      <Route path="/theme" element={<ThemePage />} />
       {/* Auth - guest only (logged-in users are redirected away) */}
       <Route
         path="/login"
@@ -141,14 +142,6 @@ export default function AppRoutes() {
         element={
           <GuestOnly>
             <ResetPassworPage />
-          </GuestOnly>
-        }
-      />
-      <Route
-        path="/page/theme"
-        element={
-          <GuestOnly>
-            <ThemePage />
           </GuestOnly>
         }
       />
