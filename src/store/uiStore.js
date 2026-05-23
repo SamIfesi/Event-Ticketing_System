@@ -5,14 +5,14 @@ let toastId = 0;
 export const useUiStore = create((set, get) => ({
   toasts: [],
   /**
-   * automatoically remove afte 'duration' ms (default 4000).
+   * automatoically remove after 'duration' ms (default 8000).
    *
    * @param {'success' | 'error' | 'info' | 'warning'} type - Type of the toast.
    * @param {string} message - Message to display in the toast.
-   * @param {number} [duration=4000]
+   * @param {number} [duration=8000]
    */
 
-  toast(type, message, duration = 4000) {
+  toast(type, message, duration = 8000) {
     const id = ++toastId;
     set((state) => ({
       toasts: [...state.toasts, { id, type, message }],
