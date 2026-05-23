@@ -9,10 +9,10 @@ export const useUiStore = create((set, get) => ({
    *
    * @param {'success' | 'error' | 'info' | 'warning'} type - Type of the toast.
    * @param {string} message - Message to display in the toast.
-   * @param {number} [duration=8000]
+   * @param {number} [duration] - Defaults to type-specific duration (error=10s, warning=7s, success/info=5s). Set to 0 to disable auto-dismiss.
    */
 
-  toast(type, message, duration = 8000) {
+  toast(type, message, duration) {
     const id = ++toastId;
     set((state) => ({
       toasts: [...state.toasts, { id, type, message }],
@@ -25,10 +25,10 @@ export const useUiStore = create((set, get) => ({
     }
   },
 
-  toastSuccess: (msg, dur) => get().toast('success', msg, dur),
-  toastError: (msg, dur) => get().toast('error', msg, dur),
-  toastWarning: (msg, dur) => get().toast('warning', msg, dur),
-  toastInfo: (msg, dur) => get().toast('info', msg, dur),
+  toastSuccess: (msg, dur) => get().toast('success', msg, dur ?? 5000),
+  toastError: (msg, dur) => get().toast('error', msg, dur ?? 10000),
+  toastWarning: (msg, dur) => get().toast('warning', msg, dur ?? 7000),
+  toastInfo: (msg, dur) => get().toast('info', msg, dur ?? 5000),
 
   dismissToast(id) {
     set((state) => ({
