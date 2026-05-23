@@ -19,6 +19,8 @@ import {
   Monitor,
   ShieldUser,
   ClipboardList,
+  Bell,
+  ScrollText,
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useAuth } from '../../hooks/useAuth';
@@ -234,6 +236,13 @@ export default function Sidebar({ isOpen, onClose }) {
                 active={isActive('/dashboard')}
               />
               <NavItem
+                to="/notifications"
+                icon={Bell}
+                label="Notification"
+                onClick={onClose}
+                active={isActive('/notifications')}
+              />
+              <NavItem
                 to="/my-bookings"
                 icon={BookOpen}
                 label="My Bookings"
@@ -260,6 +269,13 @@ export default function Sidebar({ isOpen, onClose }) {
                 label="Profile"
                 onClick={onClose}
                 active={isActive('/profile')}
+              />
+              <NavItem
+                to="/my-transactions"
+                icon={ScrollText}
+                label="Transaction Histroy"
+                onClick={onClose}
+                active={isActive('/my-transactions')}
               />
             </>
           )}
@@ -334,32 +350,32 @@ export default function Sidebar({ isOpen, onClose }) {
           <ThemeToggle onClose={onClose} />
 
           <div className="mt-2">
-          {isLoggedIn ? (
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-btn text-sm font-medium text-error hover:bg-[var(--color-error)]/10 transition-colors duration-150 touch-manipulation"
-            >
-              <LogOut size={17} strokeWidth={2} className="shrink-0" />
-              Sign out
-            </button>
-          ) : (
-            <div className="flex flex-col gap-2 px-2">
-              <Link
-                to="/login"
-                onClick={onClose}
-                className="flex items-center justify-center h-11 rounded-btn border border-border text-sm font-semibold text-primary hover:bg-border transition-colors duration-150"
+            {isLoggedIn ? (
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-btn text-sm font-medium text-error hover:bg-error/10 transition-colors duration-150 touch-manipulation"
               >
-                Sign in
-              </Link>
-              <Link
-                to="/register"
-                onClick={onClose}
-                className="flex items-center justify-center h-11 rounded-btn bg-accent hover:bg-accent-hover text-white text-sm font-semibold transition-colors duration-180"
-              >
-                Get started
-              </Link>
-            </div>
-          )}
+                <LogOut size={17} strokeWidth={2} className="shrink-0" />
+                Sign out
+              </button>
+            ) : (
+              <div className="flex flex-col gap-2 px-2">
+                <Link
+                  to="/login"
+                  onClick={onClose}
+                  className="flex items-center justify-center h-11 rounded-btn border border-border text-sm font-semibold text-primary hover:bg-border transition-colors duration-150"
+                >
+                  Sign in
+                </Link>
+                <Link
+                  to="/register"
+                  onClick={onClose}
+                  className="flex items-center justify-center h-11 rounded-btn bg-accent hover:bg-accent-hover text-white text-sm font-semibold transition-colors duration-180"
+                >
+                  Get started
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </aside>
