@@ -23,12 +23,14 @@ import EventDetailPage from './pages/public/EventDetailPage';
 import UnauthorizedPage from './pages/public/UnauthorizedPage';
 import NotFoundPage from './pages/public/NotFoundPage';
 import ThemePage from './pages/public/ThemePage';
+import NotificationsPage from './pages/public/NotificationsPage';
 
 // attendee
 import AttendeeDashboard from './pages/attendee/AttendeeDashboard';
 import MyBookingsPage from './pages/attendee/MyBookingsPage';
 import BecomeOrganizerPage from './pages/attendee/BecomeOrganizerPage';
 import MyTicketsPage from './pages/attendee/MyTicketsPage';
+import MyTransactionsPage from './pages/attendee/MyTransactionsPage';
 
 //profile
 import ProfilePage from './pages/profile/ProfilePage';
@@ -164,6 +166,14 @@ export default function AppRoutes() {
         }
       />
       <Route
+        path="/notifications"
+        element={
+          <ProtectedRoute>
+            <NotificationsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/my-bookings"
         element={
           <ProtectedRoute>
@@ -202,6 +212,14 @@ export default function AppRoutes() {
         element={
           <ProtectedRoute>
             <ProfilePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/my-transactions"
+        element={
+          <ProtectedRoute>
+            <MyTransactionsPage />
           </ProtectedRoute>
         }
       />
