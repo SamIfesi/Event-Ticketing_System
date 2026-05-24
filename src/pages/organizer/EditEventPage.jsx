@@ -2,13 +2,12 @@ import { useEffect, useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Pencil } from 'lucide-react';
 import { useOrganizerEvents } from '../../hooks/useOrganizerEvents';
-import { useEvents } from '../../hooks/useEvents';
 import CategoryService from '../../services/category.service';
+import EventsService from '../../services/events.service';
 import Navbar from '../../components/layout/Navbar';
 import Sidebar from '../../components/layout/Sidebar';
 import Footer from '../../components/layout/Footer';
 import EventForm from '../../components/events/EventForm';
-import EventsService from '../../services/events.service';
 
 // Convert backend datetime (2026-06-15 09:00:00) to datetime-local input format
 function toInputDate(str) {
@@ -18,21 +17,24 @@ function toInputDate(str) {
 
 export default function EditEventPage() {
   const { id } = useParams();
-  // const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [event, setEvent] = useState(null);
+  const [eventLoading, setEventLoading] = useState(false);
 
   const { updateEvent, loading, error, fieldErrors } = useOrganizerEvents();
-  const { event, setEvent } = useState(null);
-  const { eventLoading, setEventLoading } = useState(false);
 
-  useEffect(() => {
-    if (!id) return;
+  function fetchEvent() {
     setEventLoading(true);
     EventsService.getMyEvent(id)
       .then((data) => setEvent(data.event))
       .catch(() => {})
       .finally(() => setEventLoading(false));
+  }
+
+  useEffect(() => {
+    if (!id) return;
+    fetchEvent();
     CategoryService.getCategories()
       .then((data) => setCategories(data.categories ?? []))
       .catch(() => {});
@@ -64,13 +66,7 @@ export default function EditEventPage() {
 
   async function handleSubmit(formData) {
     await updateEvent(id, formData, {
-      onSuccess: () => {
-        setEventLoading(true);
-        EventsService.getMyEvent(id)
-          .then((data) => setEvent(data.event))
-          .catch(() => {})
-          .finally(() => setEventLoading(false));
-      },
+      onSuccess: () => fetchEvent(),
     });
   }
 
