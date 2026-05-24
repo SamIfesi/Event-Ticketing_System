@@ -8,6 +8,7 @@ import Navbar from '../../components/layout/Navbar';
 import Sidebar from '../../components/layout/Sidebar';
 import Footer from '../../components/layout/Footer';
 import EventForm from '../../components/events/EventForm';
+import EventsService from '../../services/events.service';
 
 // Convert backend datetime (2026-06-15 09:00:00) to datetime-local input format
 function toInputDate(str) {
@@ -22,12 +23,18 @@ export default function EditEventPage() {
   const [categories, setCategories] = useState([]);
 
   const { updateEvent, loading, error, fieldErrors } = useOrganizerEvents();
-  const { event, eventLoading, fetchEvent } = useEvents();
+  const { event, setEvent } = useState(null);
+  const { eventLoading, setEventLoading } = useState(false);
 
   useEffect(() => {
-    if (id) fetchEvent(id);
+    if (!id) return;
+    setEventLoading(true);
+    EventsService.getMyEvent(id)
+      .then((data) => setEvent(data.event))
+      .catch(() => {})
+      .finally(() => setEventLoading(false));
     CategoryService.getCategories()
-      .then((d) => setCategories(d.categories ?? []))
+      .then((data) => setCategories(data.categories ?? []))
       .catch(() => {});
   }, [id]);
 
@@ -58,8 +65,11 @@ export default function EditEventPage() {
   async function handleSubmit(formData) {
     await updateEvent(id, formData, {
       onSuccess: () => {
-        // navigate('/organizer/events'),
-        fetchEvent(id);
+        setEventLoading(true);
+        EventsService.getMyEvent(id)
+          .then((data) => setEvent(data.event))
+          .catch(() => {})
+          .finally(() => setEventLoading(false));
       },
     });
   }
