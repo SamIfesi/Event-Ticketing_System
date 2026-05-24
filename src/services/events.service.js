@@ -10,5 +10,9 @@ const EventsService = {
     const response = await api.get(`/events/${id}`);
     return response.data.data; // returns {event} - includes ticket_types[]
   },
+  async getMyEvent(id) {
+    const response = await api.get(`/organizer/events/${id}`);
+    return response.data.data; // returns {event} - includes ticket_types[]
+  },
 };
 export default EventsService;
