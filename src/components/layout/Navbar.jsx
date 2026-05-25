@@ -1,8 +1,9 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, ChevronDown, LogOut, Monitor, Sun, Moon } from 'lucide-react';
+import { Menu, ChevronDown, LogOut, Monitor, Sun, Moon, Bell } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useAuth } from '../../hooks/useAuth';
 import { useThemeStore } from '../../store/themeStore';
+import { useNotifications } from '../../hooks/useNotification';
 import { ROLES, NAV_GROUPS, PROFILE_MENU } from '../../config/constants';
 import Dropdown from '../ui/Dropdown';
 import logo from '/assets/icons/logo.svg';
@@ -11,7 +12,7 @@ import logo from '/assets/icons/logo.svg';
 
 function isRoleAllowed(group, role, isLoggedIn) {
   if (group.requireAuth && !isLoggedIn) return false;
-  if (!group.roles || group.roles.length === 0) return true; // everyone
+  if (!group.roles || group.roles.length === 0) return true;
   return group.roles.includes(role);
 }
 
@@ -55,7 +56,7 @@ function NavGroupPanel({ items, close }) {
   );
 }
 
-// ─── Single nav group tab (trigger + dropdown) ───────────────────────────────
+// ─── Single nav group tab ────────────────────────────────────────────────────
 
 function NavGroupTab({ group, role, isLoggedIn }) {
   const location = useLocation();
@@ -157,6 +158,27 @@ function ThemeToggleButton({ onNavigate }) {
   );
 }
 
+// ─── Notification Bell ───────────────────────────────────────────────────────
+
+function NotificationBell() {
+  const { unreadCount } = useNotifications({ pollInterval: 30000 });
+
+  return (
+    <Link
+      to="/notifications"
+      aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}
+      className="relative w-9 h-9 flex items-center justify-center rounded-btn text-muted hover:text-primary hover:bg-border transition-colors duration-150"
+    >
+      <Bell size={18} strokeWidth={2} />
+      {unreadCount > 0 && (
+        <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-error text-white text-[9px] font-bold flex items-center justify-center leading-none">
+          {unreadCount > 9 ? '9+' : unreadCount}
+        </span>
+      )}
+    </Link>
+  );
+}
+
 // ─── Avatar trigger ──────────────────────────────────────────────────────────
 
 function AvatarTrigger({ user }) {
@@ -170,7 +192,7 @@ function AvatarTrigger({ user }) {
           {user?.name?.charAt(0)?.toUpperCase()}
         </span>
       </div>
-      <span className="hidden sm:block text-sm font-medium text-primary max-w-[100px] truncate">
+      <span className="hidden sm:block text-sm font-medium text-primary max-w-25 truncate">
         {user?.name?.split(' ')[0]}
       </span>
       <ChevronDown size={13} strokeWidth={2} className="text-muted hidden sm:block" />
@@ -181,10 +203,10 @@ function AvatarTrigger({ user }) {
 // ─── Main Navbar ─────────────────────────────────────────────────────────────
 
 export default function Navbar({ onMenuClick }) {
-  const user      = useAuthStore((state) => state.user);
-  const token     = useAuthStore((state) => state.token);
+  const user       = useAuthStore((state) => state.user);
+  const token      = useAuthStore((state) => state.token);
   const isLoggedIn = Boolean(token);
-  const role      = user?.role ?? null;
+  const role       = user?.role ?? null;
 
   const { logout } = useAuth();
 
@@ -221,6 +243,11 @@ export default function Navbar({ onMenuClick }) {
               {/* Theme toggle (desktop) */}
               <div className="hidden md:flex items-center">
                 <ThemeToggleButton />
+              </div>
+
+              {/* Notification bell */}
+              <div className="hidden md:flex items-center">
+                <NotificationBell />
               </div>
 
               {/* Vertical divider */}
