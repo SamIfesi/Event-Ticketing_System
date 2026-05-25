@@ -8,9 +8,9 @@ export default function CenterLoader() {
     <div
       role="status"
       aria-label="Loading"
-      className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/20  pointer-events-none"
+      className="fixed inset-0 z-9998 flex items-center justify-center bg-black/20  pointer-events-none"
     >
-      <div className="flex items-center justify-center gap-[4px] h-10 w-10 bg-accent-text rounded-full p-[.5rem]">
+      <div className="flex items-center justify-center gap-1 h-10 w-10 bg-accent-text rounded-full p-2">
         {[0, 150, 300].map((delay) => (
           <span
             key={delay}
