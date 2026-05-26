@@ -82,7 +82,7 @@ export default function BecomeOrganizerPage() {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
       <OrganizerPitch user={user} />
 
-      <div className="bg-card border border-border rounded-card p-6 lg:sticky lg:top-24">
+      <div className="lg:bg-card lg:border lg:border-border lg:rounded-card lg:p-6 lg:sticky lg:top-24">
         <h2 className="text-lg font-bold text-primary mb-1">
           Organizer application
         </h2>
