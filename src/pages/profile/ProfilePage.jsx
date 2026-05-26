@@ -9,7 +9,7 @@ import {
   Monitor,
   LogOut,
   Ticket,
-  BookOpen,
+  BookOpen,Bell, ScrollText
 } from 'lucide-react';
 import { useProfile } from '../../hooks/useProfile';
 import { useAuth } from '../../hooks/useAuth';
@@ -82,6 +82,13 @@ export default function ProfilePage() {
               label="My Tickets"
               subtitle="Your QR entry passes"
               to="/my-tickets"
+            />
+            <SettingsItem
+              icon={Bell}
+              iconColor="#046307"
+              label="Notifications"
+              subtitle="View your recent notifications"
+              to="/notifications"
             />
           </SettingsGroup>
 
