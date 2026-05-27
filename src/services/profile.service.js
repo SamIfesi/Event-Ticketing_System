@@ -2,7 +2,7 @@ import api from './api';
 
 const ProfileService = {
   async getProfile() {
-    const response = await api.get('/profile');
+    const response = await api.get('/profile', {skipLoader: true,});
     return response.data.data; //{profile}
   },
 

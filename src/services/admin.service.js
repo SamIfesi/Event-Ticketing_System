@@ -2,12 +2,16 @@ import api from './api';
 
 const AdminService = {
   async getStats() {
-    const response = await api.get('/admin/stats');
+    const response = await api.get('/admin/stats', {skipLoader: true,});
     return response.data.data; // return {users, events, bookings, tickets, recents_activity[]}
   },
 
   async getUsers(params = {}) {
-    const response = await api.get('/admin/users', { params });
+    const response = await api.get(
+      '/admin/users',
+      { params },
+      { skipLoader: true }
+    );
     return response.data.data; // return {users[], pagination}
   },
 
@@ -29,7 +33,11 @@ const AdminService = {
   },
 
   async getEvents(params = {}) {
-    const response = await api.get('/admin/events', { params });
+    const response = await api.get(
+      '/admin/events',
+      { params },
+      { skipLoader: true }
+    );
     return response.data.data; // return {events[], pagination}
   },
 
