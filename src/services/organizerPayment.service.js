@@ -4,7 +4,7 @@ const OrganizerPaymentService = {
   // GET /api/organizer/banks
   // Returns Paystack's list of supported banks for the dropdown
   async getBanks() {
-    const response = await api.get('/organizer/banks');
+    const response = await api.get('/organizer/banks', { skipLoader: true });
     return response.data.data; // { banks: [{ name, code }] }
   },
 
@@ -23,7 +23,9 @@ const OrganizerPaymentService = {
   // GET /api/organizer/payment-details
   // Returns saved bank details (account number is masked)
   async getPaymentDetails() {
-    const response = await api.get('/organizer/payment-details');
+    const response = await api.get('/organizer/payment-details', {
+      skipLoader: true,
+    });
     return response.data.data; // { payment_details } or { payment_details: null }
   },
 
