@@ -67,7 +67,7 @@ export default function TopBarLoader() {
   return (
     <div
       aria-hidden="true"
-      className="fixed top-0 left-0 right-0 z-[9999] pointer-events-none"
+      className="fixed top-0 left-0 right-0 z-9999 pointer-events-none"
     >
       <div className="w-full h-[5px] bg-transparent">
         <div
