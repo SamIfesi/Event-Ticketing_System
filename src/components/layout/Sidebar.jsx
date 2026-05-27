@@ -27,7 +27,7 @@ import {
 import { useAuthStore } from '../../store/authStore';
 import { useAuth } from '../../hooks/useAuth';
 import { ROLES } from '../../config/constants';
-import logo from '/assets/icons/logo.svg';
+import logo from '/src/assets/icons/logo.svg';
 import { useThemeStore } from '../../store/themeStore';
 
 function NavItem({ to, icon: Icon, label, onClick, active }) {

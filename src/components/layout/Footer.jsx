@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
-import logo from '/assets/icons/logo.svg';
+import logo from '/src/assets/icons/logo.svg';
 
 export default function Footer() {
   const token = useAuthStore((state) => state.token);
