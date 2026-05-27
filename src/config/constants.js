@@ -110,6 +110,7 @@ export const TICKET_STATUS_MAP = {
   cancelled: { variant: 'error', label: 'Cancelled' },
   expired: { variant: 'neutral', label: 'Expired' },
 };
+
 export const VARIANT_STYLES = {
   success:
     'bg-[var(--color-success)]/10 text-[var(--color-success)] ring-[var(--color-success)]/20',
@@ -203,25 +204,21 @@ import {
   Send,
   Rocket,
   ClipboardClock,
+  Bell,
+  CreditCard,
+  Banknote,
+  BarChart3,
 } from 'lucide-react';
 
 /**
  * NAV_GROUPS — top-level dropdown groups shown in the desktop navbar.
- *
- * Each group:
- *   label       — display name in the navbar tab
- *   roles       — which roles can see this group.
- *                 [] = everyone (including guests)
- *                 null / omit = logged-in users only (any role)
- *   requireAuth — if true, only shown when logged in
- *   items       — links inside the dropdown
  */
 export const NAV_GROUPS = [
   {
     id: 'discover',
     label: 'Discover',
     requireAuth: false,
-    roles: [], // everyone
+    roles: [],
     items: [
       {
         to: '/home',
@@ -261,6 +258,13 @@ export const NAV_GROUPS = [
         label: 'My Tickets',
         description: 'Access your tickets',
       },
+      // ── NEW ──
+      {
+        to: '/my-transactions',
+        icon: CreditCard,
+        label: 'Transaction History',
+        description: 'Your payment records',
+      },
       {
         to: '/become-organizer',
         icon: ShieldUser,
@@ -299,6 +303,19 @@ export const NAV_GROUPS = [
         label: 'Create Event',
         description: 'Publish a new event',
       },
+      // ── NEW ──
+      {
+        to: '/organizer/payment-details',
+        icon: Banknote,
+        label: 'Payment Settings',
+        description: 'Bank details & payouts',
+      },
+      {
+        to: '/organizer/transactions',
+        icon: BarChart3,
+        label: 'Revenue Ledger',
+        description: 'Your earnings history',
+      },
     ],
   },
   {
@@ -331,15 +348,24 @@ export const NAV_GROUPS = [
         label: 'Organizer Applications',
         description: 'Review pending applications',
       },
+      // ── NEW ──
+      {
+        to: '/admin/transactions',
+        icon: BarChart3,
+        label: 'Transactions',
+        description: 'Platform-wide audit log',
+      },
+      {
+        to: '/admin/payouts',
+        icon: Banknote,
+        label: 'Payouts',
+        description: 'Manage organizer payouts',
+      },
     ],
   },
 ];
 
-/**
- * PROFILE_MENU — items shown in the avatar dropdown.
- */
 export const PROFILE_MENU = [{ to: '/profile', icon: User, label: 'Profile' }];
-// ====== END OF NAVBAR CONSTANTS =====
 
 //==== START OF USERS PAGE CONSTANTS ====
 export const ROLE_FILTERS = [
@@ -402,4 +428,4 @@ export const OPTIONS = [
       'Immediately visible to attendees and open for ticket purchases.',
     icon: Rocket,
   },
-]
+];
