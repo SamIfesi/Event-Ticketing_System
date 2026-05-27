@@ -29,6 +29,10 @@ api.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
 
+    if (config.skipLoader) {
+      return config; // Skip Loader for silenr background requests
+    }
+
     const { startTopBar, stopTopBar, startCenter, stopCenter } =
       useLoaderStore.getState();
 
@@ -65,16 +69,19 @@ api.interceptors.response.use(
   (response) => {
     if (response.config._slowTimer) clearTimeout(response.config._slowTimer);
 
-    const { stopTopBar, stopCenter } = useLoaderStore.getState();
-    response.config._isSlowRequest ? stopCenter() : stopTopBar();
-
+    if (!response.config.skipLoader) {
+      const { stopTopBar, stopCenter } = useLoaderStore.getState();
+      response.config._isSlowRequest ? stopCenter() : stopTopBar();
+    }
     return response;
   },
   (error) => {
     if (error.config?._slowTimer) clearTimeout(error.config._slowTimer);
 
-    const { stopTopBar, stopCenter } = useLoaderStore.getState();
-    error.config?._isSlowRequest ? stopCenter() : stopTopBar();
+    if (!error.config.skipLoader) {
+      const { stopTopBar, stopCenter } = useLoaderStore.getState();
+      error.config?._isSlowRequest ? stopCenter() : stopTopBar();
+    }
 
     // 401 = expired or invalid token → force logout
     if (error.response?.status === 401) {
