@@ -100,7 +100,7 @@ textarea {
   }
 
   #root {
-    @apply w-360 max-w-full mx-auto min-h-screen flex flex-col;
+    @apply max-w-360 max-w-full mx-auto min-h-screen flex flex-col;
   }
 }
 
