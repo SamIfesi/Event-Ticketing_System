@@ -21,6 +21,8 @@ import {
   ClipboardList,
   Bell,
   ScrollText,
+  CreditCard,
+  BarChart3,
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useAuth } from '../../hooks/useAuth';
@@ -64,23 +66,16 @@ function Divider() {
   return <div className="my-2 border-t border-border" />;
 }
 
-// ── Theme toggle — quick switch + chevron that goes to ThemePage ──
 function ThemeToggle({ onClose }) {
   const { resolvedTheme, theme, toggleTheme } = useThemeStore();
-
   const isDark = resolvedTheme === 'dark';
-
-  // Icon reflects what is currently ACTIVE
   const Icon = isDark ? Sun : Moon;
   const label = isDark ? 'Light Mode' : 'Dark Mode';
-
-  // Sub-label shows the chosen mode
   const modeLabel =
     theme === 'system' ? 'System default' : theme === 'dark' ? 'Dark' : 'Light';
 
   return (
     <div className="flex items-center gap-1 px-2">
-      {/* Quick toggle button */}
       <button
         onClick={toggleTheme}
         className="flex-1 flex items-center gap-3 px-3 py-3 rounded-btn text-sm font-medium text-secondary hover:bg-border transition-colors duration-150"
@@ -93,8 +88,6 @@ function ThemeToggle({ onClose }) {
           </span>
         </div>
       </button>
-
-      {/* Link to full ThemePage */}
       <Link
         to="/theme"
         onClick={onClose}
@@ -206,8 +199,9 @@ export default function Sidebar({ isOpen, onClose }) {
           </div>
         )}
 
-        {/* ── Scrollable nav ────────────────────────────────── */}
+        {/* Scrollable nav */}
         <nav className="flex-1 overflow-y-auto px-2 py-2">
+          {/* Discover */}
           <SectionLabel label="Discover" />
           <NavItem
             to="/home"
@@ -236,13 +230,6 @@ export default function Sidebar({ isOpen, onClose }) {
                 active={isActive('/dashboard')}
               />
               <NavItem
-                to="/notifications"
-                icon={Bell}
-                label="Notification"
-                onClick={onClose}
-                active={isActive('/notifications')}
-              />
-              <NavItem
                 to="/my-bookings"
                 icon={BookOpen}
                 label="My Bookings"
@@ -256,6 +243,23 @@ export default function Sidebar({ isOpen, onClose }) {
                 onClick={onClose}
                 active={isActive('/my-tickets')}
               />
+
+              {/* ── NEW ── */}
+              <NavItem
+                to="/notifications"
+                icon={Bell}
+                label="Notifications"
+                onClick={onClose}
+                active={isActive('/notifications')}
+              />
+              <NavItem
+                to="/my-transactions"
+                icon={ScrollText}
+                label="Transaction History"
+                onClick={onClose}
+                active={isActive('/my-transactions')}
+              />
+
               <NavItem
                 to="/become-organizer"
                 icon={ShieldUser}
@@ -269,13 +273,6 @@ export default function Sidebar({ isOpen, onClose }) {
                 label="Profile"
                 onClick={onClose}
                 active={isActive('/profile')}
-              />
-              <NavItem
-                to="/my-transactions"
-                icon={ScrollText}
-                label="Transaction Histroy"
-                onClick={onClose}
-                active={isActive('/my-transactions')}
               />
             </>
           )}
@@ -304,6 +301,22 @@ export default function Sidebar({ isOpen, onClose }) {
                 label="Create Event"
                 onClick={onClose}
                 active={isActive('/organizer/create/event')}
+              />
+
+              {/* ── NEW ── */}
+              <NavItem
+                to="/organizer/payment-details"
+                icon={CreditCard}
+                label="Payment Settings"
+                onClick={onClose}
+                active={isActive('/organizer/payment-details')}
+              />
+              <NavItem
+                to="/organizer/transactions"
+                icon={BarChart3}
+                label="Revenue Ledger"
+                onClick={onClose}
+                active={isActive('/organizer/transactions')}
               />
             </>
           )}
@@ -340,15 +353,29 @@ export default function Sidebar({ isOpen, onClose }) {
                 onClick={onClose}
                 active={isActive('/admin/organizer/applications')}
               />
+
+              {/* ── NEW ── */}
+              <NavItem
+                to="/admin/transactions"
+                icon={BarChart3}
+                label="Transactions"
+                onClick={onClose}
+                active={isActive('/admin/transactions')}
+              />
+              <NavItem
+                to="/admin/payouts"
+                icon={CreditCard}
+                label="Payouts"
+                onClick={onClose}
+                active={isActive('/admin/payouts')}
+              />
             </>
           )}
         </nav>
 
         {/* Footer */}
         <div className="px-2 py-4 border-t border-border shrink-0">
-          {/* Theme toggle — quick switch + link to ThemePage */}
           <ThemeToggle onClose={onClose} />
-
           <div className="mt-2">
             {isLoggedIn ? (
               <button
