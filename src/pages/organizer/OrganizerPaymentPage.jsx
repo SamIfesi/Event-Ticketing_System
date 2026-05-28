@@ -96,7 +96,7 @@ function BankDetailsForm({
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       {saveError && (
-        <div className="flex items-start gap-2 p-3 bg-error/10 border border-error/20 rounded-card">
+        <div className="flex items-center gap-2 p-3 bg-error/10 border border-error/20 rounded-card">
           <AlertTriangle size={14} className="text-error shrink-0 mt-0.5" />
           <p className="text-xs text-error">{saveError}</p>
         </div>
