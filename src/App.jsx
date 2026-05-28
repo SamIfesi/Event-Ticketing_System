@@ -5,7 +5,6 @@ import { useLoaderStore } from './store/loaderStore';
 import TopBarLoader from './components/loaders/TopBarLoader';
 import CenterLoader from './components/loaders/CenterLoader';
 import ToastContainer from './components/ui/ToastContainer';
-import ScrollToTop from './ScrollToTop';
 import AppRoutes from './Routes';
 
 function NavigationLoader() {
@@ -21,6 +20,16 @@ function NavigationLoader() {
       stopTopBar();
     };
   }, [location.pathname]);
+
+  return null;
+}
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   return null;
 }
