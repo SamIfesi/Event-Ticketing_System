@@ -68,8 +68,7 @@ export function useOrganizerPayment() {
       const data = await OrganizerPaymentService.getBanks();
       setBanks(data.banks ?? []);
     } catch (err) {
-      // toastError(err?.response?.data?.message ?? 'Could not load bank list.');
-      toastError(extractError(err));
+      toastError(err?.response?.data?.message ?? 'Could not load bank list.');
     } finally {
       setBanksLoading(false);
     }
