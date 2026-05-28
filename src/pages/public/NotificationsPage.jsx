@@ -23,29 +23,28 @@ import { useNotifications } from '../../hooks/useNotification';
 import { formateRelativeTime } from '../../utils/formatDate';
 import Navbar from '../../components/layout/Navbar';
 import Sidebar from '../../components/layout/Sidebar';
-import Footer from '../../components/layout/Footer';
 import Button from '../../components/ui/Button';
 import Pagination from '../../components/ui/Pagination';
 
 const TYPE_ICONS = {
-  booking_confirmed:       { icon: CheckCircle2,  color: '#22c55e' },
-  booking_failed:          { icon: XCircle,       color: '#ef4444' },
-  ticket_checkin:          { icon: QrCode,        color: '#2563eb' },
-  event_cancelled:         { icon: AlertCircle,   color: '#ef4444' },
-  event_updated:           { icon: CalendarDays,  color: '#f59e0b' },
-  new_booking:             { icon: Ticket,        color: '#10b981' },
-  low_tickets:             { icon: AlertTriangle, color: '#f59e0b' },
-  payout_sent:             { icon: Banknote,      color: '#22c55e' },
-  payout_failed:           { icon: XCircle,       color: '#ef4444' },
-  payout_frozen:           { icon: Lock,          color: '#f59e0b' },
-  organizer_approved:      { icon: ShieldCheck,   color: '#22c55e' },
-  organizer_rejected:      { icon: ShieldX,       color: '#ef4444' },
-  role_changed:            { icon: ShieldCheck,   color: '#2563eb' },
-  account_deactivated:     { icon: UserX,         color: '#ef4444' },
-  account_flagged:         { icon: Flag,          color: '#ef4444' },
-  bank_details_required:   { icon: CreditCard,    color: '#f59e0b' },
-  admin_payout_failed:     { icon: AlertCircle,   color: '#ef4444' },
-  admin_organizer_flagged: { icon: Flag,          color: '#f59e0b' },
+  booking_confirmed: { icon: CheckCircle2, color: '#22c55e' },
+  booking_failed: { icon: XCircle, color: '#ef4444' },
+  ticket_checkin: { icon: QrCode, color: '#2563eb' },
+  event_cancelled: { icon: AlertCircle, color: '#ef4444' },
+  event_updated: { icon: CalendarDays, color: '#f59e0b' },
+  new_booking: { icon: Ticket, color: '#10b981' },
+  low_tickets: { icon: AlertTriangle, color: '#f59e0b' },
+  payout_sent: { icon: Banknote, color: '#22c55e' },
+  payout_failed: { icon: XCircle, color: '#ef4444' },
+  payout_frozen: { icon: Lock, color: '#f59e0b' },
+  organizer_approved: { icon: ShieldCheck, color: '#22c55e' },
+  organizer_rejected: { icon: ShieldX, color: '#ef4444' },
+  role_changed: { icon: ShieldCheck, color: '#2563eb' },
+  account_deactivated: { icon: UserX, color: '#ef4444' },
+  account_flagged: { icon: Flag, color: '#ef4444' },
+  bank_details_required: { icon: CreditCard, color: '#f59e0b' },
+  admin_payout_failed: { icon: AlertCircle, color: '#ef4444' },
+  admin_organizer_flagged: { icon: Flag, color: '#f59e0b' },
 };
 
 function NotificationSkeleton() {
@@ -67,7 +66,10 @@ function NotificationCard({ notification, onMarkRead, onDelete }) {
   const navigate = useNavigate();
   const [hovered, setHovered] = useState(false);
 
-  const typeConfig = TYPE_ICONS[notification.type] ?? { icon: Bell, color: '#2563eb' };
+  const typeConfig = TYPE_ICONS[notification.type] ?? {
+    icon: Bell,
+    color: '#2563eb',
+  };
   const Icon = typeConfig.icon;
 
   function handleClick() {
@@ -81,7 +83,7 @@ function NotificationCard({ notification, onMarkRead, onDelete }) {
 
   return (
     <div
-      className={`relative bg-card border rounded-card p-4 transition-all duration-150 cursor-pointer group ${
+      className={`relative bg-card border rounded-card px-2 py-3 md:p-4 transition-all duration-150 cursor-pointer group overflow-hidden ${
         notification.is_read
           ? 'border-border hover:border-accent/30 hover:shadow-sm'
           : 'border-accent/30 bg-accent-text/30 hover:shadow-md'
@@ -95,18 +97,24 @@ function NotificationCard({ notification, onMarkRead, onDelete }) {
         <span className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-card bg-accent" />
       )}
 
-      <div className="flex items-start gap-3 pl-1">
+      <div className="flex items-start gap-1 pl-1">
         {/* Icon */}
         <div
-          className="w-10 h-10 rounded-btn flex items-center justify-center shrink-0"
+          className="w-10 h-10 rounded-btn flex items-center justify-center shrink-0 mr-2"
           style={{ background: `${typeConfig.color}18` }}
         >
-          <Icon size={17} strokeWidth={1.75} style={{ color: typeConfig.color }} />
+          <Icon
+            size={17}
+            strokeWidth={1.75}
+            style={{ color: typeConfig.color }}
+          />
         </div>
 
         {/* Content */}
         <div className="flex-1 min-w-0">
-          <p className={`text-sm leading-snug ${notification.is_read ? 'text-primary font-medium' : 'text-primary font-bold'}`}>
+          <p
+            className={`text-[11px] leading-snug ${notification.is_read ? 'text-primary font-medium' : 'text-primary font-bold'}`}
+          >
             {notification.title}
           </p>
           <p className="text-xs text-secondary mt-1 leading-relaxed line-clamp-2">
@@ -123,12 +131,16 @@ function NotificationCard({ notification, onMarkRead, onDelete }) {
             e.stopPropagation();
             onDelete(notification.id);
           }}
-          className={`w-8 h-8 flex items-center justify-center rounded-btn text-muted hover:text-error hover:bg-error/10 transition-all duration-150 shrink-0 ${
-            hovered ? 'opacity-100' : 'opacity-0'
+          className={`w-8 h-8 flex items-center justify-center rounded-btn transition-all duration-150 shrink-0 ${
+            hovered ? 'opacity-100' : 'opacity-70'
           }`}
           aria-label="Delete notification"
         >
-          <Trash2 size={14} strokeWidth={2} />
+          <Trash2
+            size={14}
+            strokeWidth={2}
+            className="text-muted hover:text-error hover:bg-error/10 transition-all duration-150"
+          />
         </button>
       </div>
     </div>
@@ -213,7 +225,10 @@ export default function NotificationsPage() {
         <div className="flex items-center gap-2 mb-6">
           {[
             { value: 'all', label: 'All' },
-            { value: 'unread', label: `Unread${unreadCount > 0 ? ` (${unreadCount})` : ''}` },
+            {
+              value: 'unread',
+              label: `Unread${unreadCount > 0 ? ` (${unreadCount})` : ''}`,
+            },
           ].map((f) => (
             <button
               key={f.value}
@@ -266,7 +281,9 @@ export default function NotificationsPage() {
             </div>
             <div>
               <p className="font-bold text-primary text-lg">
-                {filter === 'unread' ? 'All caught up!' : 'No notifications yet'}
+                {filter === 'unread'
+                  ? 'All caught up!'
+                  : 'No notifications yet'}
               </p>
               <p className="text-sm text-secondary mt-1 max-w-xs">
                 {filter === 'unread'
@@ -285,8 +302,6 @@ export default function NotificationsPage() {
           </div>
         )}
       </main>
-
-      <Footer />
     </div>
   );
 }
