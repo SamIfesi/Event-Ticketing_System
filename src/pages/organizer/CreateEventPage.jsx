@@ -4,8 +4,10 @@ import {
   ArrowLeft,
   ArrowRight,
   Send,
+  AlertTriangle
 } from 'lucide-react';
 import { useOrganizerEvents } from '../../hooks/useOrganizerEvents';
+import { useOrganizerPayment } from '../../hooks/useOrganizerPayment';
 import { useUiStore } from '../../store/uiStore';
 import CategoryService from '../../services/category.service';
 import Navbar from '../../components/layout/Navbar';
@@ -55,8 +57,13 @@ export default function CreateEventPage() {
   const [form, setForm] = useState({ ...DEFAULT_FORM });
   const navigate = useNavigate();
 
+  const { hasPaymentDetails, paymentDetailsLoading, fetchPaymentDetails } = useOrganizerPayment();
   const { createEvent, loading, error, fieldErrors } = useOrganizerEvents();
   const toastError = useUiStore((state) => state.toastError);
+
+  useEffect(() => {
+    fetchPaymentDetails();
+  }, [fetchPaymentDetails]);
 
   useEffect(() => {
     CategoryService.getCategories()
@@ -122,6 +129,27 @@ export default function CreateEventPage() {
             Follow the steps below to set up and publish your event.
           </p>
         </div>
+
+        {!paymentDetailsLoading && !hasPaymentDetails && (
+          <div className="flex items-start gap-3 p-4 bg-warning/10 border border-warning/20 rounded-card mb-6">
+            <AlertTriangle size={16} className="text-warning shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-primary">
+                Bank details required to publish
+              </p>
+              <p className="text-xs text-secondary mt-0.5">
+                You can save as draft, but you must add your bank details before
+                going live.{' '}
+                <Link
+                  to="/organizer/payment-details"
+                  className="text-accent font-semibold hover:underline"
+                >
+                  Add bank details →
+                </Link>
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Step indicator */}
         <StepIndicator current={currentStep} />

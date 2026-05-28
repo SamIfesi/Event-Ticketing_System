@@ -312,8 +312,8 @@ function SavedDetailsCard({
                 <Icon size={14} strokeWidth={1.75} className="text-accent" />
               </div>
               <div className="flex-1 flex items-center justify-between gap-4">
-                <span className="text-xs text-muted">{label}</span>
-                <span className="text-sm font-semibold text-primary">
+                <span className="text-[9px] text-muted">{label}</span>
+                <span className="text-[11px] font-semibold text-primary">
                   {value ?? '—'}
                 </span>
               </div>

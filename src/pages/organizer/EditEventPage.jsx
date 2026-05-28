@@ -1,7 +1,8 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Pencil } from 'lucide-react';
+import { ArrowLeft, Pencil, AlertTriangle } from 'lucide-react';
 import { useOrganizerEvents } from '../../hooks/useOrganizerEvents';
+import { useOrganizerPayment } from '../../hooks/useOrganizerPayment';
 import CategoryService from '../../services/category.service';
 import EventsService from '../../services/events.service';
 import Navbar from '../../components/layout/Navbar';
@@ -23,6 +24,12 @@ export default function EditEventPage() {
   const [eventLoading, setEventLoading] = useState(false);
 
   const { updateEvent, loading, error, fieldErrors } = useOrganizerEvents();
+  const { hasPaymentDetails, paymentDetailsLoading, fetchPaymentDetails } =
+    useOrganizerPayment();
+
+  useEffect(() => {
+    fetchPaymentDetails();
+  }, [fetchPaymentDetails]);
 
   function fetchEvent() {
     setEventLoading(true);
@@ -112,6 +119,29 @@ export default function EditEventPage() {
 
         {/* Form */}
         <div className="bg-card border border-border rounded-card p-6 sm:p-8">
+          {!paymentDetailsLoading && !hasPaymentDetails && (
+            <div className="flex items-start gap-3 p-4 bg-warning/10 border border-warning/20 rounded-card mb-6">
+              <AlertTriangle
+                size={16}
+                className="text-warning shrink-0 mt-0.5"
+              />
+              <div>
+                <p className="text-sm font-semibold text-primary">
+                  Bank details required to publish
+                </p>
+                <p className="text-xs text-secondary mt-0.5">
+                  You can save as draft, but you must add your bank details
+                  before going live.{' '}
+                  <Link
+                    to="/organizer/payment-details"
+                    className="text-accent font-semibold hover:underline"
+                  >
+                    Add bank details →
+                  </Link>
+                </p>
+              </div>
+            </div>
+          )}
           {eventLoading ? (
             <div className="flex flex-col gap-5 animate-pulse">
               {[0, 1, 2, 3].map((i) => (
