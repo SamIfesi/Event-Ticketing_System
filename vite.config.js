@@ -7,6 +7,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react(), tailwindcss()],
+    base: './',
 
     server: {
       host: true,
@@ -26,17 +27,17 @@ export default defineConfig(({ mode }) => {
 
     build: {
       target: 'esnext',
-      minify: 'esbuild',            // Better production optimization
-      sourcemap: !isProduction,     // Generate source maps only in development
-      chunkSizeWarningLimit: 1000,  // Helps with chunk warnings
+      minify: 'esbuild', // Better production optimization
+      sourcemap: !isProduction, // Generate source maps only in development
+      chunkSizeWarningLimit: 1000, // Helps with chunk warnings
 
       rollupOptions: {
         output: {
           manualChunks: {
-            vendor: ['react', 'react-dom', 'react-router-dom', 'axios'],  // Core framework
-            state: ['zustand'],                                           // State management
-            icons: ['lucide-react'],                                      // Icons
-            pdf: ['@react-pdf/renderer'],                                 // Heavy libraries
+            vendor: ['react', 'react-dom', 'react-router-dom', 'axios'], // Core framework
+            state: ['zustand'], // State management
+            icons: ['lucide-react'], // Icons
+            pdf: ['@react-pdf/renderer'], // Heavy libraries
           },
         },
       },
