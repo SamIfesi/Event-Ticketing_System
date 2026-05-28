@@ -5,6 +5,7 @@ import { useLoaderStore } from './store/loaderStore';
 import TopBarLoader from './components/loaders/TopBarLoader';
 import CenterLoader from './components/loaders/CenterLoader';
 import ToastContainer from './components/ui/ToastContainer';
+import ScrollToTop from './ScrollToTop';
 import AppRoutes from './Routes';
 
 function NavigationLoader() {
@@ -27,6 +28,7 @@ function NavigationLoader() {
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <NavigationLoader />
       <TopBarLoader />
       <CenterLoader />
