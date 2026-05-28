@@ -237,6 +237,25 @@ function SavedDetailsCard({
   isFlagged,
   onEdit,
 }) {
+  const BANK_DETAILS = [
+    { label: 'Bank', value: paymentDetails.bank_name, icon: Landmark },
+    {
+      label: 'Account Number',
+      value: paymentDetails.account_number_masked,
+      icon: CreditCard,
+    },
+    {
+      label: 'Account Name',
+      value: paymentDetails.account_name,
+      icon: User,
+    },
+    {
+      label: 'Platform Fee',
+      value: `${paymentDetails.platform_fee_percentage}%`,
+      icon: Percent,
+    },
+  ];
+
   return (
     <div className="flex flex-col gap-4">
       {/* Flag warning */}
@@ -267,7 +286,7 @@ function SavedDetailsCard({
 
       {/* Details card */}
       <div className="bg-card border border-border rounded-card overflow-hidden">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+        <div className="flex items-center justify-between p-3 border-b border-border">
           <div className="flex items-center gap-2">
             <h3 className="text-sm font-bold text-primary">Bank Account</h3>
             {paymentDetails.is_verified && (
@@ -287,25 +306,8 @@ function SavedDetailsCard({
         </div>
 
         <div className="divide-y divide-border">
-          {[
-            { label: 'Bank', value: paymentDetails.bank_name, icon: Landmark },
-            {
-              label: 'Account Number',
-              value: paymentDetails.account_number_masked,
-              icon: CreditCard,
-            },
-            {
-              label: 'Account Name',
-              value: paymentDetails.account_name,
-              icon: User,
-            },
-            {
-              label: 'Platform Fee',
-              value: `${paymentDetails.platform_fee_percentage}%`,
-              icon: Percent,
-            },
-          ].map(({ label, value, icon: Icon }) => (
-            <div key={label} className="flex items-center gap-4 px-5 py-3.5">
+          {BANK_DETAILS.map(({ label, value, icon: Icon }) => (
+            <div key={label} className="flex items-center gap-4 px-3 py-3.5">
               <div className="w-8 h-8 rounded-btn bg-accent-text flex items-center justify-center shrink-0">
                 <Icon size={14} strokeWidth={1.75} className="text-accent" />
               </div>
@@ -553,7 +555,7 @@ export default function OrganizerPaymentPage() {
             )}
 
             {/* Saved details OR form */}
-            <div className="bg-card border border-border rounded-card p-6">
+            <div>
               <h2 className="text-base font-bold text-primary mb-5">
                 {showForm
                   ? editing
