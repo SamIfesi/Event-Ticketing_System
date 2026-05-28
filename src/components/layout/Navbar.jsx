@@ -1,5 +1,13 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, ChevronDown, LogOut, Monitor, Sun, Moon, Bell } from 'lucide-react';
+import {
+  Menu,
+  ChevronDown,
+  LogOut,
+  Monitor,
+  Sun,
+  Moon,
+  Bell,
+} from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useAuth } from '../../hooks/useAuth';
 import { useThemeStore } from '../../store/themeStore';
@@ -22,15 +30,16 @@ function NavGroupPanel({ items, close }) {
   const location = useLocation();
 
   function isActive(to) {
-    return (
-      location.pathname === to || location.pathname.startsWith(to + '/')
-    );
+    return location.pathname === to || location.pathname.startsWith(to + '/');
   }
 
   return (
     <div
       className="bg-card border-b border-border shadow-xl overflow-hidden p-1.5"
-      style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(items.length, 3)}, minmax(130px, 1fr))` }}
+      style={{
+        display: 'grid',
+        gridTemplateColumns: `repeat(${Math.min(items.length, 3)}, minmax(130px, 1fr))`,
+      }}
     >
       {items.map(({ to, label, description }) => (
         <Link
@@ -39,7 +48,9 @@ function NavGroupPanel({ items, close }) {
           onClick={close}
           role="menuitem"
           className={`flex flex-col px-3 py-2 transition-colors duration-150 group border-b-2 ${
-            isActive(to) ? 'border-accent' : 'border-transparent hover:bg-border'
+            isActive(to)
+              ? 'border-accent'
+              : 'border-transparent hover:bg-border'
           }`}
         >
           <span className="text-sm font-medium leading-snug text-primary">
@@ -94,7 +105,9 @@ function ProfilePanel({ user, close, logout }) {
     <div className="min-w-50 bg-card border border-border rounded-card shadow-xl overflow-hidden">
       {/* User info header */}
       <div className="px-4 py-3 border-b border-border">
-        <p className="text-sm font-semibold text-primary truncate">{user?.name}</p>
+        <p className="text-sm font-semibold text-primary truncate">
+          {user?.name}
+        </p>
         <p className="text-xs text-muted truncate">{user?.email}</p>
       </div>
 
@@ -116,7 +129,10 @@ function ProfilePanel({ user, close, logout }) {
 
       {/* Sign out */}
       <button
-        onClick={async () => { close(); await logout(); }}
+        onClick={async () => {
+          close();
+          await logout();
+        }}
         role="menuitem"
         className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-error hover:bg-error/10 transition-colors duration-150"
       >
@@ -141,7 +157,11 @@ function ThemeToggleButton({ onNavigate }) {
         className="w-9 h-9 flex items-center justify-center rounded-btn text-muted hover:text-primary hover:bg-border transition-colors duration-150"
         title={isDark ? 'Light mode' : 'Dark mode'}
       >
-        {isDark ? <Sun size={16} strokeWidth={2} /> : <Moon size={16} strokeWidth={2} />}
+        {isDark ? (
+          <Sun size={16} strokeWidth={2} />
+        ) : (
+          <Moon size={16} strokeWidth={2} />
+        )}
       </button>
 
       {/* Link to full theme page */}
@@ -195,7 +215,11 @@ function AvatarTrigger({ user }) {
       <span className="hidden sm:block text-sm font-medium text-primary max-w-25 truncate">
         {user?.name?.split(' ')[0]}
       </span>
-      <ChevronDown size={13} strokeWidth={2} className="text-muted hidden sm:block" />
+      <ChevronDown
+        size={13}
+        strokeWidth={2}
+        className="text-muted hidden sm:block"
+      />
     </button>
   );
 }
@@ -203,10 +227,10 @@ function AvatarTrigger({ user }) {
 // ─── Main Navbar ─────────────────────────────────────────────────────────────
 
 export default function Navbar({ onMenuClick }) {
-  const user       = useAuthStore((state) => state.user);
-  const token      = useAuthStore((state) => state.token);
+  const user = useAuthStore((state) => state.user);
+  const token = useAuthStore((state) => state.token);
   const isLoggedIn = Boolean(token);
-  const role       = user?.role ?? null;
+  const role = user?.role ?? null;
 
   const { logout } = useAuth();
 
@@ -218,14 +242,16 @@ export default function Navbar({ onMenuClick }) {
   return (
     <header className="sticky top-0 z-50 bg-card/80 backdrop-blur-md border-b border-border">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
-
         {/* ── Logo ── */}
         <Link to="/home" className="flex items-center gap-2 shrink-0">
           <img src={logo} alt="Ticketer" className="h-6" />
         </Link>
 
         {/* ── Desktop grouped nav ── */}
-        <nav className="hidden md:flex items-center gap-1" aria-label="Primary navigation">
+        <nav
+          className="hidden md:flex items-center gap-1"
+          aria-label="Primary navigation"
+        >
           {visibleGroups.map((group) => (
             <NavGroupTab
               key={group.id}
@@ -276,13 +302,13 @@ export default function Navbar({ onMenuClick }) {
             <>
               <Link
                 to="/login"
-                className="px-4 text-sm font-semibold text-secondary hover:text-primary transition-colors duration-150"
+                className="px-4 py-1.5 md:py-0 bg-accent md:bg-transparent hover:bg-accent-hover md:hover:bg-transparent text-white md:text-secondary md:hover:text-primary text-sm font-semibold rounded-btn transition-colors duration-180 md:duration-150 flex items-center md:inline-flex"
               >
                 Sign in
               </Link>
               <Link
                 to="/register"
-                className="h-9 px-4 bg-accent hover:bg-accent-hover text-white text-sm font-semibold rounded-btn transition-colors duration-180 flex items-center"
+                className="hidden md:flex h-9 px-4 py-1.5 bg-accent hover:bg-accent-hover text-white text-sm font-semibold rounded-btn transition-colors duration-180 items-center"
               >
                 Get started
               </Link>
