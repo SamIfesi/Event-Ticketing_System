@@ -21,8 +21,8 @@ export function useTicketDownload() {
     setChecking(true);
     try {
       const data = await TicketsService.getTicketStatus(bookingId);
-      setIsReady(data.receipt_generated);
-      return data.receipt_generated;
+      setIsReady(data.ticket_generated);
+      return data.ticket_generated;
     } catch {
       return false;
     } finally {
