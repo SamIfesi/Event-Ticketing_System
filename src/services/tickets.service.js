@@ -23,7 +23,7 @@ const TicketsService = {
   async downloadTicket(bookingId) {
     const response = await api.get(`/bookings/${bookingId}/ticket`, {
       responseType: 'blob',
-    });
+    }, {skipLoader: true});
 
     const blob = new Blob([response.data], { type: 'application/pdf' });
     const url = window.URL.createObjectURL(blob);
@@ -40,11 +40,11 @@ const TicketsService = {
   },
 
   // ── PDF status check ──────────────────────────────────────
-  // Returns { receipt_generated: bool, download_url: string | null }
+  // Returns { ticket_generated: bool, download_url: string | null }
   // Call this before attempting a download so the UI can show a
   // "still generating…" state when the worker hasn't finished yet.
   async getTicketStatus(bookingId) {
-    const response = await api.get(`/bookings/${bookingId}/ticket/status`);
+    const response = await api.get(`/bookings/${bookingId}/ticket/status`, {skipLoader: true});
     return response.data.data;
   },
 };
