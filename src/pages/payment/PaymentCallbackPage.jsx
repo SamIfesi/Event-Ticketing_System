@@ -145,7 +145,7 @@ function SuccessState({ data, reference, countdown, onViewTickets }) {
         QR code at the gate for entry.
       </p>
 
-      {/* Receipt card */}
+      {/* Ticket card */}
       <div className="w-full max-w-sm bg-card border border-border rounded-card overflow-hidden mb-8">
         {/* Green top strip */}
         <div className="h-1.5 w-full bg-success" />
