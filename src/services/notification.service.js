@@ -12,7 +12,7 @@ const NotificationService = {
   // GET /api/notifications/unread
   // Lightweight — just the count for the bell badge
   async getUnreadCount() {
-    const response = await api.get('/notifications/unread', {skipLoader: true,});
+    const response = await api.get('/notifications/unread', {skipLoader: true});
     return response.data.data; // { unread_count }
   },
 
