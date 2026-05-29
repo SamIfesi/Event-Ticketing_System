@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import Badge from '../../components/ui/Badge';
 import { formatShortDate } from '../../utils/formatDate';
 import { formatCurrency } from '../../utils/formatCurrency';
+import DownloadTicketButton from '../tickets/DownloadTicketButton';
 import {
   CreditCard,
   ArrowUpRight,
@@ -138,15 +139,22 @@ export default function BookingCard({ booking }) {
                     : 'Awaiting payment'}
             </span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             {isPaid && bookingId && (
               <Link
                 to={`/my-tickets?booking=${bookingId}`}
-                className="flexitems-center gap-1 text-xs font-semibold text-accent hover:text-accent-hover transition-colors"
+                className="flex items-center gap-1 text-xs font-semibold text-accent hover:text-accent-hover transition-colors"
               >
                 <Ticket size={12} strokeWidth={2.5} />
                 View tickets
               </Link>
+            )}
+            {isPaid && bookingId && (
+              <DownloadTicketButton
+                bookingId={bookingId}
+                variant="link"
+                size="sm"
+              />
             )}
             {eventId && (
               <Link
