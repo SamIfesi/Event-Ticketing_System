@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { useOrganizerEvents } from '../../hooks/useOrganizerEvents';
 import { useEvents } from '../../hooks/useEvents';
-import { formatShortDate, formatTime } from '../../utils/formatDate';
+import { formatShortDate } from '../../utils/formatDate';
 import { formatCurrency } from '../../utils/formatCurrency';
 import Navbar from '../../components/layout/Navbar';
 import Sidebar from '../../components/layout/Sidebar';
@@ -72,10 +72,10 @@ function BookingRow({ booking }) {
             </span>
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-primary truncate max-w-[160px]">
+            <p className="text-sm font-semibold text-primary truncate max-w-40">
               {booking.attendee_name ?? '—'}
             </p>
-            <p className="text-xs text-muted truncate max-w-[180px]">
+            <p className="text-xs text-muted truncate max-w-45">
               {booking.attendee_email ?? '—'}
             </p>
           </div>
@@ -165,7 +165,7 @@ export default function EventBookingsPage() {
             <ArrowLeft size={13} strokeWidth={2.5} /> My Events
           </Link>
           <span className="text-muted">/</span>
-          <span className="text-primary font-medium truncate max-w-[200px]">
+          <span className="text-primary font-medium truncate max-w-50">
             {eventLoading ? 'Loading…' : (event?.title ?? 'Bookings')}
           </span>
         </div>
@@ -226,7 +226,7 @@ export default function EventBookingsPage() {
         {/* Table */}
         <div className="bg-card border border-border rounded-card overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[680px]">
+            <table className="w-full min-w-170">
               <thead>
                 <tr className="bg-main-bg">
                   {['Attendee', 'Ticket Type', 'Qty', 'Amount', 'Paid On', 'Status'].map((h) => (
