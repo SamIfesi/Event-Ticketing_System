@@ -5,6 +5,7 @@ import {
   Search,
   Filter,
   X,
+  Ticket,
   CheckCircle2,
   CreditCard,
 } from 'lucide-react';
@@ -23,6 +24,7 @@ const PAYMENT_FILTERS = [
   { value: 'failed', label: 'Failed' },
   { value: 'refunded', label: 'Refunded' },
 ];
+
 
 export default function MyBookingsPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -48,11 +50,38 @@ export default function MyBookingsPage() {
   // Summary stats
   const totalSpent = bookings
     .filter((b) => b.payment_status === 'paid')
-    .reduce((acc, b) => acc + (b.total_amount ?? 0), 0);
+    .reduce((acc, b) => acc + parseFloat(b.total_amount ?? 0), 0);
   const confirmedCount = bookings.filter(
     (b) => b.payment_status === 'paid'
   ).length;
   const totalTickets = bookings.reduce((acc, b) => acc + (b.quantity ?? 0), 0);
+
+  const BOOKING_DETAILS = [
+    {
+      label: 'Total Bookings',
+      value: bookings.length,
+      icon: BookOpen,
+      color: '#2563eb',
+    },
+    {
+      label: 'Confirmed',
+      value: confirmedCount,
+      icon: CheckCircle2,
+      color: '#22c55e',
+    },
+    {
+      label: 'Total Tickets',
+      value: totalTickets,
+      icon: Ticket,
+      color: '#ee743c',
+    },
+    {
+      label: 'Total Spent',
+      value: formatCurrency(totalSpent),
+      icon: CreditCard,
+      color: '#8b5cf6',
+    },
+  ]
 
   return (
     <div className="flex flex-col min-h-screen bg-main-bg">
@@ -72,33 +101,8 @@ export default function MyBookingsPage() {
 
         {/* Summary strip */}
         {!bookingsLoading && bookings.length > 0 && (
-          <div className="grid grid-cols-3 gap-4 mb-8">
-            {[
-              {
-                label: 'Total Bookings',
-                value: bookings.length,
-                icon: BookOpen,
-                color: '#2563eb',
-              },
-              {
-                label: 'Confirmed',
-                value: confirmedCount,
-                icon: CheckCircle2,
-                color: '#22c55e',
-              },
-              {
-                label: 'Total Tickets',
-                value: totalTickets,
-                icon: Ticket,
-                color: '#ee743c',
-              },
-              {
-                label: 'Total Spent',
-                value: formatCurrency(totalSpent),
-                icon: CreditCard,
-                color: '#8b5cf6',
-              },
-            ].map(({ label, value, icon: Icon, color }) => (
+          <div className="grid grid-cols-2 gap-2 mb-8 md:grid-cols-3  md:gap-4">
+            {BOOKING_DETAILS.map(({ label, value, icon: Icon, color }) => (
               <div
                 key={label}
                 className="bg-card border border-border rounded-card px-4 py-3.5 flex items-center gap-3"

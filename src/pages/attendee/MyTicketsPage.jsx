@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useProfile } from '../../hooks/useProfile';
+import { useTickets } from '../../hooks/useTickets';
 import Navbar from '../../components/layout/Navbar';
 import Sidebar from '../../components/layout/Sidebar';
 import Footer from '../../components/layout/Footer';
@@ -43,6 +44,8 @@ export default function MyTicketsPage() {
   const [dateFilter, setDate] = useState('all');
 
   const { tickets, ticketsLoading, fetchTickets } = useProfile();
+  const { ticket } = useTickets();
+  
   const [searchParams] = useSearchParams();
   const bookingIdFilter = searchParams.get('booking');
 

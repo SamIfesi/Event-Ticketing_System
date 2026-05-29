@@ -14,7 +14,6 @@ import {
   ArrowLeft,
   Share2,
   AlertCircle,
-  Download,
   ExternalLink,
   Music,
   Cpu,
@@ -29,13 +28,11 @@ import {
 import { useTickets } from '../../hooks/useTickets';
 import { useUiStore } from '../../store/uiStore';
 import { formatShortDate, formatTime } from '../../utils/formatDate';
-import { formatCurrency } from '../../utils/formatCurrency';
 import QRCodeDisplay from '../../components/tickets/QRCodeDisplay';
-import DownloadableTicket from '../../components/tickets/DownloadableTicket';
+import DownloadTicketButton from '../../components/tickets/DownloadTicketButton';
 import Navbar from '../../components/layout/Navbar';
 import Sidebar from '../../components/layout/Sidebar';
 import Footer from '../../components/layout/Footer';
-import Button from '../../components/ui/Button';
 
 // ── Category icons ────────────────────────────────────────────
 const CATEGORY_ICONS = {
@@ -126,7 +123,7 @@ function Perforation() {
   return (
     <div className="relative flex items-center" style={{ margin: '0 -1px' }}>
       <div
-        className="w-5 h-5 rounded-full flex-shrink-0 bg-main-bg border border-border"
+        className="w-5 h-5 rounded-full shrink-0 bg-main-bg border border-border"
         style={{ marginLeft: '-10px', zIndex: 1 }}
       />
       <div
@@ -134,7 +131,7 @@ function Perforation() {
         style={{ margin: '0 4px' }}
       />
       <div
-        className="w-5 h-5 rounded-full flex-shrink-0 bg-main-bg border border-border"
+        className="w-5 h-5 rounded-full shrink-0 bg-main-bg border border-border"
         style={{ marginRight: '-10px', zIndex: 1 }}
       />
     </div>
@@ -174,7 +171,6 @@ export default function TicketDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [showDownload, setShowDownload] = useState(false);
 
   const { ticket, ticketLoading, ticketError, fetchTicket } = useTickets();
   const toastSuccess = useUiStore((s) => s.toastSuccess);
@@ -219,6 +215,7 @@ export default function TicketDetailPage() {
     );
   }
 
+  const isValid = ticket?.status === 'valid';
   const isUsed = ticket?.status === 'used';
   const isCancelled =
     ticket?.status === 'cancelled' || ticket?.status === 'expired';
@@ -369,15 +366,14 @@ export default function TicketDetailPage() {
 
             {/* ── Action buttons ── */}
             <div className="flex flex-col gap-3">
-              <Button
-                variant="primary"
-                size="md"
-                icon={<Download size={15} strokeWidth={2} />}
-                onClick={() => setShowDownload((v) => !v)}
-                className="w-full"
-              >
-                {showDownload ? 'Hide download' : 'Download ticket'}
-              </Button>
+              {/* Download ticket PDF — valid and used tickets both get a PDF */}
+              {/* {(isValid || isUsed) && ticket?.booking_id && ( */}
+                <DownloadTicketButton
+                  bookingId={ticket.booking_id}
+                  size="md"
+                  checkOnMount
+                />
+              {/* )} */}
 
               <div className="flex items-center gap-3">
                 <Link
@@ -395,16 +391,6 @@ export default function TicketDetailPage() {
                 </Link>
               </div>
             </div>
-
-            {/* ── Download panel ── */}
-            {showDownload && (
-              <div className="bg-card border border-border rounded-card p-5">
-                <p className="text-xs font-semibold text-muted uppercase tracking-widest mb-4">
-                  Downloadable ticket
-                </p>
-                <DownloadableTicket ticket={ticket} />
-              </div>
-            )}
 
             {/* Fine print */}
             <p className="text-center text-xs text-muted pb-2">
