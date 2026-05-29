@@ -30,6 +30,7 @@ import {
   Star,
 } from 'lucide-react';
 import QRCodeDisplay from '../../components/tickets/QRCodeDisplay';
+import DownloadTicketButton from './DownloadTicketButton';
 import { formatShortDate, formatTime } from '../../utils/formatDate';
 
 // ── Category icon map ─────────────────────────────────────────
@@ -153,7 +154,7 @@ function Perforation({ className = '' }) {
     >
       {/* Left notch */}
       <div
-        className="w-5 h-5 rounded-full flex-shrink-0 bg-main-bg border border-border"
+        className="w-5 h-5 rounded-full shrink-0 bg-main-bg border border-border"
         style={{ marginLeft: '-10px', zIndex: 1 }}
       />
       {/* Dashed line */}
@@ -163,7 +164,7 @@ function Perforation({ className = '' }) {
       />
       {/* Right notch */}
       <div
-        className="w-5 h-5 rounded-full flex-shrink-0 bg-main-bg border border-border"
+        className="w-5 h-5 rounded-full shrink-0 bg-main-bg border border-border"
         style={{ marginRight: '-10px', zIndex: 1 }}
       />
     </div>
@@ -222,7 +223,7 @@ function CompactRow({ ticket, gradientIndex, onExpand, expanded }) {
 // ── Expanded ticket card (image 2 style) ──────────────────────
 function ExpandedCard({ ticket, gradientIndex, onCollapse }) {
   const event = ticket?.event ?? {};
-  // const isValid = ticket?.status === 'valid';
+  const isValid = ticket?.status === 'valid';
   const isUsed = ticket?.status === 'used';
   const isCancelled =
     ticket?.status === 'cancelled' || ticket?.status === 'expired';
@@ -340,7 +341,7 @@ function ExpandedCard({ ticket, gradientIndex, onCollapse }) {
       {/* ── QR Stub ── */}
       <div className="px-5 py-4 flex items-center gap-4">
         <QRCodeDisplay
-          url={ticket?.qr_code_url}
+          url={ticket.qr_code_url}
           size={80}
           disabled={isUsed || isCancelled}
         />
@@ -356,14 +357,26 @@ function ExpandedCard({ ticket, gradientIndex, onCollapse }) {
           </div>
         </div>
 
-        {/* Details link */}
-        <Link
-          to={`/ticket/${ticket?.id}`}
-          className="flex flex-col items-center gap-1 text-muted hover:text-accent transition-colors shrink-0"
-        >
-          <ExternalLink size={16} strokeWidth={2} />
-          <span className="text-[10px] font-medium">Details</span>
-        </Link>
+        {/* Download + Details actions */}
+        <div className="flex flex-col items-center gap-2 shrink-0">
+          {/* Download PDF link — valid and used tickets both get a PDF */}
+          {(isValid || isUsed) && ticket?.booking_id && (
+            <DownloadTicketButton
+              bookingId={ticket.booking_id}
+              variant="link"
+              size="sm"
+            />
+          )}
+
+          {/* Details link */}
+          <Link
+            to={`/ticket/${ticket?.id}`}
+            className="flex flex-col items-center gap-1 text-muted hover:text-accent transition-colors"
+          >
+            <ExternalLink size={16} strokeWidth={2} />
+            <span className="text-[10px] font-medium">Details</span>
+          </Link>
+        </div>
       </div>
     </div>
   );
