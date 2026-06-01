@@ -10,9 +10,9 @@ import { formatShortDate } from '../../utils/formatDate';
 
 function Skeleton() {
   return (
-    <div className="bg-card border border-border rounded-card p-5 animate-pulse">
+    <div className="bg-card border border-border rounded-card p-3 animate-pulse">
       <div className="flex items-center gap-4">
-        <div className="w-16 h-16 rounded-full bg-border shrink-0" />
+        <div className="w-22 h-22 rounded-full bg-border shrink-0" />
         <div className="flex flex-col gap-2 flex-1">
           <div className="h-5 bg-border rounded w-36" />
           <div className="h-3 bg-border rounded w-48" />
@@ -34,18 +34,25 @@ export default function ProfileHeader({ profile, user, loading }) {
   const since = profile?.created_at ?? user?.created_at;
 
   return (
-    <div className="bg-card border border-border rounded-card p-5">
+    <div className="bg-card border border-border rounded-card p-3">
       <div className="flex items-center gap-4">
         {/* Avatar */}
         <div className="relative shrink-0">
           {avatar ? (
             <img
-              src={avatar}
+              src={
+                avatar?.includes('cloudinary.com')
+                  ? avatar.replace(
+                      '/upload/',
+                      '/upload/w_160,h_160,c_fill,f_auto,q_auto/'
+                    )
+                  : avatar
+              }
               alt={name}
-              className="w-16 h-16 rounded-full object-cover border-2 border-border"
+              className="w-22 h-22 rounded-full object-cover border-2 border-border"
             />
           ) : (
-            <div className="w-16 h-16 rounded-full bg-accent-text border-2 border-accent-border flex items-center justify-center">
+            <div className="w-22 h-22 rounded-full bg-accent-text border-2 border-accent-border flex items-center justify-center">
               <span className="text-xl font-black text-accent">
                 {name.charAt(0).toUpperCase()}
               </span>
