@@ -3,14 +3,23 @@ import { useNavigate } from 'react-router-dom';
 import { User, Camera, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { useProfile } from '../../hooks/useProfile';
 import { useAuthStore } from '../../store/authStore';
+import { useUiStore } from '../../store/uiStore';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
+import ImageUpload from '../../components/ui/ImageUpload';
+import api from '../../services/api';
 
 export default function EditProfilePage() {
+  const toastSuccess = useUiStore((state) => state.toastSuccess);
+
   const navigate = useNavigate();
   const [done, setDone] = useState(false);
 
   const user = useAuthStore((s) => s.user);
+  const token = useAuthStore((s) => s.token);
+  const isVerified = useAuthStore((s) => s.isVerified);
+  const setAuth = useAuthStore((s) => s.setAuth);
+
   const {
     profile,
     profileLoading,
@@ -32,7 +41,7 @@ export default function EditProfilePage() {
 
   const displayName = profile?.name ?? user?.name ?? '';
   const displayEmail = profile?.email ?? user?.email ?? '';
-  const avatar = profile?.avatar;
+  // const avatar = profile?.avatar;
 
   const canSubmit = name.trim().length >= 2 && name.trim() !== displayName;
 
@@ -41,6 +50,15 @@ export default function EditProfilePage() {
     if (!canSubmit) return;
     await updateProfile({ name: name.trim() });
     if (!error) setDone(true);
+  }
+
+  async function handleAvatarUpload({ publicId, secureUrl }) {
+    await api.post('/cloudinary/avatar', {
+      public_id: publicId,
+      secure_url: secureUrl,
+    });
+    setAuth({ user: { ...user, avatar: secureUrl }, token, isVerified });
+    toastSuccess('Avatar Updated!');
   }
 
   return (
@@ -93,27 +111,12 @@ export default function EditProfilePage() {
           <>
             {/* Avatar */}
             <div className="flex flex-col items-center mb-8">
-              <div className="relative">
-                {avatar ? (
-                  <img
-                    src={avatar}
-                    alt={displayName}
-                    className="w-20 h-20 rounded-full object-cover border-2 border-border"
-                  />
-                ) : (
-                  <div className="w-20 h-20 rounded-full bg-accent-text border-2 border-accent-border flex items-center justify-center">
-                    <span className="text-2xl font-black text-accent">
-                      {(name || displayName).charAt(0).toUpperCase()}
-                    </span>
-                  </div>
-                )}
-                <button
-                  type="button"
-                  className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-accent border-2 border-card flex items-center justify-center hover:bg-accent-hover transition-colors"
-                  title="Change photo (coming soon)"
-                >
-                  <Camera size={14} className="text-white" strokeWidth={2.5} />
-                </button>
+              <div className="relative shrink-0">
+                <ImageUpload
+                  type="avatar"
+                  currentUrl={profile?.avatar}
+                  onUploaded={handleAvatarUpload}
+                />
               </div>
               <p className="text-xs text-muted mt-3">{displayEmail}</p>
             </div>
