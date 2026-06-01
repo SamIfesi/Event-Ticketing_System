@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useAuth } from '../../hooks/useAuth';
+import { useProfile } from '../../hooks/useProfile';
 import { ROLES } from '../../config/constants';
 import logo from '/src/assets/icons/logo.svg';
 import { useThemeStore } from '../../store/themeStore';
@@ -102,15 +103,21 @@ function ThemeToggle({ onClose }) {
 
 export default function Sidebar({ isOpen, onClose }) {
   const location = useLocation();
+  const { profile, fetchProfile } = useProfile();
   const user = useAuthStore((state) => state.user);
   const token = useAuthStore((state) => state.token);
   const isLoggedIn = Boolean(token);
   const role = user?.role;
+  const avatar = profile?.avatar;
 
   const isAdmin = role === ROLES.ADMIN || role === ROLES.DEV;
   const isOrganizer = role === ROLES.ORGANIZER || isAdmin;
 
   const { logout } = useAuth();
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
 
   useEffect(() => {
     function onKey(e) {
@@ -180,11 +187,29 @@ export default function Sidebar({ isOpen, onClose }) {
               onClick={onClose}
               className="flex items-center gap-3 p-3 rounded-card bg-main-bg hover:bg-border transition-colors duration-150 touch-manipulation group"
             >
-              <div className="w-10 h-10 rounded-full bg-accent-text flex items-center justify-center shrink-0">
-                <span className="font-bold text-accent text-sm">
-                  {user?.name?.charAt(0)?.toUpperCase()}
-                </span>
+
+              {/* Avatar */}
+              <div className="w-15 h-15 rounded-full bg-accent-text flex items-center justify-center shrink-0">
+                {avatar ? (
+                  <img
+                    src={
+                      avatar?.includes('cloudinary.com')
+                        ? avatar.replace(
+                            '/upload/',
+                            '/upload/w_160,h_160,c_fill,f_auto,q_auto/'
+                          )
+                        : avatar
+                    }
+                    alt={name}
+                    className="w-15 h-15 rounded-full object-cover border-2 border-border"
+                  />
+                ) : (
+                  <span className="font-bold text-accent text-sm">
+                    {user?.name?.charAt(0)?.toUpperCase()}
+                  </span>
+                )}
               </div>
+
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-primary truncate">
                   {user.name}

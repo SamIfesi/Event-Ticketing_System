@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Menu,
@@ -10,6 +11,7 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useAuth } from '../../hooks/useAuth';
+import { useProfile } from '../../hooks/useProfile';
 import { useThemeStore } from '../../store/themeStore';
 import { useNotifications } from '../../hooks/useNotification';
 import { ROLES, NAV_GROUPS, PROFILE_MENU } from '../../config/constants';
@@ -202,15 +204,37 @@ function NotificationBell() {
 // ─── Avatar trigger ──────────────────────────────────────────────────────────
 
 function AvatarTrigger({ user }) {
+  const { profile, fetchProfile } = useProfile();
+  const avatar = profile?.avatar;
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
   return (
     <button
       aria-haspopup="menu"
       className="flex items-center gap-2 px-2 py-1 rounded-btn hover:bg-border transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
     >
       <div className="w-8 h-8 rounded-full bg-accent-text flex items-center justify-center shrink-0">
-        <span className="font-bold text-accent text-sm">
-          {user?.name?.charAt(0)?.toUpperCase()}
-        </span>
+        {avatar ? (
+          <img
+            src={
+              avatar?.includes('cloudinary.com')
+                ? avatar.replace(
+                    '/upload/',
+                    '/upload/w_160,h_160,c_fill,f_auto,q_auto/'
+                  )
+                : avatar
+            }
+            alt={name}
+            className="w-8 h-8 rounded-full object-cover border-2 border-border"
+          />
+        ) : (
+          <span className="font-bold text-accent text-sm">
+            {user?.name?.charAt(0)?.toUpperCase()}
+          </span>
+        )}
       </div>
       <span className="hidden sm:block text-sm font-medium text-primary max-w-25 truncate">
         {user?.name?.split(' ')[0]}
