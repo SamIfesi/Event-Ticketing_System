@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Camera, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { User, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { useProfile } from '../../hooks/useProfile';
 import { useAuthStore } from '../../store/authStore';
 import { useUiStore } from '../../store/uiStore';

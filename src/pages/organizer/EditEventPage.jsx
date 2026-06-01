@@ -56,6 +56,7 @@ export default function EditEventPage() {
       category_id: event.category_id ? String(event.category_id) : '',
       location: event.location ?? '',
       banner_image: event.banner_image ?? '',
+      banner_public_id: event.banner_public_id ?? '',
       start_date: toInputDate(event.start_date),
       end_date: toInputDate(event.end_date),
       total_tickets: event.total_tickets ?? '',

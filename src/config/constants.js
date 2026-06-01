@@ -407,6 +407,7 @@ export const DEFAULT_FORM = {
   category_id: '',
   location: '',
   banner_image: '',
+  banner_public_id: '',
   start_date: '',
   end_date: '',
   ticket_types: [{ ...EMPTY_TICKET }],
