@@ -433,7 +433,7 @@ export function StepPublish({ form, setForm, error }) {
       {/* Event summary card */}
       <div className="bg-card border border-border rounded-card overflow-hidden">
         {/* Mini banner */}
-        <div className="h-28 bg-linear-to-br from-blue-600 to-indigo-700 relative overflow-hidden">
+        <div className="h- bg-linear-to-br from-blue-600 to-indigo-700 relative overflow-hidden">
           {form.banner_image && (
             <img
               src={form.banner_image}
