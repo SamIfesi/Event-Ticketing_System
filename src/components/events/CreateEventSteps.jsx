@@ -14,6 +14,7 @@ import {
 import CategoryService from '../../services/category.service';
 import { formatCurrency } from '../../utils/formatCurrency';
 import Input from '../../components/ui/Input';
+import ImageUpload from '../../components/ui/ImageUpload';
 import {
   GRADIENTS,
   STEPS,
@@ -206,30 +207,20 @@ export function DateInfo({ form, setForm, fieldErrors }) {
       </div>
 
       {/* Banner */}
-      <Input
-        label={
-          <>
-            Banner image URL{' '}
-            <span className="text-muted font-normal">(optional)</span>
-          </>
-        }
-        type="url"
-        placeholder="https://… (paste an image link)"
-        value={form.banner_image}
-        onChange={(e) => set('banner_image', e.target.value)}
-        error={fieldErrors?.banner_image}
-        icon={<Image size={15} />}
-      />
-      {form.banner_image && (
-        <img
-          src={form.banner_image}
-          alt="Banner preview"
-          className="w-full h-40 object-cover rounded-card border border-border"
-          onError={(e) => {
-            e.target.style.display = 'none';
+      <div className="flex flex-col gap-1.5 mt-4">
+        <label className="text-sm font-medium text-primary select-none">
+          Banner image{' '}
+          <span className="text-muted font-normal">(optional)</span>
+        </label>
+        <ImageUpload
+          type="banner"
+          currentUrl={form.banner_image}
+          onUploaded={({ publicId, secureUrl }) => {
+            set('banner_image', secureUrl);
+            set('banner_public_id', publicId);
           }}
         />
-      )}
+      </div>
     </>
   );
 }

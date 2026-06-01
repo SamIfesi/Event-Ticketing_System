@@ -28,6 +28,7 @@ import {
 import Input from '../ui/Input';
 import Button from '../ui/Button';
 import { formatCurrency } from '../../utils/formatCurrency';
+import ImageUpload from '../ui/ImageUpload';
 
 // ── Ticket type row ───────────────────────────────────────────
 function TicketTypeRow({ tt, index, onChange, onRemove, disabled }) {
@@ -149,6 +150,7 @@ const DEFAULT_VALUES = {
   category_id: '',
   location: '',
   banner_image: '',
+  banner_public_id: '',
   start_date: '',
   end_date: '',
   total_tickets: '',
@@ -301,31 +303,21 @@ export default function EventForm({
         />
 
         {/* Banner image URL */}
-        <Input
-          label={
-            <>
-              Banner image URL{' '}
-              <span className="text-muted font-normal">(optional)</span>
-            </>
-          }
-          type="url"
-          placeholder="https://… (image link)"
-          value={form.banner_image}
-          onChange={(e) => set('banner_image', e.target.value)}
-          error={fieldErrors.banner_image}
+      <div className="flex flex-col gap-1.5 mt-4">
+        <label className="text-sm font-medium text-primary select-none">
+          Banner image{' '}
+          <span className="text-muted font-normal">(optional)</span>
+        </label>
+        <ImageUpload
+          type="banner"
+          currentUrl={form.banner_image}
           disabled={loading}
-          icon={<Image size={15} />}
+          onUploaded={({ publicId, secureUrl }) => {
+            set('banner_image', secureUrl);
+            set('banner_public_id', publicId);
+          }}
         />
-        {form.banner_image && (
-          <img
-            src={form.banner_image}
-            alt="Banner preview"
-            className="w-full h-40 object-cover rounded-card border border-border"
-            onError={(e) => {
-              e.target.style.display = 'none';
-            }}
-          />
-        )}
+      </div>
       </section>
 
       {/* ── Section: Date & time ────────────────────────────── */}

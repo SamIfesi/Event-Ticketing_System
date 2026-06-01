@@ -36,7 +36,14 @@ export default function EventCard({ event, index = 0, compact = false }) {
       >
         {event.banner_image ? (
           <img
-            src={event.banner_image}
+            src={
+              event.banner_image?.includes('cloudinary.com')
+                ? event.banner_image.replace(
+                    '/upload/',
+                    '/upload/w_600,h_400,c_fill,f_auto,q_auto/'
+                  )
+                : event.banner_image
+            }
             alt={event.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-400"
           />
