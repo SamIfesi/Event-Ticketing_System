@@ -23,7 +23,8 @@ const TicketsService = {
   async downloadTicket(bookingId) {
     const response = await api.get(`/bookings/${bookingId}/ticket`, {
       responseType: 'blob',
-    }, {skipLoader: true});
+      skipLoader: true,
+    });
 
     const blob = new Blob([response.data], { type: 'application/pdf' });
     const url = window.URL.createObjectURL(blob);
@@ -46,7 +47,6 @@ const TicketsService = {
   async getTicketStatus(bookingId) {
     const response = await api.get(`/bookings/${bookingId}/ticket/status`, {skipLoader: true});
     return response.data.data;
-    console.log(bookingId)
   },
 };
 
