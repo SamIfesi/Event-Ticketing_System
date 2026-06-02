@@ -34,6 +34,8 @@ export function useTicketDownload() {
   // Useful right after payment when the worker hasn't finished yet.
   const waitAndDownload = useCallback(
     async (bookingId, maxWaitSeconds = 60) => {
+      if (!bookingId) return toastError('Invalid  Booking ID.');
+      
       setDownloading(true);
       toastInfo('Preparing your ticket PDF…');
 
