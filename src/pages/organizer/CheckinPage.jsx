@@ -40,6 +40,7 @@ function StatPill({ label, value, color }) {
 // ── Attendee row in checkin list ──────────────────────────────
 function AttendeeRow({ ticket }) {
   const isCheckedIn = ticket.is_used === 1 || ticket.is_used === true;
+  const ticketId = `#${String(ticket.id).padStart(6, '0')}`;
 
   return (
     <tr className="border-t border-border hover:bg-main-bg transition-colors duration-150">
@@ -72,7 +73,7 @@ function AttendeeRow({ ticket }) {
       </td>
 
       <td className="px-4 py-3.5">
-        <span className="text-xs font-semibold text-primary">{ticket.ticketId ?? '—'}</span>
+        <span className="text-xs font-semibold text-primary">{ticketId}</span>
       </td>
 
       {/* Status */}
@@ -153,10 +154,12 @@ export default function CheckinPage() {
   const filtered = tickets.filter((t) => {
     if (!search) return true;
     const q = search.toLowerCase();
+    const ticketNumber = String(t.id ?? '').padStart(6, '0');
     return (
       (t.attendee_name ?? '').toLowerCase().includes(q) ||
       (t.attendee_email ?? '').toLowerCase().includes(q) ||
-      (t.ticket_type ?? '').toLowerCase().includes(q)
+      (t.ticket_type ?? '').toLowerCase().includes(q) ||
+      ticketNumber.includes(q)
     );
   });
 
