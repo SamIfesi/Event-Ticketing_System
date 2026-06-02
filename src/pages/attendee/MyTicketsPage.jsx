@@ -44,7 +44,6 @@ export default function MyTicketsPage() {
   const [dateFilter, setDate] = useState('all');
 
   const { tickets, ticketsLoading, fetchTickets } = useProfile();
-  const { ticket } = useTickets();
   
   const [searchParams] = useSearchParams();
   const bookingIdFilter = searchParams.get('booking');
