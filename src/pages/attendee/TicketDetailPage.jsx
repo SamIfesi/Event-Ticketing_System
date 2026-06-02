@@ -107,7 +107,8 @@ function StatusPill({ status }) {
       label: 'Expired',
     },
   };
-  const s = styles[status] ?? styles.expired;
+  const normalizedStatus = status?.toLowerCase();
+  const s = styles[normalizedStatus] ?? styles.expired;
   return (
     <span
       className={`inline-flex items-center gap-1.5 rounded-full border text-xs font-medium px-3 py-1 ${s.bg} ${s.text} ${s.border}`}
@@ -215,14 +216,16 @@ export default function TicketDetailPage() {
     );
   }
 
-  const isValid = ticket?.status === 'valid';
-  const isUsed = ticket?.status === 'used';
+  const isValid = ticket?.status?.toLowerCase() === 'valid';
+  const isUsed = ticket?.status?.toLowerCase() === 'used';
   const isCancelled =
-    ticket?.status === 'cancelled' || ticket?.status === 'expired';
+    ticket?.status?.toLowerCase() === 'cancelled' || ticket?.status?.toLowerCase() === 'expired';
   const gradientIndex = getGradientIndex(id);
   const event = ticket?.event ?? {};
   const startDate = ticket?.event_start_date ?? event?.start_date;
   const location = ticket?.event_location ?? event?.location;
+  console.log('ticket detail', ticket);
+  console.log('booking_id', ticket?.booking_id);
 
   return (
     <div className="flex flex-col min-h-screen bg-main-bg">
@@ -313,7 +316,7 @@ export default function TicketDetailPage() {
                     Ticket type
                   </p>
                   <p className="text-base font-semibold text-primary">
-                    {ticket.ticket_type_name ?? 'General Admission'}
+                    {ticket.ticket_type ?? 'General Admission'}
                   </p>
                 </div>
                 <div>
@@ -367,13 +370,13 @@ export default function TicketDetailPage() {
             {/* ── Action buttons ── */}
             <div className="flex flex-col gap-3">
               {/* Download ticket PDF — valid and used tickets both get a PDF */}
-              {/* {(isValid || isUsed) && ticket?.booking_id && ( */}
-                <DownloadTicketButton
-                  bookingId={ticket.booking_id}
-                  size="md"
-                  checkOnMount
-                />
-              {/* )} */}
+              {(isValid || isUsed) && ticket?.booking_id && (
+              <DownloadTicketButton
+                bookingId={ticket.booking_id}
+                size="md"
+                checkOnMount
+              />
+              )}
 
               <div className="flex items-center gap-3">
                 <Link
