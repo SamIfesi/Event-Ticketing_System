@@ -22,6 +22,7 @@ import CheckinScanner from '../../components/tickets/CheckinScanner';
 
 // ── Tab enum ──────────────────────────────────────────────────
 const TABS = { SCANNER: 'scanner', LIST: 'list' };
+const TABLE_HEADERS = ['Attendee', 'Ticket Type', 'Ticket ID', 'Status', 'Checked In At'];
 
 // ── Stat card ─────────────────────────────────────────────────
 function StatPill({ label, value, color }) {
@@ -55,10 +56,10 @@ function AttendeeRow({ ticket }) {
             </span>
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-primary truncate max-w-[160px]">
+            <p className="text-sm font-semibold text-primary truncate max-w-40">
               {ticket.attendee_name ?? '—'}
             </p>
-            <p className="text-xs text-muted truncate max-w-[180px]">
+            <p className="text-xs text-muted truncate max-w-45">
               {ticket.attendee_email ?? '—'}
             </p>
           </div>
@@ -70,11 +71,15 @@ function AttendeeRow({ ticket }) {
         <span className="text-xs font-semibold text-primary">{ticket.ticket_type ?? '—'}</span>
       </td>
 
+      <td className="px-4 py-3.5">
+        <span className="text-xs font-semibold text-primary">{ticket.ticketId ?? '—'}</span>
+      </td>
+
       {/* Status */}
       <td className="px-4 py-3.5">
         {isCheckedIn ? (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-success/10 text-success">
-            <CheckCircle2 size={11} strokeWidth={2.5} /> Checked in
+            <CheckCircle2 size={11} strokeWidth={2.5} /> Checked{""}in
           </span>
         ) : (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-border text-muted">
@@ -108,7 +113,7 @@ function SkeletonRow() {
           </div>
         </div>
       </td>
-      {[72, 80, 80].map((w, i) => (
+      {[72, 80, 80, 80].map((w, i) => (
         <td key={i} className="px-4 py-3.5">
           <div className="h-4 bg-border rounded" style={{ width: w }} />
         </td>
@@ -171,7 +176,7 @@ export default function CheckinPage() {
             <ArrowLeft size={13} strokeWidth={2.5} /> My Events
           </Link>
           <span className="text-muted">/</span>
-          <span className="text-primary font-medium truncate max-w-[200px]">
+          <span className="text-primary font-medium truncate max-w-50">
             {eventLoading ? 'Loading…' : (event?.title ?? 'Check-in')}
           </span>
         </div>
@@ -283,10 +288,10 @@ export default function CheckinPage() {
             {/* Table */}
             <div className="bg-card border border-border rounded-card overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full min-w-[580px]">
+                <table className="w-full min-w-160">
                   <thead>
                     <tr className="bg-main-bg">
-                      {['Attendee', 'Ticket Type', 'Status', 'Checked In At'].map((h) => (
+                      {TABLE_HEADERS.map((h) => (
                         <th
                           key={h}
                           className="px-4 py-3 text-left text-xs font-bold text-muted uppercase tracking-wider"
