@@ -46,6 +46,7 @@ const TicketsService = {
   async getTicketStatus(bookingId) {
     const response = await api.get(`/bookings/${bookingId}/ticket/status`, {skipLoader: true});
     return response.data.data;
+    console.log(bookingId)
   },
 };
 
