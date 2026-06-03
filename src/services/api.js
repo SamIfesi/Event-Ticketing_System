@@ -87,8 +87,9 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       const isAuthEndpoint = error.config?.url?.includes('/auth/');
       const isAlreadyOnLogin = window.location.pathname === '/login';
+      const hadToken = Boolean(useAuthStore.getState().token);
 
-      if (!isAuthEndpoint && !isAlreadyOnLogin) {
+      if (!isAuthEndpoint && !isAlreadyOnLogin && !hadToken) {
         useAuthStore.getState().clearAuth();
         window.location.href = '/login';
       }
