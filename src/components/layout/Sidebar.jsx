@@ -116,8 +116,9 @@ export default function Sidebar({ isOpen, onClose }) {
   const { logout } = useAuth();
 
   useEffect(() => {
+    if (!user) return;
     fetchProfile();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     function onKey(e) {

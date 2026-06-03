@@ -298,8 +298,9 @@ export default function ProfilePage() {
   } = useProfile();
 
   useEffect(() => {
+    if (!user) return;
     fetchProfile();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (profile) {

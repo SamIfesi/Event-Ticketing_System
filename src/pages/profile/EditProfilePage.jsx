@@ -32,8 +32,9 @@ export default function EditProfilePage() {
   const [name, setName] = useState('');
 
   useEffect(() => {
+    if (!user) return;
     fetchProfile();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (profile) setName(profile.name ?? '');

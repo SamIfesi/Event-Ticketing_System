@@ -30,8 +30,9 @@ export default function ProfilePage() {
   const { theme, resolvedTheme } = useThemeStore();
 
   useEffect(() => {
+    if (!user) return;
     fetchProfile();
-  }, []);
+  }, [user]);
 
   const ThemeIcon =
     theme === 'system' ? Monitor : resolvedTheme === 'dark' ? Moon : Sun;

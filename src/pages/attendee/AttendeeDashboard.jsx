@@ -96,9 +96,10 @@ export default function AttendeeDashboard() {
   const { bookings, bookingsLoading, fetchMyBookings } = useBookings();
 
   useEffect(() => {
+    if (!user) return;
     fetchProfile();
     fetchMyBookings();
-  }, []);
+  }, [user]);
 
   const totalBookings = bookings?.length ?? 0;
   const confirmedBookings =

@@ -183,7 +183,8 @@ function ThemeToggleButton({ onNavigate }) {
 // ─── Notification Bell ───────────────────────────────────────────────────────
 
 function NotificationBell() {
-  const { unreadCount } = useNotifications({ pollInterval: 30000 });
+  const token = useAuthStore((state) => state.token);
+  const { unreadCount } = useNotifications(token ? { pollInterval: 30000 }:{});
 
   return (
     <Link
@@ -208,8 +209,9 @@ function AvatarTrigger({ user }) {
   const avatar = profile?.avatar;
 
   useEffect(() => {
+    if(!user) return;
     fetchProfile();
-  }, []);
+  }, [user]);
 
   return (
     <button
