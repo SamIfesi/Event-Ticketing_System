@@ -28,6 +28,7 @@ import {
 import { useTickets } from '../../hooks/useTickets';
 import { useUiStore } from '../../store/uiStore';
 import { formatShortDate, formatTime } from '../../utils/formatDate';
+import { formatCurrency } from '../../utils/formatCurrency';
 import QRCodeDisplay from '../../components/tickets/QRCodeDisplay';
 import DownloadTicketButton from '../../components/tickets/DownloadTicketButton';
 import Navbar from '../../components/layout/Navbar';
@@ -219,13 +220,13 @@ export default function TicketDetailPage() {
   const isValid = ticket?.status?.toLowerCase() === 'valid';
   const isUsed = ticket?.status?.toLowerCase() === 'used';
   const isCancelled =
-    ticket?.status?.toLowerCase() === 'cancelled' || ticket?.status?.toLowerCase() === 'expired';
+    ticket?.status?.toLowerCase() === 'cancelled' ||
+    ticket?.status?.toLowerCase() === 'expired';
   const gradientIndex = getGradientIndex(id);
   const event = ticket?.event ?? {};
   const startDate = ticket?.event_start_date ?? event?.start_date;
   const location = ticket?.event_location ?? event?.location;
-  console.log('ticket detail', ticket);
-  console.log('booking_id', ticket?.booking_id);
+  const ticketAmount = ticket?.total_amount === 0 ? 'FREE' : ticket?.ticket_amount;
 
   return (
     <div className="flex flex-col min-h-screen bg-main-bg">
@@ -320,6 +321,14 @@ export default function TicketDetailPage() {
                   </p>
                 </div>
                 <div>
+                  <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">
+                    Ticket Amount
+                  </p>
+                  <p className="text-base font-semibold text-primary">
+                    {formatCurrency(ticketAmount)}
+                  </p>
+                </div>
+                <div>
                   {isUsed && ticket.checked_in_at ? (
                     <>
                       <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">
@@ -371,11 +380,11 @@ export default function TicketDetailPage() {
             <div className="flex flex-col gap-3">
               {/* Download ticket PDF — valid and used tickets both get a PDF */}
               {(isValid || isUsed) && ticket?.booking_id && (
-              <DownloadTicketButton
-                bookingId={ticket.booking_id}
-                size="md"
-                checkOnMount
-              />
+                <DownloadTicketButton
+                  bookingId={ticket.booking_id}
+                  size="md"
+                  checkOnMount
+                />
               )}
 
               <div className="flex items-center gap-3">

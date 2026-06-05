@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import QRCodeDisplay from './QRCodeDisplay';
 import { formatShortDate, formatTime } from '../../utils/formatDate';
+import { formatCurrency } from '../../utils/formatCurrency';
 
 // ── Category icon map ─────────────────────────────────────────
 const CATEGORY_ICONS = {
@@ -161,6 +162,7 @@ function FullTicketCard({ ticket, showQr }) {
   const title = ticket?.event_title ?? event?.title ?? 'Event';
   const startDate = ticket?.event_start_date ?? event?.start_date;
   const location = ticket?.event_location ?? event?.location;
+  const ticketAmount = ticket?.total_amount === 0 ? 'FREE' : ticket?.ticket_amount;
 
   return (
     <div className="bg-card border border-border rounded-card overflow-hidden shadow-md">
@@ -221,7 +223,15 @@ function FullTicketCard({ ticket, showQr }) {
             Ticket type
           </p>
           <p className="text-base font-semibold text-primary">
-            {ticket?.ticket_type_name ?? 'General Admission'}
+            {ticket?.ticket_type ?? 'General Admission'}
+          </p>
+        </div>
+        <div>
+          <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">
+            Ticket Amount
+          </p>
+          <p className="text-base font-semibold text-primary">
+            {formatCurrency(ticketAmount)}
           </p>
         </div>
         <div>

@@ -32,6 +32,7 @@ import {
 import QRCodeDisplay from '../../components/tickets/QRCodeDisplay';
 import DownloadTicketButton from './DownloadTicketButton';
 import { formatShortDate, formatTime } from '../../utils/formatDate';
+import { formatCurrency } from '../../utils/formatCurrency';
 
 // ── Category icon map ─────────────────────────────────────────
 const CATEGORY_ICONS = {
@@ -230,6 +231,8 @@ function ExpandedCard({ ticket, gradientIndex, onCollapse }) {
   const title = ticket?.event_title ?? event?.title ?? 'Event';
   const startDate = ticket?.event_start_date ?? event?.start_date;
   const location = ticket?.event_location ?? event?.location;
+  const ticketAmount =
+    ticket?.total_amount === 0.00 ? 'FREE' : ticket?.total_amount;
 
   return (
     <div className="bg-card border border-accent/20 rounded-card overflow-hidden shadow-lg transition-all duration-300">
@@ -306,7 +309,17 @@ function ExpandedCard({ ticket, gradientIndex, onCollapse }) {
             Ticket type
           </p>
           <p className="text-base font-semibold text-primary leading-snug">
-            {ticket?.ticket_type_name ?? 'General Admission'}
+            {ticket?.ticket_type ?? 'General Admission'}
+          </p>
+        </div>
+
+        {/* Ticket Amount */}
+        <div>
+          <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">
+            Ticket Amount
+          </p>
+          <p className="text-base font-semibold text-primary">
+            {formatCurrency(ticketAmount)}
           </p>
         </div>
 
