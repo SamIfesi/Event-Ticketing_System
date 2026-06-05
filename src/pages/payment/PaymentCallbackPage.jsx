@@ -45,7 +45,10 @@ function TicketSuccess() {
   return (
     <div className="relative flex items-center justify-center w-28 h-28 mx-auto mb-8">
       {/* Outer pulse ring */}
-      <div className="absolute inset-0 rounded-full border-2 border-success/30 animate-ping" style={{ animationDuration: '2s' }} />
+      <div
+        className="absolute inset-0 rounded-full border-2 border-success/30 animate-ping"
+        style={{ animationDuration: '2s' }}
+      />
       {/* Mid ring */}
       <div className="absolute inset-2 rounded-full border border-success/20" />
       {/* Inner filled circle */}
@@ -54,7 +57,10 @@ function TicketSuccess() {
       </div>
       {/* Sparkle decorations */}
       <Sparkles size={14} className="absolute top-1 right-3 text-success/60" />
-      <Sparkles size={10} className="absolute bottom-3 left-2 text-success/40" />
+      <Sparkles
+        size={10}
+        className="absolute bottom-3 left-2 text-success/40"
+      />
     </div>
   );
 }
@@ -152,13 +158,19 @@ function SuccessState({ data, reference, countdown, onViewTickets }) {
 
         <div className="p-5 flex flex-col gap-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-muted uppercase font-bold tracking-wider">Reference</span>
-            <span className="text-xs font-mono font-semibold text-primary">{reference}</span>
+            <span className="text-xs text-muted uppercase font-bold tracking-wider">
+              Reference
+            </span>
+            <span className="text-xs font-mono font-semibold text-primary">
+              {reference}
+            </span>
           </div>
 
           {data?.booking_id && (
             <div className="flex items-center justify-between">
-              <span className="text-xs text-muted uppercase font-bold tracking-wider">Booking</span>
+              <span className="text-xs text-muted uppercase font-bold tracking-wider">
+                Booking
+              </span>
               <span className="text-xs font-semibold text-primary">
                 #{String(data.booking_id).padStart(6, '0')}
               </span>
@@ -167,15 +179,20 @@ function SuccessState({ data, reference, countdown, onViewTickets }) {
 
           {data?.tickets_issued != null && (
             <div className="flex items-center justify-between">
-              <span className="text-xs text-muted uppercase font-bold tracking-wider">Tickets</span>
+              <span className="text-xs text-muted uppercase font-bold tracking-wider">
+                Tickets
+              </span>
               <span className="text-xs font-semibold text-success">
-                {data.tickets_issued} ticket{data.tickets_issued !== 1 ? 's' : ''} issued
+                {data.tickets_issued} ticket
+                {data.tickets_issued !== 1 ? 's' : ''} issued
               </span>
             </div>
           )}
 
           <div className="flex items-center justify-between">
-            <span className="text-xs text-muted uppercase font-bold tracking-wider">Status</span>
+            <span className="text-xs text-muted uppercase font-bold tracking-wider">
+              Status
+            </span>
             <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-semibold bg-success/10 text-success">
               <CheckCircle2 size={10} strokeWidth={2.5} /> Paid
             </span>
@@ -198,17 +215,17 @@ function SuccessState({ data, reference, countdown, onViewTickets }) {
       </div>
 
       {/* CTAs */}
-      <div className="flex flex-col sm:flex-row gap-3 w-full max-w-sm">
+      <div className="flex flex-col sm:flex-row gap-3 w-full">
         <button
           onClick={onViewTickets}
-          className="flex-1 flex items-center justify-center gap-2 h-12 px-5 bg-accent hover:bg-accent-hover text-white text-sm font-semibold rounded-btn transition-colors active:scale-95 touch-manipulation"
+          className="flex items-center justify-center gap-2 h-12 px-5 bg-accent hover:bg-accent-hover text-white text-sm font-semibold rounded-btn transition-colors active:scale-95 touch-manipulation w-full sm:flex-1"
         >
           <Ticket size={15} strokeWidth={2.5} />
           View My Tickets
         </button>
         <Link
           to="/events"
-          className="flex items-center justify-center gap-2 h-12 px-5 bg-card border border-border text-secondary text-sm font-semibold rounded-btn hover:text-primary hover:border-accent/40 transition-colors"
+          className="flex items-center justify-center gap-2 h-12 px-5 bg-card border border-border text-secondary text-sm font-semibold rounded-btn hover:text-primary hover:border-accent/40 transition-colors w-full sm:flex-1"
         >
           Browse More
         </Link>
@@ -279,7 +296,7 @@ function FailedState({ reference, error, onRetry, retrying }) {
         <button
           onClick={onRetry}
           disabled={retrying}
-          className="flex-1 flex items-center justify-center gap-2 h-12 px-5 bg-accent hover:bg-accent-hover text-white text-sm font-semibold rounded-btn transition-colors disabled:opacity-50 active:scale-95 p-3"
+          className="flex items-center justify-center gap-2 h-12 px-5 bg-accent hover:bg-accent-hover text-white text-sm font-semibold rounded-btn transition-colors disabled:opacity-50 active:scale-95 p-3"
         >
           {retrying ? (
             <RefreshCw size={15} className="animate-spin" />
@@ -358,7 +375,8 @@ export default function PaymentCallbackPage() {
   // Prevent double-verification in StrictMode
   const verified = useRef(false);
 
-  const reference = searchParams.get('reference') || searchParams.get('trxref') || '';
+  const reference =
+    searchParams.get('reference') || searchParams.get('trxref') || '';
 
   async function verify() {
     if (!reference) {
@@ -373,7 +391,7 @@ export default function PaymentCallbackPage() {
       toastSuccess('Payment confirmed! Your tickets have been issued.');
 
       // Auto-redirect countdown
-      setCountdown(5);
+      setCountdown(60);
     } catch (err) {
       const msg =
         err?.response?.data?.message ??
@@ -420,7 +438,7 @@ export default function PaymentCallbackPage() {
       <Navbar onMenuClick={() => setSidebarOpen(true)} />
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-      <main className="flex-1 flex items-center justify-center px-4 py-8">
+      <main className="flex-1 flex items-center justify-center py-8 min-h-screen">
         <div className="w-full max-w-lg">
           {/* Card wrapper */}
           <div className="">
@@ -449,7 +467,7 @@ export default function PaymentCallbackPage() {
 
           {/* Help footer */}
           {status !== STATUS.VERIFYING && (
-            <p className="text-center text-xs text-muted mt-6 fixed bottom-10 left-1/2 -translate-x-1/2">
+            <p className="text-center text-xs text-muted mt-4">
               Having trouble?{' '}
               <a
                 href="mailto:support@ticketer.ng"
