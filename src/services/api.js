@@ -89,7 +89,7 @@ api.interceptors.response.use(
       const isAlreadyOnLogin = window.location.pathname === '/login';
       const hadToken = Boolean(useAuthStore.getState().token);
 
-      if (!isAuthEndpoint && !isAlreadyOnLogin && !hadToken) {
+      if (!isAuthEndpoint && !isAlreadyOnLogin && hadToken) {
         useAuthStore.getState().clearAuth();
         window.location.href = '/login';
       }
