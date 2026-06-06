@@ -4,10 +4,11 @@ import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
+import GoogleSignInButton from '../../components/auth/GoogleSignInButton';
 import logo from '/src/assets/icons/logo.svg';
 
 export default function LoginPage() {
-  const { login, loading, fieldErrors } = useAuth();
+  const { login, googleLogin, loading, fieldErrors } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -31,7 +32,8 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <div className="bg-main-bg pt-4 pb-8">
+        <div className="bg-main-bg pt-4 flex flex-col gap-5">
+          {/* ── Email / password form ── */}
           <form
             onSubmit={handleSubmit}
             noValidate
@@ -93,6 +95,23 @@ export default function LoginPage() {
               Sign in
             </Button>
           </form>
+
+          {/* ── Divider ── */}
+          <div className="flex items-center gap-3">
+            <div className="flex-1 h-px bg-border" />
+            <span className="text-xs text-muted font-medium">
+              or continue with email
+            </span>
+            <div className="flex-1 h-px bg-border" />
+          </div>
+
+          {/* ── Google sign-in ── */}
+          <GoogleSignInButton
+            label="Sign in with Google"
+            loading={loading}
+            onSuccess={(accessToken) => googleLogin(accessToken)}
+            onError={() => {}}
+          />
         </div>
 
         <p className="mt-6 text-center text-sm text-secondary">

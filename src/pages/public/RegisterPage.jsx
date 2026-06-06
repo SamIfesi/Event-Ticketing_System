@@ -5,10 +5,11 @@ import { useAuth } from '../../hooks/useAuth';
 import PasswordStrength from './PasswordStrength';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
+import GoogleSignInButton from '../../components/auth/GoogleSignInButton';
 import logo from '/src/assets/icons/logo.svg';
 
 export default function RegisterPage() {
-  const { register, loading, fieldErrors } = useAuth();
+  const { register, googleLogin, loading, fieldErrors } = useAuth();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -35,7 +36,7 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen flex items-start justify-center bg-main-bg px-6 py-12">
-      <div className="w-full max-w-[26.25rem]">
+      <div className="w-full max-w-105">
         <div className="flex flex-col items-start mb-8">
           <img src={logo} alt="Ticketer Logo" className="mb-8 self-center" />
           <h1 className="text-3xl font-bold text-primary tracking-tight">
@@ -46,7 +47,8 @@ export default function RegisterPage() {
           </p>
         </div>
 
-        <div className="bg-main-bg">
+        <div className="bg-main-bg flex flex-col gap-5">
+          {/* ── Email / password form ── */}
           <form
             onSubmit={handleSubmit}
             noValidate
@@ -150,7 +152,9 @@ export default function RegisterPage() {
                     passwordsMatch ? 'text-success' : 'text-error'
                   }`}
                 >
-                  {passwordsMatch ? 'Passwords match' : 'Passwords do not match'}
+                  {passwordsMatch
+                    ? 'Passwords match'
+                    : 'Passwords do not match'}
                 </p>
               )}
             </div>
@@ -176,6 +180,23 @@ export default function RegisterPage() {
               Create Account
             </Button>
           </form>
+
+          {/* ── Divider ── */}
+          <div className="flex items-center gap-3">
+            <div className="flex-1 h-px bg-border" />
+            <span className="text-xs text-muted font-medium">
+              or continue with email
+            </span>
+            <div className="flex-1 h-px bg-border" />
+          </div>
+
+          {/* ── Google sign-in ── */}
+          <GoogleSignInButton
+            label="Sign in with Google"
+            loading={loading}
+            onSuccess={(accessToken) => googleLogin(accessToken)}
+            onError={() => {}}
+          />
         </div>
 
         <p className="mt-6 text-center text-sm text-secondary">
