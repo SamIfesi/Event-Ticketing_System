@@ -247,6 +247,21 @@ export function useAuth() {
     []
   );
 
+  const googleLogin = useCallback(async (accessToken) => {
+    setLoading(true);
+    resetErrors();
+    try {
+      const data = await AuthService.googleAuth(accessToken);
+      setAuth({ user: data.user, token: data.token, isVerified: true });
+      toastSuccess('Welcome! Signed in with Google.');
+      navigate(getDefaultPath(data.user.role));
+    } catch (error) {
+      toastError(extractError(error));
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   return {
     // State
     user,
@@ -269,6 +284,7 @@ export function useAuth() {
     logout,
     rehydrate,
     resetErrors,
+    googleLogin,
 
     // forgotton password
     forgotPassword,
