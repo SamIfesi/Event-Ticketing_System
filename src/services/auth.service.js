@@ -61,6 +61,13 @@ const AuthService = {
     });
     return response.data; // returns {success, message}
   },
+
+  async googleAuth(accessToken) {
+    const response = await api.post('/auth/google', {
+      access_token: accessToken,
+    });
+    return response.data.data; // returns {user, token, email_verified:true}
+  },
 };
 
 export default AuthService;
