@@ -185,7 +185,7 @@ export default function RegisterPage() {
           <div className="flex items-center gap-3">
             <div className="flex-1 h-px bg-border" />
             <span className="text-xs text-muted font-medium">
-              or continue with email
+              or continue with google
             </span>
             <div className="flex-1 h-px bg-border" />
           </div>
