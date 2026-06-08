@@ -224,7 +224,7 @@ function CompactRow({ ticket, gradientIndex, onExpand, expanded }) {
 // ── Expanded ticket card (image 2 style) ──────────────────────
 function ExpandedCard({ ticket, gradientIndex, onCollapse }) {
   const event = ticket?.event ?? {};
-  const isValid = ticket?.status === 'valid';
+  // const isValid = ticket?.status === 'valid';
   const isUsed = ticket?.status === 'used';
   const isCancelled =
     ticket?.status === 'cancelled' || ticket?.status === 'expired';
@@ -371,15 +371,15 @@ function ExpandedCard({ ticket, gradientIndex, onCollapse }) {
         </div>
 
         {/* Download + Details actions */}
-        <div className="flex flex-col items-center gap-2 shrink-0">
+        <div className="flex flex-col items-center gap-2 shrink-0 w-20">
           {/* Download PDF link — valid and used tickets both get a PDF */}
-          {(isValid || isUsed) && ticket?.booking_id && (
+          {/* {(isValid || isUsed) && ticket?.booking_id && (
             <DownloadTicketButton
               bookingId={ticket.booking_id}
               variant="link"
               size="sm"
             />
-          )}
+          )} */}
 
           {/* Details link */}
           <Link
