@@ -12,6 +12,7 @@ export default defineConfig(({ mode }) => {
     server: {
       host: true,
       port: 5173,
+      allowedHosts: true, // Allow all hosts for development
 
       // Development caching
       headers: {
