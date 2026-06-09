@@ -58,7 +58,7 @@ function EventCard({ event, index, onDelete, mutating }) {
       <div className="bg-card border border-border rounded-card overflow-hidden hover:shadow-md hover:border-accent/20 transition-all duration-200 flex flex-col">
         {/* Banner */}
         <div
-          className={`relative h-36 bg-gradient-to-br ${gradient} overflow-hidden`}
+          className={`relative h-36 bg-linear-to-br ${gradient} overflow-hidden`}
         >
           {event.banner_image && (
             <img
@@ -67,7 +67,7 @@ function EventCard({ event, index, onDelete, mutating }) {
               className="w-full h-full object-cover"
             />
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent" />
 
           {/* Status badge */}
           <div className="absolute top-3 left-3">
