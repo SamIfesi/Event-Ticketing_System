@@ -168,13 +168,13 @@ export default function MyBookingsPage() {
 
         {/* Bookings list */}
         {bookingsLoading ? (
-          <div className="flex flex-col gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {[0, 1, 2, 3].map((i) => (
               <BookingSkeleton key={i} />
             ))}
           </div>
         ) : filtered.length > 0 ? (
-          <div className="flex flex-col gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {filtered.map((booking) => (
               <BookingCard key={booking.id} booking={booking} />
             ))}
