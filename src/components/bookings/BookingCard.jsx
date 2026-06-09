@@ -33,6 +33,7 @@ export default function BookingCard({ booking }) {
   const event = booking?.event ?? {};
   const isPaid = booking?.payment_status === 'paid';
   const isFailed = booking?.payment_status === 'failed';
+  const bannerImage = booking?.banner_image ?? '';
 
   const eventId = event?.id ?? booking?.event_id;
   const bookingId = booking?.id;
@@ -48,9 +49,9 @@ export default function BookingCard({ booking }) {
         <div className="flex items-start gap-4">
           {/* Event thumbnail */}
           <div className="w-16 h-16 rounded-btn overflow-hidden bg-linear-to-br from-blue-500 to-indigo-700 shrink-0 flex items-center justify-center">
-            {event.banner_image ? (
+            {bannerImage ? (
               <img
-                src={event.banner_image}
+                src={bannerImage}
                 alt={event.title}
                 className="w-full h-full object-cover"
               />
