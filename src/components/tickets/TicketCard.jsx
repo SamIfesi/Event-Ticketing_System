@@ -310,7 +310,7 @@ function CompactTicketCard({ ticket }) {
         </p>
         <p className="text-sm text-secondary mt-0.5 truncate">
           {[
-            ticket?.ticket_type_name ?? 'General',
+            ticket?.ticket_type ?? 'General',
             startDate ? formatShortDate(startDate) : null,
           ]
             .filter(Boolean)
