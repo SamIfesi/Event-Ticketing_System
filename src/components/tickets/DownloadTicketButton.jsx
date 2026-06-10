@@ -75,7 +75,7 @@ export default function DownloadTicketButton({
       <button
         onClick={handlePdf}
         disabled={isAnyLoading}
-        className="flex items-center gap-1.5 text-xs font-semibold text-accent hover:text-accent-hover transition-colors disabled:opacity-50 touch-manipulation"
+        className="flex items-center gap-1.5 text-xs font-semibold text-accent hover:text-accent-hover transition-colors disabled:opacity-50 touch-manipulation cursor-pointer"
       >
         {isLoadingPdf ? (
           <Loader2 size={13} className="animate-spin" />
