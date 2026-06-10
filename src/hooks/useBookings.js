@@ -47,6 +47,15 @@ export function useBookings() {
   setPayError(null);
   setPendingBooking(null);
   try {
+    // step 1 check  for existing pending booking for this ticket type and quantity
+    const resumeRes = await BookingsService.resumeBooking({ ticketTypeId, quantity });
+
+    if (resumeRes.has_pending) {
+      setPendingBooking(resumeRes);
+      return resumeRes;
+    }
+
+    // step 2 No resumable booking - create new one
     const data = await BookingsService.createBooking({
       ticketTypeId,
       quantity,
