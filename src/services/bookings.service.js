@@ -10,6 +10,15 @@ const BookingsService = {
     });
     return response.data.data; // return {booking_id, reference, amount, authorization_url, access_code}
   },
+  
+  // resume booking for unfinished payment
+  async resumeBooking({ticketTypeId, quantity}) {
+    const response = await api.post('/bookings/resume', {
+      ticket_type_id: ticketTypeId,
+      quantity
+    })
+    return response.data.data;  // return {booking_id, reference, amount, authorization_url, access_code}
+  },
 
   // called after the paystack popup closes successfully.
   // PHP verifes with Paystack, marks booking paid, issues tickets, and returns the tickets to the client.
