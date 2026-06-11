@@ -177,7 +177,7 @@ function CompactRow({ ticket, gradientIndex, onExpand, expanded }) {
   const event = ticket?.event ?? {};
   const title = ticket?.event_title ?? event?.title ?? 'Event';
   const sub = [
-    ticket?.ticket_type_name ?? 'General',
+    ticket?.ticket_type ?? 'General',
     ticket?.event_start_date || event?.start_date
       ? formatShortDate(ticket?.event_start_date ?? event?.start_date)
       : null,
