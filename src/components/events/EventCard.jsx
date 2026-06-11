@@ -22,6 +22,10 @@ const GRADIENTS = [
 ];
 
 export default function EventCard({ event, index = 0, compact = false }) {
+  console.log(event);
+  const isPast = event.end_date
+    ? new Date(event.end_date) < new Date()
+    : new Date(event.start_date) < new Date();
   const hasPrice = event.min_price != null;
   const gradient = GRADIENTS[index % GRADIENTS.length];
 
@@ -72,11 +76,16 @@ export default function EventCard({ event, index = 0, compact = false }) {
         </span>
 
         {/* Status badge — only if not published */}
-        {event.status && event.status !== 'published' && (
-          <div className="absolute bottom-2 left-3">
+        <div className="absolute bottom-2 right-3 flex items-center gap-1.5">
+          {isPast && (
+            <span className="px-2 py-0.5 bg-black/60 backdrop-blur-sm text-white text-[9px] font-bold rounded-full tracking-wide">
+              Past
+            </span>
+          )}
+          {event.status && event.status !== 'published' && (
             <Badge status={event.status} size="sm" />
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Body */}
