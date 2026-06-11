@@ -70,6 +70,7 @@
     stroke 800ms ease,
     outline-color 800ms ease,
     text-decoration-color 800ms ease;
+    scrollbar-width: none;
 }
 
 button,
@@ -93,14 +94,23 @@ textarea {
     @apply box-border p-0 m-0;
     font-family: var(--font-fractul);
     -webkit-tap-highlight-color: transparent;
+    
+    /* scrollbar-width: thin;
+    scrollbar-color: var(--color-muted) transparent; */
   }
-
+  @media (prefers-reduced-motion: reduce) {
+    *::before,
+    *::after,
+    * {
+      transition: none !important;
+    }
+  }
   a {
     @apply no-underline text-inherit;
   }
 
   #root {
-    @apply max-w-360 max-w-full mx-auto min-h-screen flex flex-col;
+    @apply max-w-full mx-auto min-h-screen flex flex-col;
   }
 }
 
