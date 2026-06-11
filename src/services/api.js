@@ -2,10 +2,18 @@ import axios from 'axios';
 import { useLoaderStore } from '../store/loaderStore';
 import { useAuthStore } from '../store/authStore';
 
+const getBaseURL = () => {
+  if(window.location.hostname.includes('devtunnels.ms')) {
+    return 'https://h6nnjkh5-80.uks1.devtunnels.ms/ticketer/api';
+  }
+  return import.meta.env.VITE_API_URL;
+}
+
 const SLOW_THRESHOLD_MS = 800;
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  // baseURL: import.meta.env.VITE_API_URL,
+  baseURL: getBaseURL(),
   headers: {
     'Content-Type': 'application/json',
   },
