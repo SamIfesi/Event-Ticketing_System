@@ -173,7 +173,7 @@ export default function AttendeeDashboard() {
             sub={
               totalBookings === 1
                 ? '1 booking made'
-                : `${totalBookings}bookings made`
+                : `${totalBookings} bookings made`
             }
             accent="#2563eb"
             loading={bookingsLoading}
@@ -284,7 +284,7 @@ export default function AttendeeDashboard() {
               <QuickAction
                 icon={Search}
                 label="Browse Events"
-                to="/events "
+                to="/events"
                 color="#2563eb"
               />
               <QuickAction
