@@ -54,7 +54,7 @@ const OrgApplicationsPage = lazy(() => import('./pages/admin/OrgApplicationsPage
 
 // payment
 const PaymentCallbackPage = lazy(() => import('./pages/payment/PaymentCallbackPage'));
-import Spinner from './components/ui/Spinner';
+import Spinner from './components/loaders/Spinner';
 
 // ── NEW IMPORTS ───────────────────────────────────────────────
 const NotificationsPage = lazy(() => import('./pages/public/NotificationsPage'));
