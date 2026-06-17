@@ -396,8 +396,8 @@ function ExpandedCard({ ticket, gradientIndex, onCollapse }) {
 }
 
 // ── Main export ───────────────────────────────────────────────
-export default function ExpandableTicketCard({ ticket }) {
-  const [expanded, setExpanded] = useState(false);
+export default function ExpandableTicketCard({ ticket, defaultExpanded = false }) {
+  const [expanded, setExpanded] = useState(defaultExpanded);
   const gradientIndex = getGradientIndex(ticket?.id);
 
   return (
