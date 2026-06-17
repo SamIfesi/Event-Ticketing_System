@@ -22,7 +22,6 @@ const GRADIENTS = [
 ];
 
 export default function EventCard({ event, index = 0, compact = false }) {
-  console.log(event);
   const isPast = event.end_date
     ? new Date(event.end_date) < new Date()
     : new Date(event.start_date) < new Date();
@@ -36,7 +35,7 @@ export default function EventCard({ event, index = 0, compact = false }) {
     >
       {/* Banner */}
       <div
-        className={`relative bg-gradient-to-br ${gradient} overflow-hidden ${compact ? 'h-32' : 'h-44'}`}
+        className={`relative bg-linear-to-br ${gradient} overflow-hidden ${compact ? 'h-32' : 'h-44'}`}
       >
         {event.banner_image ? (
           <img
