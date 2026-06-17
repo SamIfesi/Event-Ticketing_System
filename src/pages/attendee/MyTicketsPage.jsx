@@ -43,13 +43,14 @@ export default function MyTicketsPage() {
   const [dateFilter, setDate] = useState('all');
 
   const { tickets, ticketsLoading, fetchTickets } = useProfile();
-  
+
   const [searchParams] = useSearchParams();
   const bookingIdFilter = searchParams.get('booking');
+  const autoExpand = searchParams.get('expand') === 'true';
 
   useEffect(() => {
     fetchTickets({ filter: dateFilter !== 'all' ? dateFilter : undefined });
-  }, [dateFilter]);
+  }, [dateFilter, fetchTickets]);
 
   const filtered = tickets.filter((t) => {
     // Booking-specific filter (from ?booking= URL param)
@@ -136,7 +137,11 @@ export default function MyTicketsPage() {
         ) : filtered.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {filtered.map((ticket) => (
-              <ExpandableTicketCard key={ticket.id} ticket={ticket} />
+              <ExpandableTicketCard
+                key={ticket.id}
+                ticket={ticket}
+                defaultExpanded={autoExpand}
+              />
             ))}
           </div>
         ) : (
