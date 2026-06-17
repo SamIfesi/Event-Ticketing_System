@@ -47,12 +47,12 @@ function Bar({ label, value, max, valuePrefix, accent }) {
   );
 }
 
-function SkeletonBar() {
+function SkeletonBar({ height }) {
   return (
     <div className="flex flex-col items-center gap-1.5 flex-1 animate-pulse">
       <div
         className="w-full bg-border rounded-t-sm"
-        style={{ height: `${Math.random() * 60 + 30}%` }}
+        style={{ height: `${height}%` }}
       />
       <div className="h-2 bg-border rounded w-6" />
     </div>
@@ -70,6 +70,7 @@ export default function RevenueChart({
 }) {
   const max = data.length > 0 ? Math.max(...data.map((d) => d.value), 1) : 1;
   const total = data.reduce((acc, d) => acc + d.value, 0);
+  const skeletonHeights = [40, 65, 50, 80, 55, 70, 45];
 
   return (
     <div
@@ -96,8 +97,8 @@ export default function RevenueChart({
       {/* Bars */}
       {loading ? (
         <div className="flex items-end gap-2 h-28">
-          {Array.from({ length: 7 }).map((_, i) => (
-            <SkeletonBar key={i} />
+          {skeletonHeights.map((height, i) => (
+            <SkeletonBar key={i} height={height} />
           ))}
         </div>
       ) : data.length > 0 ? (
