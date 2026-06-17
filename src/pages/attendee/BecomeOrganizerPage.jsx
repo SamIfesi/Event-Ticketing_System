@@ -5,7 +5,7 @@
 //   4. Application rejected → show rejection + allow reapply
 
 import { useEffect, useState } from 'react';
-import { useOrganizerApplication } from '../../hooks/useOrgApplication';
+import { useOrgApplication } from '../../hooks/useOrgApplication';
 import { useAuthStore } from '../../store/authStore';
 
 import Navbar from '../../components/layout/Navbar';
@@ -38,7 +38,7 @@ export default function BecomeOrganizerPage() {
     error: submitError,
     fieldErrors,
     submitApplication,
-  } = useOrganizerApplication();
+  } = useOrgApplication();
 
   useEffect(() => {
     fetchMyApplication();

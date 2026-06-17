@@ -21,7 +21,7 @@ import { useUiStore } from '../store/uiStore';
 import { useAuthStore } from '../store/authStore';
 import { PAGINATION } from '../config/constants';
 
-export function useOrganizerApplication() {
+export function useOrgApplication() {
   const setAuth = useAuthStore((state) => state.setAuth);
   const token = useAuthStore((state) => state.token);
   const isVerified = useAuthStore((state) => state.isVerified);

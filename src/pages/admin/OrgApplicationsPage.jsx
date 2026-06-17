@@ -12,7 +12,7 @@ import {
   Eye,
   X,
 } from 'lucide-react';
-import { useOrganizerApplication } from '../../hooks/useOrgApplication';
+import { useOrgApplication } from '../../hooks/useOrgApplication';
 import { formatShortDate } from '../../utils/formatDate';
 import Navbar from '../../components/layout/Navbar';
 import Sidebar from '../../components/layout/Sidebar';
@@ -353,7 +353,7 @@ export default function OrgApplicationsPage() {
     mutating,
     approveApplication,
     rejectApplication,
-  } = useOrganizerApplication();
+  } = useOrgApplication();
 
   // ⚠️  No extra useEffect here — the hook's own effect handles fetching
   // whenever page/statusFilter change. Adding another one here was the
