@@ -10,60 +10,59 @@ import OrganizerService from '../services/organizer.service';
 
 export function useOrganizerEvents() {
   const toastSuccess = useUiStore((state) => state.toastSuccess);
-  const toastError   = useUiStore((state) => state.toastError);
+  const toastError = useUiStore((state) => state.toastError);
 
   // ── My events list ────────────────────────────────────────────
-  const [myEvents,       setMyEvents]       = useState([]);
+  const [myEvents, setMyEvents] = useState([]);
   const [myEventsLoading, setMyEventsLoading] = useState(false);
-  const [myEventsError,   setMyEventsError]   = useState(null);
+  const [myEventsError, setMyEventsError] = useState(null);
 
   // ── Single event detail (for edit page) ──────────────────────
-  const [loading,     setLoading]     = useState(false);
-  const [error,       setError]       = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [fieldErrors, setFieldErrors] = useState({});
 
   // ── Bookings for an event ─────────────────────────────────────
-  const [bookings,        setBookings]        = useState([]);
+  const [bookings, setBookings] = useState([]);
   const [bookingsLoading, setBookingsLoading] = useState(false);
 
   // ── Check-in list ─────────────────────────────────────────────
-  const [checkinData,    setCheckinData]    = useState(null); // { summary, tickets[] }
+  const [checkinData, setCheckinData] = useState(null); // { summary, tickets[] }
   const [checkinLoading, setCheckinLoading] = useState(false);
 
-  // ── Helpers ───────────────────────────────────────────────────
-  function resetErrors() {
+  // ── Helpers ──────────────────────────────────────────────────
+  const resetErrors = useCallback(() => {
     setError(null);
     setFieldErrors({});
-  }
-  
-  function extractError(err) {
+  }, []);
+
+  const extractError = useCallback((err) => {
     const data = err?.response?.data;
-  
+
     if (data?.errors) {
       setFieldErrors(data.errors);
-  
+
       // Extract real messages
       const messages = Object.values(data.errors);
-      const combined = messages.join("\n");
-  
+      const combined = messages.join('\n');
+
       setError(combined);
       return combined;
     }
-  
-    const msg =
-      data?.message ?? 'Something went wrong. Please try again.';
-  
+
+    const msg = data?.message ?? 'Something went wrong. Please try again.';
+
     setError(msg);
     return msg;
-  }
-  
-  // ── Fetch my events ───────────────────────────────────────────
+  }, []);
+
+  // ── Fetch my events ──────────────────────────────────────────
   const fetchMyEvents = useCallback(async () => {
     setMyEventsLoading(true);
     setMyEventsError(null);
     try {
       const data = await OrganizerService.getMyEvents();
-      setMyEvents(data.events);
+      setMyEvents(data.events ?? []);
     } catch (err) {
       const msg = err?.response?.data?.message ?? 'Failed to load your events.';
       setMyEventsError(msg);
@@ -71,89 +70,124 @@ export function useOrganizerEvents() {
     } finally {
       setMyEventsLoading(false);
     }
-  }, []);
+  }, [toastError]);
 
   // ── Create event ──────────────────────────────────────────────
   // eventData shape: { title, description, location, category_id,
   //                    start_date, end_date, total_tickets, status,
   //                    banner_image, ticket_types[] }
-  const createEvent = useCallback(async (eventData, { onSuccess } = {}) => {
-    setLoading(true);
-    resetErrors();
-    try {
-      const data = await OrganizerService.createEvent(eventData);
-      toastSuccess('Event created successfully!');
-      // Refresh my events list so the new event appears immediately
-      onSuccess?.(data.event);
-      await fetchMyEvents();
-    } catch (err) {
-      toastError(extractError(err));
-    } finally {
-      setLoading(false);
-    }
-  }, [fetchMyEvents]);
+  const createEvent = useCallback(
+    async (eventData, { onSuccess } = {}) => {
+      setLoading(true);
+      resetErrors();
 
-  // ── Update event ──────────────────────────────────────────────
-  const updateEvent = useCallback(async (id, eventData, { onSuccess } = {}) => {
-    setLoading(true);
-    resetErrors();
-    try {
-      const data = await OrganizerService.updateEvent(id, eventData);
-      toastSuccess('Event updated successfully!');
-      // Update the item in the list without a full re-fetch
-      setMyEvents((prev) =>
-        prev.map((e) => (e.id === id ? { ...e, ...data.event } : e))
-      );
-      onSuccess?.(data.event);
-    } catch (err) {
-      toastError(extractError(err));
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+      try {
+        const data = await OrganizerService.createEvent(eventData);
 
-  // ── Delete (cancel) event ─────────────────────────────────────
-  const deleteEvent = useCallback(async (id, { onSuccess } = {}) => {
-    setLoading(true);
-    resetErrors();
-    try {
-      await OrganizerService.deleteEvent(id);
-      toastSuccess('Event cancelled.');
-      // Remove from local list
-      setMyEvents((prev) => prev.filter((e) => e.id !== id));
-      onSuccess?.();
-    } catch (err) {
-      toastError(extractError(err));
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+        toastSuccess('Event created successfully!');
 
-  // ── Fetch event bookings ──────────────────────────────────────
-  const fetchEventBookings = useCallback(async (eventId) => {
-    setBookingsLoading(true);
-    try {
-      const data = await OrganizerService.getEventBookings(eventId);
-      setBookings(data.bookings);
-    } catch (err) {
-      toastError(err?.response?.data?.message ?? 'Failed to load bookings.');
-    } finally {
-      setBookingsLoading(false);
-    }
-  }, []);
+        onSuccess?.(data.event);
 
-  // ── Fetch check-in list ───────────────────────────────────────
-  const fetchCheckinList = useCallback(async (eventId) => {
-    setCheckinLoading(true);
-    try {
-      const data = await OrganizerService.getCheckinList(eventId);
-      setCheckinData(data);
-    } catch (err) {
-      toastError(err?.response?.data?.message ?? 'Failed to load check-in list.');
-    } finally {
-      setCheckinLoading(false);
-    }
-  }, []);
+        // Re-fetch because the server created a new record.
+        await fetchMyEvents();
+      } catch (err) {
+        toastError(extractError(err));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [fetchMyEvents, resetErrors, extractError, toastSuccess, toastError]
+  );
+
+  // ── Update event ─────────────────────────────────────────────
+  const updateEvent = useCallback(
+    async (id, eventData, { onSuccess } = {}) => {
+      setLoading(true);
+      resetErrors();
+
+      try {
+        const data = await OrganizerService.updateEvent(id, eventData);
+
+        toastSuccess('Event updated successfully!');
+
+        // Patch local state instead of re-fetching.
+        setMyEvents((prev) =>
+          prev.map((event) =>
+            event.id === id ? { ...event, ...data.event } : event
+          )
+        );
+
+        onSuccess?.(data.event);
+      } catch (err) {
+        toastError(extractError(err));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [resetErrors, extractError, toastSuccess, toastError]
+  );
+
+  // ── Delete event ─────────────────────────────────────────────
+  const deleteEvent = useCallback(
+    async (id, { onSuccess } = {}) => {
+      setLoading(true);
+      resetErrors();
+
+      try {
+        await OrganizerService.deleteEvent(id);
+
+        toastSuccess('Event cancelled.');
+
+        // Remove locally instead of re-fetching.
+        setMyEvents((prev) => prev.filter((event) => event.id !== id));
+
+        onSuccess?.();
+      } catch (err) {
+        toastError(extractError(err));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [resetErrors, extractError, toastSuccess, toastError]
+  );
+
+  // ── Fetch event bookings ─────────────────────────────────────
+  const fetchEventBookings = useCallback(
+    async (eventId) => {
+      setBookingsLoading(true);
+
+      try {
+        const data = await OrganizerService.getEventBookings(eventId);
+
+        setBookings(data.bookings ?? []);
+      } catch (err) {
+        toastError(err?.response?.data?.message ?? 'Failed to load bookings.');
+      } finally {
+        setBookingsLoading(false);
+      }
+    },
+    [toastError]
+  );
+
+  // ── Fetch check-in list ──────────────────────────────────────
+  const fetchCheckinList = useCallback(
+    async (eventId) => {
+      setCheckinLoading(true);
+
+      try {
+        const data = await OrganizerService.getCheckinList(eventId);
+
+        setCheckinData(data);
+      } catch (err) {
+        toastError(
+          err?.response?.data?.message ?? 'Failed to load check-in list.'
+        );
+      } finally {
+        setCheckinLoading(false);
+      }
+    },
+    [toastError]
+  );
 
   return {
     // ── My events
