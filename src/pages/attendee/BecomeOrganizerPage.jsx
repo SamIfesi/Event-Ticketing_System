@@ -42,9 +42,12 @@ export default function BecomeOrganizerPage() {
 
   useEffect(() => {
     fetchMyApplication();
-  }, []);
+  }, [fetchMyApplication]);
 
-  const isShowingForm = !hasPendingApplication && !hasApprovedApplication && (!hasRejectedApplication || showForm);
+  const isShowingForm =
+    !hasPendingApplication &&
+    !hasApprovedApplication &&
+    (!hasRejectedApplication || showForm);
 
   async function handleSubmit(formData) {
     const success = await submitApplication(formData);
@@ -58,7 +61,7 @@ export default function BecomeOrganizerPage() {
       <main className="flex-1 w-full max-w-5xl mx-auto px-6 py-10">
         {children}
       </main>
-      {isShowingForm && <Footer /> }
+      {isShowingForm && <Footer />}
     </div>
   );
 
