@@ -77,11 +77,11 @@ const Input = forwardRef(function Input(
           className={`w-full bg-bg text-primary border rounded-card text-base placeholder:text-muted transition-color duration-180 focus:outline-none focus:ring-2 focus:ring-offset-0 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation 
             ${icon ? 'pl-10' : 'pl-4'} 
             ${right ? 'pr-11' : 'pr-4'} 
-            ${as === 'testarea' ? 'py-3 resize-y min -h-[120px] leading-relaxed' : 'h-12'} 
+            ${as === 'textarea' ? 'py-3 resize-y min-h-30 leading-relaxed' : 'h-12'} 
             ${
               hasError
                 ? 'border-error focus:ring-error/30'
-                : 'border-border focus:ring-accent/30 focus: border-accent'
+                : 'border-border focus:ring-accent/30 focus:border-accent'
             }
             `}
           {...props}
