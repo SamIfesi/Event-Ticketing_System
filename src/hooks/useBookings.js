@@ -78,7 +78,7 @@ export function useBookings() {
   } finally {
     setPayLoading(false);
   }
-}, []);
+}, [navigate, toastError, toastSuccess]);
 
   // ── Step 2: Confirm payment ───────────────────────────────────
   // Called from the Paystack popup's onSuccess callback.
@@ -100,7 +100,7 @@ export function useBookings() {
     } finally {
       setPayLoading(false);
     }
-  }, []);
+  }, [navigate, toastError, toastSuccess]);
 
   // ── Called if the user closes the Paystack popup ──────────────
   function cancelPayment() {
@@ -120,7 +120,7 @@ export function useBookings() {
     } finally {
       setBookingsLoading(false);
     }
-  }, []);
+  }, [toastError]);
 
   // ── Fetch single booking (with tickets) ──────────────────────
   const fetchBooking = useCallback(async (id) => {
@@ -133,7 +133,7 @@ export function useBookings() {
     } finally {
       setBookingLoading(false);
     }
-  }, []);
+  }, [toastError]);
 
   return {
     // ── History

@@ -124,7 +124,7 @@ export function useOrgApplication() {
       setMyApplicationLoading(false);
       setMyApplicationChecked(true);
     }
-  }, [token, isVerified]);
+  }, [token, toastError, setAuth]);
 
   // ── Submit application ────────────────────────────────────────
   const submitApplication = useCallback(
@@ -150,7 +150,7 @@ export function useOrgApplication() {
         setLoading(false);
       }
     },
-    [fetchMyApplication]
+    [fetchMyApplication, toastError, toastSuccess]
   );
 
   // ── Admin: fetch all applications ─────────────────────────────
@@ -186,7 +186,7 @@ export function useOrgApplication() {
     } finally {
       setApplicationsLoading(false);
     }
-  }, []); // stable reference — never changes
+  }, [toastError]); // stable reference — never changes
 
   // Auto-fetch when page or statusFilter URL params change.
   // Using a separate effect that reads the params directly keeps
@@ -217,7 +217,7 @@ export function useOrgApplication() {
       setLoading(false);
       mutatingRef.current = false;
     }
-  }, []);
+  }, [toastError, toastSuccess]);
 
   // ── Admin: reject ─────────────────────────────────────────────
   const rejectApplication = useCallback(async (id) => {
@@ -237,7 +237,7 @@ export function useOrgApplication() {
       setLoading(false);
       mutatingRef.current = false;
     }
-  }, []);
+  }, [toastError, toastSuccess]);
 
   // ── URL param setters (admin) ─────────────────────────────────
   function setStatusFilter(value) {

@@ -74,7 +74,7 @@ export function useTransactions() {
         setMyTransactionsLoading(false);
       }
     },
-    [page]
+    [page, toastError]
   );
 
   // ── Fetch organizer revenue ledger ────────────────────────────
@@ -101,7 +101,7 @@ export function useTransactions() {
         setOrganizerTransactionsLoading(false);
       }
     },
-    [page, fromDate, toDate, typeFilter, eventFilter]
+    [page, fromDate, toDate, typeFilter, eventFilter, toastError]
   );
 
   // ── Fetch admin platform-wide transactions ────────────────────
@@ -126,7 +126,7 @@ export function useTransactions() {
         setAdminTransactionsLoading(false);
       }
     },
-    [page, fromDate, toDate, typeFilter]
+    [page, fromDate, toDate, typeFilter, toastError]
   );
 
   // ── Fetch admin financial KPI summary ─────────────────────────
@@ -148,7 +148,7 @@ export function useTransactions() {
         setSummaryLoading(false);
       }
     },
-    [fromDate, toDate]
+    [fromDate, toDate, toastError]
   );
 
   // ── Fetch audit trail for a single booking ────────────────────
@@ -162,7 +162,7 @@ export function useTransactions() {
     } finally {
       setAuditTrailLoading(false);
     }
-  }, []);
+  }, [toastError]);
 
   // ── URL param setters ─────────────────────────────────────────
   function setPage(newPage) {

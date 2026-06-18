@@ -48,7 +48,7 @@ export function useNotifications({ pollInterval = 30000 } = {}) {
     } finally {
       setNotificationsLoading(false);
     }
-  }, []);
+  }, [toastError]);
 
   // ── Fetch unread count only (lightweight, used for polling) ───
   const fetchUnreadCount = useCallback(async () => {
@@ -95,7 +95,7 @@ export function useNotifications({ pollInterval = 30000 } = {}) {
     } finally {
       setMutating(false);
     }
-  }, []);
+  }, [toastError]);
 
   // ── Mark all as read ──────────────────────────────────────────
   // Called when user opens the notification panel
@@ -123,7 +123,7 @@ export function useNotifications({ pollInterval = 30000 } = {}) {
     } finally {
       setMutating(false);
     }
-  }, []);
+  }, [toastError, toastSuccess]);
 
   // ── Delete a notification ─────────────────────────────────────
   const deleteNotification = useCallback(async (id) => {
@@ -139,7 +139,7 @@ export function useNotifications({ pollInterval = 30000 } = {}) {
     } finally {
       setMutating(false);
     }
-  }, []);
+  }, [toastError]);
 
   return {
     // ── List

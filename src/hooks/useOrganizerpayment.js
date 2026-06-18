@@ -72,7 +72,7 @@ export function useOrganizerPayment() {
     } finally {
       setBanksLoading(false);
     }
-  }, []);
+  }, [toastError]);
 
   // ── Resolve account number ────────────────────────────────────
   // Call when user has filled in both account number and bank
@@ -112,7 +112,7 @@ export function useOrganizerPayment() {
     } finally {
       setPaymentDetailsLoading(false);
     }
-  }, []);
+  }, [toastError]);
 
   // ── Save bank details for the first time ──────────────────────
   // Automatically creates Paystack subaccount + recipient
@@ -134,7 +134,7 @@ export function useOrganizerPayment() {
         setSaving(false);
       }
     },
-    [fetchPaymentDetails]
+    [fetchPaymentDetails, toastError, toastSuccess]
   );
 
   // ── Update existing bank details ──────────────────────────────
@@ -157,7 +157,7 @@ export function useOrganizerPayment() {
         setSaving(false);
       }
     },
-    [fetchPaymentDetails]
+    [fetchPaymentDetails, toastError, toastSuccess]
   );
 
   // ── Fetch own payout history ──────────────────────────────────
@@ -174,7 +174,7 @@ export function useOrganizerPayment() {
     } finally {
       setPayoutsLoading(false);
     }
-  }, []);
+  }, [toastError]);
 
   // ── Derived helpers ───────────────────────────────────────────
   const hasPaymentDetails = Boolean(paymentDetails);

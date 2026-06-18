@@ -61,7 +61,7 @@ export function usePayouts() {
         setPayoutsLoading(false);
       }
     },
-    [page, statusFilter]
+    [page, statusFilter, toastError]
   );
 
   // ── Fetch pending payouts (action queue) ──────────────────────
@@ -77,7 +77,7 @@ export function usePayouts() {
     } finally {
       setPendingPayoutsLoading(false);
     }
-  }, []);
+  }, [toastError]);
 
   // ── Manually trigger a payout ─────────────────────────────────
   const triggerPayout = useCallback(async (eventId, { onSuccess } = {}) => {
@@ -102,7 +102,7 @@ export function usePayouts() {
       setMutating(false);
       setMutatingId(null);
     }
-  }, []);
+  }, [toastError, toastSuccess]);
 
   // ── Freeze a payout ───────────────────────────────────────────
   // Use when an attendee reports a scam or dispute
@@ -133,7 +133,7 @@ export function usePayouts() {
         setMutatingId(null);
       }
     },
-    []
+    [toastError, toastSuccess]
   );
 
   // ── Unfreeze a payout ─────────────────────────────────────────
@@ -158,7 +158,7 @@ export function usePayouts() {
       setMutating(false);
       setMutatingId(null);
     }
-  }, []);
+  }, [toastError, toastSuccess]);
 
   // ── Refund all attendees for a cancelled event ────────────────
   // Platform absorbs Paystack charges — organizer gets nothing
@@ -186,7 +186,7 @@ export function usePayouts() {
         setMutatingId(null);
       }
     },
-    []
+    [toastError, toastSuccess]
   );
 
   // ── Clear organizer flag + reset strike count ─────────────────
@@ -205,7 +205,7 @@ export function usePayouts() {
         setMutating(false);
       }
     },
-    []
+    [toastError, toasstSuccess]
   );
 
   // ── URL param setters ─────────────────────────────────────────

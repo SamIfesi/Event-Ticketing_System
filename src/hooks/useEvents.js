@@ -53,7 +53,7 @@ export function useEvents() {
     } finally {
       setLoading(false);
     }
-  }, [page, limit, search, category, date]);
+  }, [page, limit, search, category, date, toastError]);
 
   // Re-fetch whenever URL params change
   useEffect(() => {
@@ -74,7 +74,7 @@ export function useEvents() {
     } finally {
       setEventLoading(false);
     }
-  }, []);
+  }, [toastError]);
 
   // ── URL param setters ─────────────────────────────────────────
   // These update the URL which triggers a re-fetch automatically.

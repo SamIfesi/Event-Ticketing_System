@@ -44,7 +44,7 @@ export function useTickets() {
     } finally {
       setTicketLoading(false);
     }
-  }, []);
+  }, [toastError]);
 
   // ── Fetch all tickets under a booking ─────────────────────────
   const fetchTicketsByBooking = useCallback(async (bookingId) => {
@@ -57,7 +57,7 @@ export function useTickets() {
     } finally {
       setTicketsLoading(false);
     }
-  }, []);
+  }, [toastError]);
 
   // ── Check in a ticket (organizer gate scan) ───────────────────
   const checkin = useCallback(async (qrToken) => {
@@ -76,7 +76,7 @@ export function useTickets() {
     } finally {
       setCheckinLoading(false);
     }
-  }, []);
+  }, [toastError, toastSuccess]);
 
   function resetCheckin() {
     setCheckinResult(null);

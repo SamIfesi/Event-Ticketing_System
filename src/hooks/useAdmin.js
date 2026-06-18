@@ -76,7 +76,7 @@ export function useAdmin() {
     } finally {
       setStatsLoading(false);
     }
-  }, []);
+  }, [toastError]);
 
   // ── Fetch users ───────────────────────────────────────────────
   const fetchUsers = useCallback(async () => {
@@ -95,7 +95,7 @@ export function useAdmin() {
     } finally {
       setUsersLoading(false);
     }
-  }, [usersPage, usersLimit, usersSearch, usersRole]);
+  }, [usersPage, usersLimit, usersSearch, usersRole, toastError]);
 
   useEffect(() => {
     fetchUsers();
@@ -112,7 +112,7 @@ export function useAdmin() {
     } finally {
       setSelectedUserLoading(false);
     }
-  }, []);
+  }, [toastError]);
 
   // ── Update user role ──────────────────────────────────────────
   const updateUserRole = useCallback(
@@ -132,7 +132,7 @@ export function useAdmin() {
         setMutating(false);
       }
     },
-    [selectedUser]
+    [selectedUser, toastError, toastSuccess]
   );
 
   // ── Update user status ────────────────────────────────────────
@@ -157,7 +157,7 @@ export function useAdmin() {
         setMutating(false);
       }
     },
-    [selectedUser]
+    [selectedUser, toastError, toastSuccess]
   );
 
   // ── Fetch admin events list ───────────────────────────────────
@@ -176,7 +176,7 @@ export function useAdmin() {
     } finally {
       setAdminEventsLoading(false);
     }
-  }, [eventsPage, eventsLimit, eventsStatus]);
+  }, [eventsPage, eventsLimit, eventsStatus, toastError]);
 
   useEffect(() => {
     fetchAdminEvents();
@@ -198,7 +198,7 @@ export function useAdmin() {
     } finally {
       setMutating(false);
     }
-  }, []);
+  }, [toastError, toastSuccess]);
 
   // ── URL param setters ─────────────────────────────────────────
   function setUsersPage(page) {

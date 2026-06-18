@@ -16,20 +16,20 @@ import { useAuthStore } from '../store/authStore';
 import { useUiStore } from '../store/uiStore';
 
 export function useProfile() {
-  const setAuth      = useAuthStore((state) => state.setAuth);
-  const token        = useAuthStore((state) => state.token);
-  const isVerified   = useAuthStore((state) => state.isVerified);
+  const setAuth = useAuthStore((state) => state.setAuth);
+  const token = useAuthStore((state) => state.token);
+  const isVerified = useAuthStore((state) => state.isVerified);
   const toastSuccess = useUiStore((state) => state.toastSuccess);
-  const toastError   = useUiStore((state) => state.toastError);
+  const toastError = useUiStore((state) => state.toastError);
 
   // ── Profile data ──────────────────────────────────────────────
-  const [profile,        setProfile]        = useState(null);
+  const [profile, setProfile] = useState(null);
   const [profileLoading, setProfileLoading] = useState(false);
-  const [profileError,   setProfileError]   = useState(null);
+  const [profileError, setProfileError] = useState(null);
 
   // ── Mutation state (shared across update/password/email actions) ──
-  const [loading,     setLoading]     = useState(false);
-  const [error,       setError]       = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [fieldErrors, setFieldErrors] = useState({});
 
   // ── Email change flow ─────────────────────────────────────────
@@ -37,11 +37,11 @@ export function useProfile() {
   const [emailChangePending, setEmailChangePending] = useState(false);
 
   // ── Activity / history ────────────────────────────────────────
-  const [bookings,        setBookings]        = useState([]);
+  const [bookings, setBookings] = useState([]);
   const [bookingsLoading, setBookingsLoading] = useState(false);
-  const [tickets,         setTickets]         = useState([]);
-  const [ticketsLoading,  setTicketsLoading]  = useState(false);
-  const [activity,        setActivity]        = useState([]);
+  const [tickets, setTickets] = useState([]);
+  const [ticketsLoading, setTicketsLoading] = useState(false);
+  const [activity, setActivity] = useState([]);
   const [activityLoading, setActivityLoading] = useState(false);
 
   // ── Helpers ───────────────────────────────────────────────────
@@ -52,22 +52,20 @@ export function useProfile() {
 
   function extractError(err) {
     const data = err?.response?.data;
-  
+
     if (data?.errors) {
       setFieldErrors(data.errors);
-  
+
       // Extract real messages
       const messages = Object.values(data.errors);
-      const combined = messages.join("\n");
-  
+      const combined = messages.join('\n');
+
       setError(combined);
       return combined;
     }
-  
-    const msg =
-      data?.message ??
-      'Something went wrong. Please try again.';
-  
+
+    const msg = data?.message ?? 'Something went wrong. Please try again.';
+
     setError(msg);
     return msg;
   }
@@ -86,71 +84,87 @@ export function useProfile() {
     } finally {
       setProfileLoading(false);
     }
-  }, []);
+  }, [toastError]);
 
   // ── Update name / avatar ──────────────────────────────────────
-  const updateProfile = useCallback(async ({ name, avatar } = {}) => {
-    setLoading(true);
-    resetErrors();
-    try {
-      const data = await ProfileService.updateProfile({ name, avatar });
-      // Update the profile page data
-      setProfile((prev) => prev ? { ...prev, ...data.user } : data.user);
-      // Keep the auth store in sync so the navbar shows the new name
-      setAuth({ user: data.user, token, isVerified });
-      toastSuccess('Profile updated.');
-    } catch (err) {
-      toastError(extractError(err));
-    } finally {
-      setLoading(false);
-    }
-  }, [token, isVerified]);
+  const updateProfile = useCallback(
+    async ({ name, avatar } = {}) => {
+      setLoading(true);
+      resetErrors();
+      try {
+        const data = await ProfileService.updateProfile({ name, avatar });
+        // Update the profile page data
+        setProfile((prev) => (prev ? { ...prev, ...data.user } : data.user));
+        // Keep the auth store in sync so the navbar shows the new name
+        setAuth({ user: data.user, token, isVerified });
+        toastSuccess('Profile updated.');
+      } catch (err) {
+        toastError(extractError(err));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [token, isVerified, setAuth, toastSuccess, toastError]
+  );
 
   // ── Change password ───────────────────────────────────────────
-  const changePassword = useCallback(async ({ currentPassword, newPassword, confirmPassword }) => {
-    setLoading(true);
-    resetErrors();
-    try {
-      await ProfileService.changePassword({ currentPassword, newPassword, confirmPassword });
-      toastSuccess('Password changed successfully.');
-    } catch (err) {
-      toastError(extractError(err));
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const changePassword = useCallback(
+    async ({ currentPassword, newPassword, confirmPassword }) => {
+      setLoading(true);
+      resetErrors();
+      try {
+        await ProfileService.changePassword({
+          currentPassword,
+          newPassword,
+          confirmPassword,
+        });
+        toastSuccess('Password changed successfully.');
+      } catch (err) {
+        toastError(extractError(err));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [toastSuccess, toastError]
+  );
 
   // ── Email change step 1 ───────────────────────────────────────
-  const requestEmailChange = useCallback(async (newEmail) => {
-    setLoading(true);
-    resetErrors();
-    try {
-      await ProfileService.requestEmailChange(newEmail);
-      setEmailChangePending(true);
-      toastSuccess(`A verification code was sent to ${newEmail}.`);
-    } catch (err) {
-      toastError(extractError(err));
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const requestEmailChange = useCallback(
+    async (newEmail) => {
+      setLoading(true);
+      resetErrors();
+      try {
+        await ProfileService.requestEmailChange(newEmail);
+        setEmailChangePending(true);
+        toastSuccess(`A verification code was sent to ${newEmail}.`);
+      } catch (err) {
+        toastError(extractError(err));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [toastSuccess, toastError]
+  );
 
   // ── Email change step 2 ───────────────────────────────────────
-  const confirmEmailChange = useCallback(async (otp) => {
-    setLoading(true);
-    resetErrors();
-    try {
-      await ProfileService.confirmEmailChange(otp);
-      setEmailChangePending(false);
-      // Re-fetch profile to get the updated email reflected everywhere
-      await fetchProfile();
-      toastSuccess('Email address updated.');
-    } catch (err) {
-      toastError(extractError(err));
-    } finally {
-      setLoading(false);
-    }
-  }, [fetchProfile]);
+  const confirmEmailChange = useCallback(
+    async (otp) => {
+      setLoading(true);
+      resetErrors();
+      try {
+        await ProfileService.confirmEmailChange(otp);
+        setEmailChangePending(false);
+        // Re-fetch profile to get the updated email reflected everywhere
+        await fetchProfile();
+        toastSuccess('Email address updated.');
+      } catch (err) {
+        toastError(extractError(err));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [fetchProfile, toastSuccess, toastError]
+  );
 
   function cancelEmailChange() {
     setEmailChangePending(false);
@@ -158,43 +172,52 @@ export function useProfile() {
   }
 
   // ── Booking history ───────────────────────────────────────────
-  const fetchBookings = useCallback(async (params = {}) => {
-    setBookingsLoading(true);
-    try {
-      const data = await ProfileService.getBookings(params);
-      setBookings(data.bookings);
-    } catch (err) {
-      toastError(err?.response?.data?.message ?? 'Failed to load bookings.');
-    } finally {
-      setBookingsLoading(false);
-    }
-  }, []);
+  const fetchBookings = useCallback(
+    async (params = {}) => {
+      setBookingsLoading(true);
+      try {
+        const data = await ProfileService.getBookings(params);
+        setBookings(data.bookings);
+      } catch (err) {
+        toastError(err?.response?.data?.message ?? 'Failed to load bookings.');
+      } finally {
+        setBookingsLoading(false);
+      }
+    },
+    [toastError]
+  );
 
   // ── Ticket history ────────────────────────────────────────────
-  const fetchTickets = useCallback(async (params = {}) => {
-    setTicketsLoading(true);
-    try {
-      const data = await ProfileService.getTickets(params);
-      setTickets(data.tickets);
-    } catch (err) {
-      toastError(err?.response?.data?.message ?? 'Failed to load tickets.');
-    } finally {
-      setTicketsLoading(false);
-    }
-  }, []);
+  const fetchTickets = useCallback(
+    async (params = {}) => {
+      setTicketsLoading(true);
+      try {
+        const data = await ProfileService.getTickets(params);
+        setTickets(data.tickets);
+      } catch (err) {
+        toastError(err?.response?.data?.message ?? 'Failed to load tickets.');
+      } finally {
+        setTicketsLoading(false);
+      }
+    },
+    [toastError]
+  );
 
   // ── Activity log ──────────────────────────────────────────────
-  const fetchActivity = useCallback(async (params = {}) => {
-    setActivityLoading(true);
-    try {
-      const data = await ProfileService.getActivity(params);
-      setActivity(data.activity);
-    } catch (err) {
-      toastError(err?.response?.data?.message ?? 'Failed to load activity.');
-    } finally {
-      setActivityLoading(false);
-    }
-  }, []);
+  const fetchActivity = useCallback(
+    async (params = {}) => {
+      setActivityLoading(true);
+      try {
+        const data = await ProfileService.getActivity(params);
+        setActivity(data.activity);
+      } catch (err) {
+        toastError(err?.response?.data?.message ?? 'Failed to load activity.');
+      } finally {
+        setActivityLoading(false);
+      }
+    },
+    [toastError]
+  );
 
   return {
     // ── Profile data

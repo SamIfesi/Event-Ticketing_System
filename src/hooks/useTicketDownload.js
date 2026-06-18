@@ -118,7 +118,7 @@ export function useTicketDownload() {
 
       await poll();
     },
-    [checkStatus]
+    [checkStatus, toastInfo, toastError, toastSuccess]
   );
 
   // Direct PDF download. Falls back to polling if file not ready yet.
@@ -140,7 +140,7 @@ export function useTicketDownload() {
         setDownloading(false);
       }
     },
-    [waitAndDownload]
+    [waitAndDownload, toastError, toastSuccess]
   );
 
   // Direct PNG download. Falls back to polling if file not ready yet.
@@ -162,7 +162,7 @@ export function useTicketDownload() {
         setDownloadingPng(false);
       }
     },
-    [waitAndDownload]
+    [waitAndDownload, toastError, toastSuccess]
   );
 
   // ============================================================
@@ -185,7 +185,7 @@ export function useTicketDownload() {
     } finally {
       setCheckinListLoading(false);
     }
-  }, []);
+  }, [toastError]);
 
   // Submit a scanned QR token at the gate.
   // Stores result or error so the scanner UI can display it.
@@ -206,7 +206,7 @@ export function useTicketDownload() {
     } finally {
       setCheckinLoading(false);
     }
-  }, []);
+  }, [toastError, toastSuccess]);
 
   function resetCheckin() {
     setCheckinResult(null);
@@ -230,22 +230,25 @@ export function useTicketDownload() {
     } finally {
       setAdminDownloading(false);
     }
-  }, []);
+  }, [toastError, toastSuccess]);
 
   // Download any booking's PNG ticket (no ownership check).
-  const adminDownloadPng = useCallback(async (bookingId) => {
-    setAdminDownloadingPng(true);
-    try {
-      await TicketsService.adminDownloadTicketPng(bookingId);
-      toastSuccess('Ticket image downloaded.');
-    } catch (err) {
-      toastError(
-        err?.response?.data?.message ?? 'Download failed. Please try again.'
-      );
-    } finally {
-      setAdminDownloadingPng(false);
-    }
-  }, []);
+  const adminDownloadPng = useCallback(
+    async (bookingId) => {
+      setAdminDownloadingPng(true);
+      try {
+        await TicketsService.adminDownloadTicketPng(bookingId);
+        toastSuccess('Ticket image downloaded.');
+      } catch (err) {
+        toastError(
+          err?.response?.data?.message ?? 'Download failed. Please try again.'
+        );
+      } finally {
+        setAdminDownloadingPng(false);
+      }
+    },
+    [toastError, toastSuccess]
+  );
 
   // Force-clear the cached PDF + PNG and regenerate both.
   // Returns { booking_id, ticket_url, ticket_png_url, file_size }
@@ -268,7 +271,7 @@ export function useTicketDownload() {
     } finally {
       setRegenerating(false);
     }
-  }, []);
+  }, [toastError, toastSuccess]);
 
   // ============================================================
   // DEV
@@ -290,7 +293,7 @@ export function useTicketDownload() {
     } finally {
       setFailedBookingsLoading(false);
     }
-  }, []);
+  }, [toastError]);
 
   // Manually mark a booking as paid and issue tickets.
   // No real Paystack transaction — dev tool only.
@@ -311,7 +314,7 @@ export function useTicketDownload() {
     } finally {
       setForcePayLoading(false);
     }
-  }, []);
+  }, [toastError, toastSuccess]);
 
   // ============================================================
   // RETURN
