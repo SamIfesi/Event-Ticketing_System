@@ -406,19 +406,23 @@ export default function PaymentCallbackPage() {
     if (verified.current) return;
     verified.current = true;
     verify();
-  }, []);
+  }, [verified]);
 
   // Countdown timer
   useEffect(() => {
     if (countdown <= 0) return;
     if (countdown === 1) {
       // Navigate on last tick
-      const t = setTimeout(() => navigate('/my-tickets'), 1000);
+      const t = setTimeout(() => navigate(
+        verifyData?.booking_id
+        ? `/my-tickets?booking=${verifyData.booking_id}&expand=true`
+        : '/my-tickets'
+      ), 1000);
       return () => clearTimeout(t);
     }
     const t = setTimeout(() => setCountdown((c) => c - 1), 1000);
     return () => clearTimeout(t);
-  }, [countdown]);
+  }, [countdown, navigate, verifyData]);
 
   async function handleRetry() {
     setRetrying(true);
@@ -430,7 +434,11 @@ export default function PaymentCallbackPage() {
   }
 
   function handleViewTickets() {
-    navigate('/my-tickets');
+    navigate(
+      verifyData?.booking_id
+        ? `/my-tickets?booking=${verifyData.booking_id}&expand=true`
+        : '/my-tickets'
+    );
   }
 
   return (
