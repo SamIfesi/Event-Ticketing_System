@@ -34,7 +34,7 @@ export default function EditProfilePage() {
   useEffect(() => {
     if (!user) return;
     fetchProfile();
-  }, [user]);
+  }, [user, fetchProfile]);
 
   useEffect(() => {
     if (profile) setName(profile.name ?? '');
@@ -42,8 +42,6 @@ export default function EditProfilePage() {
 
   const displayName = profile?.name ?? user?.name ?? '';
   const displayEmail = profile?.email ?? user?.email ?? '';
-  // const avatar = profile?.avatar;
-
   const canSubmit = name.trim().length >= 2 && name.trim() !== displayName;
 
   async function handleSubmit(e) {
