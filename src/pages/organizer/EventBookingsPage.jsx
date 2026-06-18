@@ -7,7 +7,6 @@ import {
   X,
   Ticket,
   TrendingUp,
-  Download,
   QrCode,
 } from 'lucide-react';
 import { useOrganizerEvents } from '../../hooks/useOrganizerEvents';
@@ -131,7 +130,7 @@ export default function EventBookingsPage() {
       fetchEvent(id);
       fetchEventBookings(id);
     }
-  }, [id]);
+  }, [id, fetchEvent, fetchEventBookings]);
 
   // Client-side search
   const filtered = bookings.filter((b) => {
