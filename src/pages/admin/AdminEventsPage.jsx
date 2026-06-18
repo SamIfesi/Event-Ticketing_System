@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Search, X, CalendarDays, RefreshCw, ShieldCheck } from 'lucide-react';
 import { useAdmin } from '../../hooks/useAdmin';
 import { EVENT_STATUS } from '../../config/constants';
@@ -31,10 +31,6 @@ export default function AdminEventsPage() {
     updateEventStatus,
     mutating,
   } = useAdmin();
-
-  useEffect(() => {
-    fetchAdminEvents();
-  }, []);
 
   const total = adminEventsPagination?.total ?? 0;
 
