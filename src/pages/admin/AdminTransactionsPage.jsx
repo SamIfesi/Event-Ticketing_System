@@ -183,9 +183,6 @@ function AllTransactionsTab({
   setFromDate, setToDate, setTypeFilter, setPage, page,
   fetchAdminTransactions,
 }) {
-  // const [userId, setUserId]     = useState('');
-  // const [eventId, setEventId]   = useState('');
-  // const [orgId, setOrgId]       = useState('');
 
   useEffect(() => {
     fetchAdminTransactions();
