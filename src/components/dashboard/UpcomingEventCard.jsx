@@ -15,7 +15,7 @@ export default function UpcomingEventCard({ booking, index }) {
   return (
     <Link
       to={`/events/${event?.id ?? booking?.event_id}`}
-      className="group flex flex-col bg-card border border-border rounded-card overflow-hidden hover:shadow-lg hover:boder-accent/30 transition-all duration-200 active:scale-[.99]"
+      className="group flex flex-col bg-card border border-border rounded-card overflow-hidden hover:shadow-lg hover:border-accent/30 transition-all duration-200 active:scale-[.99]"
     >
       <div
         className={`relative h-28 bg-gradient-to-br ${GRADIENTS[index % GRADIENTS.length]} overflow-hidden`}
