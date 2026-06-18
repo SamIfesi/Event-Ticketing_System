@@ -1,8 +1,6 @@
 import { forwardRef } from 'react';
 import Spinner from '../loaders/Spinner';
-import { Ghost } from 'lucide-react';
-import  {VARIANTS, SIZES}  from '../../config/constants';
-
+import { VARIANTS, SIZES } from '../../config/constants';
 
 const Button = forwardRef(function Button(
   {
