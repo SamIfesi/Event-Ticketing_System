@@ -66,27 +66,30 @@ export function useAuth() {
     return msg;
   }
 
-  const register = useCallback(async ({ name, email, password }) => {
-    setLoading(true);
-    resetErrors();
-    try {
-      const data = await AuthService.register({ name, email, password });
-      setAuth({
-        user: data.user,
-        token: data.token,
-        isVerified: false,
-      });
-      toastSuccess(
-        data.message_hint ??
-          'Account created! Check your email for the OTP to verify your account.'
-      );
-      navigate('/verify-email');
-    } catch (error) {
-      toastError(extractError(error));
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const register = useCallback(
+    async ({ name, email, password }) => {
+      setLoading(true);
+      resetErrors();
+      try {
+        const data = await AuthService.register({ name, email, password });
+        setAuth({
+          user: data.user,
+          token: data.token,
+          isVerified: false,
+        });
+        toastSuccess(
+          data.message_hint ??
+            'Account created! Check your email for the OTP to verify your account.'
+        );
+        navigate('/verify-email');
+      } catch (error) {
+        toastError(extractError(error));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [setAuth, toastError, toastSuccess, navigate]
+  );
 
   const verifyEmail = useCallback(
     async (otp) => {
@@ -103,7 +106,7 @@ export function useAuth() {
         setLoading(false);
       }
     },
-    [role]
+    [role, setEmailVerified, toastSuccess, toastError, navigate]
   );
 
   const resendOtp = useCallback(async () => {
@@ -117,32 +120,35 @@ export function useAuth() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [toastError, toastSuccess]);
 
-  const login = useCallback(async ({ email, password }) => {
-    setLoading(true);
-    resetErrors();
-    try {
-      const data = await AuthService.login({ email, password });
-      setAuth({
-        user: data.user,
-        token: data.token,
-        isVerified: Boolean(data.email_verified),
-      });
+  const login = useCallback(
+    async ({ email, password }) => {
+      setLoading(true);
+      resetErrors();
+      try {
+        const data = await AuthService.login({ email, password });
+        setAuth({
+          user: data.user,
+          token: data.token,
+          isVerified: Boolean(data.email_verified),
+        });
 
-      !data.email_verified
-        ? (toastSuccess(
-            'Logged in successfully! Please verify your email to continue.'
-          ),
-          navigate('/verify-email'))
-        : (toastSuccess(data.message_hint ?? 'Welcome back!'),
-          navigate(getDefaultPath(data.user.role)));
-    } catch (error) {
-      toastError(extractError(error));
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+        !data.email_verified
+          ? (toastSuccess(
+              'Logged in successfully! Please verify your email to continue.'
+            ),
+            navigate('/verify-email'))
+          : (toastSuccess(data.message_hint ?? 'Welcome back!'),
+            navigate(getDefaultPath(data.user.role)));
+      } catch (error) {
+        toastError(extractError(error));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [setAuth, toastError, toastSuccess, navigate]
+  );
 
   const logout = useCallback(async () => {
     try {
@@ -152,7 +158,7 @@ export function useAuth() {
       clearAuth();
       navigate('/home', { replace: true });
     }
-  }, [navigate]);
+  }, [navigate, setLoggingOut, clearAuth]);
 
   const rehydrate = useCallback(async () => {
     if (!token) return;
@@ -167,11 +173,11 @@ export function useAuth() {
     } catch {
       clearAuth();
     }
-  }, [token, user]);
+  }, [token, user, clearAuth, setAuth]);
 
   useEffect(() => {
     rehydrate();
-  }, []);
+  }, [rehydrate]);
 
   // FORGOTTON PASSWORD IMPLEMENTATION HOOKS
   const forgotPassword = useCallback(
@@ -188,7 +194,7 @@ export function useAuth() {
         setLoading(false);
       }
     },
-    [navigate]
+    [navigate, toastError, toastSuccess]
   );
 
   const verifyForgotOtp = useCallback(
@@ -219,11 +225,11 @@ export function useAuth() {
         setLoading(false);
       }
     },
-    [navigate]
+    [navigate, toastError, toastSuccess]
   );
 
   const resetPassword = useCallback(
-    async ({ email, resetToken, newPassword, confirmPassword }) => {
+    async ({ resetToken, newPassword, confirmPassword }) => {
       setLoading(true);
       resetErrors();
 
@@ -244,23 +250,26 @@ export function useAuth() {
         setLoading(false);
       }
     },
-    []
+    [navigate, toastError, toastSuccess]
   );
 
-  const googleLogin = useCallback(async (accessToken) => {
-    setLoading(true);
-    resetErrors();
-    try {
-      const data = await AuthService.googleAuth(accessToken);
-      setAuth({ user: data.user, token: data.token, isVerified: true });
-      toastSuccess('Welcome! Signed in with Google.');
-      navigate(getDefaultPath(data.user.role));
-    } catch (error) {
-      toastError(extractError(error));
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const googleLogin = useCallback(
+    async (accessToken) => {
+      setLoading(true);
+      resetErrors();
+      try {
+        const data = await AuthService.googleAuth(accessToken);
+        setAuth({ user: data.user, token: data.token, isVerified: true });
+        toastSuccess('Welcome! Signed in with Google.');
+        navigate(getDefaultPath(data.user.role));
+      } catch (error) {
+        toastError(extractError(error));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [setAuth, toastError, toastSuccess, navigate]
+  );
 
   return {
     // State
