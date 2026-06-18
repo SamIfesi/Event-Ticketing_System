@@ -33,7 +33,7 @@ function SkeletonDashboard() {
       <div className="flex-1 max-w-6xl mx-auto w-full px-6 py-6">
         <div className="animate-pulse flex flex-col gap-6">
           <div className="h-8 bg-border rounded w-64" />
-          <div className="grid grid-cols-2nlg:grid-col-4 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[0, 1, 2, 3].map((i) => (
               <div className="h-28 bg-border rounded-card" key={i} />
             ))}
@@ -98,7 +98,7 @@ export default function OrganizerDashboard() {
 
   useEffect(() => {
     fetchMyEvents();
-  }, []);
+  }, [fetchMyEvents]);
 
   // Aggregate stats across all organizer events
   const totalEvents = myEvents.length;
