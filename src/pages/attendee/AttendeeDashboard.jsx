@@ -6,8 +6,6 @@ import {
   BookOpen,
   Wallet,
   ArrowRight,
-  Clock,
-  MapPin,
   AlertCircle,
   ChevronRight,
   Search,
