@@ -30,6 +30,7 @@ import { useProfile } from '../../hooks/useProfile';
 import { ROLES } from '../../config/constants';
 import logo from '/src/assets/icons/logo.svg';
 import { useThemeStore } from '../../store/themeStore';
+import { useNotifications } from '../../hooks/useNotification';
 
 function NavItem({ to, icon: Icon, label, onClick, active }) {
   return (
@@ -112,13 +113,16 @@ export default function Sidebar({ isOpen, onClose }) {
 
   const isAdmin = role === ROLES.ADMIN || role === ROLES.DEV;
   const isOrganizer = role === ROLES.ORGANIZER || isAdmin;
+  const { unreadCount } = useNotifications(
+    token ? { pollInterval: 15000 } : {}
+  );
 
   const { logout } = useAuth();
 
   useEffect(() => {
     if (!user) return;
     fetchProfile();
-  }, [user]);
+  }, [user, fetchProfile]);
 
   useEffect(() => {
     function onKey(e) {
@@ -188,7 +192,6 @@ export default function Sidebar({ isOpen, onClose }) {
               onClick={onClose}
               className="flex items-center gap-3 p-3 rounded-card bg-main-bg hover:bg-border transition-colors duration-150 touch-manipulation group"
             >
-
               {/* Avatar */}
               <div className="w-15 h-15 rounded-full bg-accent-text flex items-center justify-center shrink-0">
                 {avatar ? (
@@ -271,13 +274,41 @@ export default function Sidebar({ isOpen, onClose }) {
               />
 
               {/* ── NEW ── */}
-              <NavItem
+              <Link
                 to="/notifications"
-                icon={Bell}
-                label="Notifications"
                 onClick={onClose}
-                active={isActive('/notifications')}
-              />
+                className={`flex items-center gap-3 px-4 py-3 rounded-btn text-sm font-medium transition-all duration-150 group touch-manipulation ${
+                  isActive('/notifications')
+                    ? 'bg-accent-text text-accent'
+                    : 'text-secondary hover:text-primary hover:bg-border'
+                }`}
+              >
+                <div className="relative shrink-0">
+                  <Bell
+                    size={17}
+                    strokeWidth={isActive('/notifications') ? 2.5 : 2}
+                    className={
+                      isActive('/notifications')
+                        ? 'text-accent'
+                        : 'text-muted group-hover:text-primary'
+                    }
+                  />
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-error text-white text-[9px] font-bold flex items-center justify-center leading-none">
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                  )}
+                </div>
+                <span className="flex-1">Notifications</span>
+                {/* {unreadCount > 0 && (
+                  <span className="text-[10px] font-bold text-error bg-error/10 px-1.5 py-0.5 rounded-full">
+                    {unreadCount}
+                  </span>
+                )} */}
+                {isActive('/notifications') && (
+                  <ChevronRight size={14} className="text-accent/60" />
+                )}
+              </Link>
               <NavItem
                 to="/my-transactions"
                 icon={ScrollText}
