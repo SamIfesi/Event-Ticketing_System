@@ -184,7 +184,7 @@ function ThemeToggleButton({ onNavigate }) {
 
 function NotificationBell() {
   const token = useAuthStore((state) => state.token);
-  const { unreadCount } = useNotifications(token ? { pollInterval: 30000 }:{});
+  const { unreadCount } = useNotifications(token ? { pollInterval: 15000 }:{});
 
   return (
     <Link
@@ -209,9 +209,9 @@ function AvatarTrigger({ user }) {
   const avatar = profile?.avatar;
 
   useEffect(() => {
-    if(!user) return;
+    if (!user) return;
     fetchProfile();
-  }, [user]);
+  }, [user, fetchProfile]);
 
   return (
     <button
@@ -229,7 +229,7 @@ function AvatarTrigger({ user }) {
                   )
                 : avatar
             }
-            alt={name}
+            alt={user?.name}
             className="w-8 h-8 rounded-full object-cover border-2 border-border"
           />
         ) : (
