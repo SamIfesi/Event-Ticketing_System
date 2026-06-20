@@ -86,7 +86,7 @@ function EventRow({
 
           <div className="min-w-0">
             <Link
-              to={`/events/${event.id}`}
+              to={`/organizer/events/${event.id}`}
               className="text-sm font-semibold text-primary hover:text-accent transition-colors truncate block max-w-45"
             >
               {event.title}
@@ -166,7 +166,7 @@ function EventRow({
                     onClick={() => setMenuOpen(false)}
                     className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-secondary hover:bg-main-bg hover:text-primary transition-colors duration-150"
                   >
-                    <Eye size={13} className="text-muted" /> View event
+                    <Eye size={13} className="text-muted" /> View public page
                   </Link>
 
                   {showActions === 'admin' && (
@@ -245,7 +245,7 @@ export default function EventTable({
       className={`bg-card border border-border rounded-card overflow-hidden min-w-0 ${className}`}
     >
       <div className="overflow-x-auto">
-        <table className="w-full min-w-155">
+        <table className="w-full min-w-max">
           <thead>
             <tr className="bg-main-bg">
               {EVENT_TABLE_HEADS.map(
