@@ -13,7 +13,7 @@ import { useState, useCallback, useEffect } from 'react';
 import NotificationService from '../services/notification.service';
 import { useUiStore } from '../store/uiStore';
 
-export function useNotifications({ pollInterval = 30000 } = {}) {
+export function useNotifications({ pollInterval = 15000 } = {}) {
   const toastError = useUiStore((s) => s.toastError);
   const toastSuccess = useUiStore((s) => s.toastSuccess);
 
