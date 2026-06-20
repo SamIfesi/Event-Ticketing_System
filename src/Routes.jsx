@@ -28,6 +28,7 @@ const ThemePage = lazy(() => import('./pages/public/ThemePage'));
 // attendee
 const AttendeeDashboard = lazy(() => import('./pages/attendee/AttendeeDashboard'));
 const MyBookingsPage = lazy(() => import('./pages/attendee/MyBookingsPage'));
+const BookingDetailPage = lazy(() => import('./pages/attendee/BookingDetailPage'));
 const BecomeOrganizerPage = lazy(() => import('./pages/attendee/BecomeOrganizerPage'));
 const MyTicketsPage = lazy(() => import('./pages/attendee/MyTicketsPage'));
 
@@ -45,11 +46,13 @@ const CreateEventPage = lazy(() => import('./pages/organizer/CreateEventPage'));
 const EditEventPage = lazy(() => import('./pages/organizer/EditEventPage'));
 const EventBookingsPage = lazy(() => import('./pages/organizer/EventBookingsPage'));
 const CheckinPage = lazy(() => import('./pages/organizer/CheckinPage'));
+const OrganizerEventDetailPage = lazy(() => import('./pages/organizer/OrganizerEventDetailPage'));
 
 // admin
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
 const UsersPage = lazy(() => import('./pages/admin/UsersPage'));
 const AdminEventsPage = lazy(() => import('./pages/admin/AdminEventsPage'));
+const AdminUserDetailPage = lazy(() => import('./pages/admin/AdminUserDetailPage'));
 const OrgApplicationsPage = lazy(() => import('./pages/admin/OrgApplicationsPage'));
 
 // payment
@@ -194,6 +197,14 @@ export default function AppRoutes() {
         }
       />
       <Route
+        path="/bookings/:id"
+        element={
+          <ProtectedRoute>
+            <BookingDetailPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/become-organizer"
         element={
           <ProtectedRoute>
@@ -292,6 +303,16 @@ export default function AppRoutes() {
         }
       />
       <Route
+        path="/organizer/events/:id"
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
+              <OrganizerEventDetailPage />
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/organizer/create/event"
         element={
           <ProtectedRoute>
@@ -371,6 +392,16 @@ export default function AppRoutes() {
           <ProtectedRoute>
             <RoleRoute allowed={[ROLES.ADMIN, ROLES.DEV]}>
               <UsersPage />
+            </RoleRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/users/:id"
+        element={
+          <ProtectedRoute>
+            <RoleRoute allowed={[ROLES.ADMIN, ROLES.DEV]}>
+              <AdminUserDetailPage />
             </RoleRoute>
           </ProtectedRoute>
         }
