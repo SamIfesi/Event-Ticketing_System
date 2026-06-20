@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
   Bell,
   CheckCircle2,
@@ -25,6 +24,7 @@ import Navbar from '../../components/layout/Navbar';
 import Sidebar from '../../components/layout/Sidebar';
 import Button from '../../components/ui/Button';
 import Pagination from '../../components/ui/Pagination';
+import NotificationDetailModal from '../../components/notifications/NotificationDetailModal';
 
 const TYPE_ICONS = {
   booking_confirmed: { icon: CheckCircle2, color: '#22c55e' },
@@ -62,8 +62,7 @@ function NotificationSkeleton() {
   );
 }
 
-function NotificationCard({ notification, onMarkRead, onDelete }) {
-  const navigate = useNavigate();
+function NotificationCard({ notification, onOpen, onDelete }) {
   const [hovered, setHovered] = useState(false);
 
   const typeConfig = TYPE_ICONS[notification.type] ?? {
@@ -73,12 +72,7 @@ function NotificationCard({ notification, onMarkRead, onDelete }) {
   const Icon = typeConfig.icon;
 
   function handleClick() {
-    if (!notification.is_read) {
-      onMarkRead(notification.id);
-    }
-    if (notification.action_url) {
-      navigate(notification.action_url);
-    }
+    onOpen(notification);
   }
 
   return (
@@ -151,6 +145,7 @@ export default function NotificationsPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [filter, setFilter] = useState('all'); // 'all' | 'unread'
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedNotification, setSelectedNotification] = useState(null);
 
   const {
     notifications,
@@ -169,7 +164,7 @@ export default function NotificationsPage() {
       page: currentPage,
       ...(filter === 'unread' ? { unread: 1 } : {}),
     });
-  }, [filter, currentPage]);
+  }, [filter, currentPage, fetchNotifications]);
 
   async function handleMarkAllRead() {
     await markAllRead();
@@ -258,7 +253,7 @@ export default function NotificationsPage() {
                 <NotificationCard
                   key={n.id}
                   notification={n}
-                  onMarkRead={markRead}
+                  onOpen={setSelectedNotification}
                   onDelete={deleteNotification}
                 />
               ))}
@@ -302,6 +297,17 @@ export default function NotificationsPage() {
           </div>
         )}
       </main>
+
+      <NotificationDetailModal 
+      notification={selectedNotification}
+      isOpen={Boolean(selectedNotification)}
+      onClose={() => setSelectedNotification(null)}
+      onMarkRead={markRead}
+      onDelete={(id) => {
+        deleteNotification(id);
+        setSelectedNotification(null); // Close modal after deletion
+      }}
+      />
     </div>
   );
 }
