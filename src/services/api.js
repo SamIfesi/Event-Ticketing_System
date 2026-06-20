@@ -4,7 +4,7 @@ import { useAuthStore } from '../store/authStore';
 
 const getBaseURL = () => {
   if(window.location.hostname.includes('devtunnels.ms')) {
-    return 'https://h6nnjkh5-80.uks1.devtunnels.ms/ticketer/api';
+    return 'https://w6v6qlwv-80.usw3.devtunnels.ms/ticketer/api';
   }
   return import.meta.env.VITE_API_URL;
 }
