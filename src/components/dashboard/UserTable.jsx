@@ -9,6 +9,7 @@
 //   mutating     — disables action buttons while a mutation is in flight
 
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { MoreHorizontal, ShieldCheck, UserX, UserCheck } from 'lucide-react';
 import Badge from '../ui/Badge';
 import {
@@ -22,8 +23,8 @@ import { SkeletonRow } from '../dashboard/EventTable';
 
 function UserRow({ user, onRoleChange, onStatusChange, mutating }) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const isActive = user.is_active !== 0;
-  const role = user.role?.trim().toLowerCase();
+  const isActive = user?.is_active !== 0;
+  const role = user?.role?.trim().toLowerCase();
   const color = ROLE_COLORS[role] ?? '#ff0303';
 
   return (
@@ -35,22 +36,27 @@ function UserRow({ user, onRoleChange, onStatusChange, mutating }) {
           <div className="w-10 h-10 rounded-full bg-accent-text flex items-center justify-center shrink-0 overflow-hidden">
             {user.avatar ? (
               <img
-                src={user.avatar}
+                src={user?.avatar}
                 alt=""
                 className="w-full h-full object-cover"
               />
             ) : (
               <span className="text-xs font-bold text-accent">
-                {user.name?.charAt(0)?.toUpperCase()}
+                {user?.name?.charAt(0)?.toUpperCase()}
               </span>
             )}
           </div>
 
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-primary hover:text-accent transition-colors truncate block max-w-45">
-              {user.name}
+            <Link
+              to={`/admin/users/${user.id}`}
+              className="text-sm font-semibold text-primary hover:text-accent transition-colors truncate block max-w-45"
+            >
+              {user?.name}
+            </Link>
+            <p className="text-xs text-muted truncate max-w-40">
+              {user?.email}
             </p>
-            <p className="text-xs text-muted truncate max-w-40">{user.email}</p>
           </div>
         </div>
       </td>
@@ -58,7 +64,7 @@ function UserRow({ user, onRoleChange, onStatusChange, mutating }) {
       {/* Role */}
       <td className="px-4 py-3">
         <Badge
-          status={user.role}
+          status={user?.role}
           style={{
             background: `${color}18`,
             color,
@@ -79,7 +85,7 @@ function UserRow({ user, onRoleChange, onStatusChange, mutating }) {
       {/* Joined */}
       <td className="px-4 py-3">
         <span className="text-xs text-muted">
-          {user.created_at ? formatShortDate(user.created_at) : '—'}
+          {user?.created_at ? formatShortDate(user?.created_at) : '—'}
         </span>
       </td>
 
@@ -161,7 +167,7 @@ export default function UserTable({
       className={`bg-card border border-border rounded-card overflow-hidden min-w-0 ${className}`}
     >
       <div className="overflow-x-auto">
-        <table className="w-full min-w-155">
+        <table className="w-full min-w-max">
           <thead>
             <tr className="bg-main-bg">
               {USERTABLE_HEADS.map((header) => (
