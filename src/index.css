@@ -95,8 +95,8 @@ textarea {
     font-family: var(--font-fractul);
     -webkit-tap-highlight-color: transparent;
     
-    /* scrollbar-width: thin;
-    scrollbar-color: var(--color-muted) transparent; */
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-muted) transparent;
   }
   @media (prefers-reduced-motion: reduce) {
     *::before,
