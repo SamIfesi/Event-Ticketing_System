@@ -13,6 +13,7 @@ export default defineConfig(({ mode }) => {
       host: true,
       port: 5173,
       allowedHosts: true, // Allow all hosts for development
+      strictport: true, // fail if port 5173 is already in use instead of picking another random port
 
       // Development caching
       headers: {
