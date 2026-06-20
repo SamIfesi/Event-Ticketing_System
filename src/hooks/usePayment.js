@@ -205,7 +205,7 @@ export function usePayouts() {
         setMutating(false);
       }
     },
-    [toastError, toasstSuccess]
+    [toastError, toastSuccess]
   );
 
   // ── URL param setters ─────────────────────────────────────────
