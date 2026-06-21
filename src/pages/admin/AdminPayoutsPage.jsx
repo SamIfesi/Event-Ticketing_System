@@ -351,7 +351,7 @@ function AllPayoutsTab({
       {/* Table */}
       <div className="bg-card border border-border rounded-card overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-215">
+          <table className="w-full min-w-max">
             <thead>
               <tr className="bg-main-bg">
                 {[
