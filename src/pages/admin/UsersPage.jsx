@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import {
   Search,
   X,
@@ -113,21 +113,26 @@ function UserRow({ user, onStatusChange, mutating }) {
       <tr className="border-t border-border hover:bg-main-bg transition-colors duration-150">
         {/* Name + email */}
         <td className="px-4 py-3.5">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-accent-text flex items-center justify-center shrink-0">
-              <span className="text-xs font-bold text-accent">
-                {user.name?.charAt(0)?.toUpperCase()}
-              </span>
+          <Link
+            to={`/admin/users/${user.id}`}
+            className="flex items-center gap-3 group"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-accent-text flex items-center justify-center shrink-0">
+                <span className="text-xs font-bold text-accent">
+                  {user.name?.charAt(0)?.toUpperCase()}
+                </span>
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-primary truncate max-w-[160px]">
+                  {user.name}
+                </p>
+                <p className="text-xs text-muted truncate max-w-[200px]">
+                  {user.email}
+                </p>
+              </div>
             </div>
-            <div className="min-w-0">
-              <p className="text-sm font-semibold text-primary truncate max-w-[160px]">
-                {user.name}
-              </p>
-              <p className="text-xs text-muted truncate max-w-[200px]">
-                {user.email}
-              </p>
-            </div>
-          </div>
+          </Link>
         </td>
 
         {/* Role */}
@@ -234,7 +239,7 @@ export default function UsersPage() {
   // users for the table (uses URL params automatically)
   useEffect(() => {
     fetchStats();
-  }, []);
+  }, [fetchStats]);
 
   // Keep local search input in sync with URL
   useEffect(() => {
@@ -247,7 +252,7 @@ export default function UsersPage() {
       if (searchInput !== usersSearch) setUsersSearch(searchInput);
     }, 500);
     return () => clearTimeout(t);
-  }, [searchInput]);
+  }, [searchInput, setUsersSearch, usersSearch]);
 
   // Per-page: update URL param directly so useAdmin re-fetches automatically
   function handlePerPageChange(newLimit) {
@@ -405,7 +410,7 @@ export default function UsersPage() {
         {/* ── Table ────────────────────────────────────────── */}
         <div className="bg-card border border-border rounded-card overflow-hidden mb-4">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[680px]">
+            <table className="w-full min-w-max">
               <thead>
                 <tr className="bg-main-bg">
                   {['User', 'Role', 'Status', 'Date Joined', 'Action'].map(
