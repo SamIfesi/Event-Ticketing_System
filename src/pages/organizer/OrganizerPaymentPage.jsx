@@ -350,7 +350,7 @@ function PayoutHistory({
       <h2 className="text-base font-bold text-primary mb-4">Payout History</h2>
       <div className="bg-card border border-border rounded-card overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-180">
+          <table className="w-full min-w-max">
             <thead>
               <tr className="bg-main-bg">
                 {[
