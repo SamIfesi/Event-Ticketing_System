@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
   Users,
@@ -29,7 +29,9 @@ function MiniStat({ icon: Icon, label, value, color }) {
         <Icon size={16} strokeWidth={1.75} style={{ color }} />
       </div>
       <div>
-        <p className="text-base font-black text-primary leading-none">{value}</p>
+        <p className="text-base font-black text-primary leading-none">
+          {value}
+        </p>
         <p className="text-xs text-muted mt-0.5">{label}</p>
       </div>
     </div>
@@ -59,9 +61,12 @@ function SkeletonRow() {
 }
 
 // ── Booking row ────────────────────────────────────────────────
-function BookingRow({ booking }) {
+function BookingRow({ booking, onView }) {
   return (
-    <tr className="border-t border-border hover:bg-main-bg transition-colors duration-150">
+    <tr
+      onClick={() => onView(booking.id)}
+      className="border-t border-border hover:bg-main-bg transition-colors duration-150"
+    >
       {/* Attendee */}
       <td className="px-4 py-3.5">
         <div className="flex items-center gap-3">
@@ -121,8 +126,10 @@ export default function EventBookingsPage() {
   const { id } = useParams();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [search, setSearch] = useState('');
+  const navigate = useNavigate();
 
-  const { bookings, bookingsLoading, fetchEventBookings } = useOrganizerEvents();
+  const { bookings, bookingsLoading, fetchEventBookings } =
+    useOrganizerEvents();
   const { event, eventLoading, fetchEvent } = useEvents();
 
   useEffect(() => {
@@ -144,8 +151,14 @@ export default function EventBookingsPage() {
   });
 
   // Derived stats
-  const totalRevenue  = bookings.reduce((acc, b) => acc + parseFloat(b.total_amount ?? 0), 0);
-  const totalTickets  = bookings.reduce((acc, b) => acc + parseInt(b.quantity ?? 1, 10), 0);
+  const totalRevenue = bookings.reduce(
+    (acc, b) => acc + parseFloat(b.total_amount ?? 0),
+    0
+  );
+  const totalTickets = bookings.reduce(
+    (acc, b) => acc + parseInt(b.quantity ?? 1, 10),
+    0
+  );
   const totalBookings = bookings.length;
 
   return (
@@ -154,7 +167,6 @@ export default function EventBookingsPage() {
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <main className="flex-1 max-w-6xl mx-auto w-full px-6 py-8">
-
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-xs text-secondary mb-6">
           <Link
@@ -196,15 +208,33 @@ export default function EventBookingsPage() {
         {/* Summary stats */}
         {!bookingsLoading && bookings.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-            <MiniStat icon={Users}      label="Total Bookings" value={totalBookings}                   color="#2563eb" />
-            <MiniStat icon={Ticket}     label="Tickets Issued" value={totalTickets.toLocaleString()}   color="#f59e0b" />
-            <MiniStat icon={TrendingUp} label="Revenue"        value={formatCurrency(totalRevenue)}    color="#10b981" />
+            <MiniStat
+              icon={Users}
+              label="Total Bookings"
+              value={totalBookings}
+              color="#2563eb"
+            />
+            <MiniStat
+              icon={Ticket}
+              label="Tickets Issued"
+              value={totalTickets.toLocaleString()}
+              color="#f59e0b"
+            />
+            <MiniStat
+              icon={TrendingUp}
+              label="Revenue"
+              value={formatCurrency(totalRevenue)}
+              color="#10b981"
+            />
           </div>
         )}
 
         {/* Search */}
         <div className="relative mb-6 max-w-sm">
-          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
+          <Search
+            size={15}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none"
+          />
           <input
             type="text"
             value={search}
@@ -225,10 +255,17 @@ export default function EventBookingsPage() {
         {/* Table */}
         <div className="bg-card border border-border rounded-card overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-170">
+            <table className="w-full min-w-max">
               <thead>
                 <tr className="bg-main-bg">
-                  {['Attendee', 'Ticket Type', 'Qty', 'Amount', 'Paid On', 'Status'].map((h) => (
+                  {[
+                    'Attendee',
+                    'Ticket Type',
+                    'Qty',
+                    'Amount',
+                    'Paid On',
+                    'Status',
+                  ].map((h) => (
                     <th
                       key={h}
                       className="px-4 py-3 text-left text-xs font-bold text-muted uppercase tracking-wider"
@@ -240,20 +277,28 @@ export default function EventBookingsPage() {
               </thead>
               <tbody>
                 {bookingsLoading ? (
-                  Array.from({ length: 8 }).map((_, i) => <SkeletonRow key={i} />)
+                  Array.from({ length: 8 }).map((_, i) => (
+                    <SkeletonRow key={i} />
+                  ))
                 ) : filtered.length > 0 ? (
                   filtered.map((booking) => (
-                    <BookingRow key={booking.id} booking={booking} />
+                    <BookingRow key={booking.id} booking={booking} onView={(id)=>navigate(`/bookings/${id}`)}/>
                   ))
                 ) : (
                   <tr>
                     <td colSpan={6} className="px-4 py-16 text-center">
                       <div className="flex flex-col items-center gap-3">
                         <div className="w-12 h-12 rounded-card bg-accent-text border border-accent-border flex items-center justify-center">
-                          <Users size={20} strokeWidth={1.5} className="text-accent" />
+                          <Users
+                            size={20}
+                            strokeWidth={1.5}
+                            className="text-accent"
+                          />
                         </div>
                         <p className="text-sm font-semibold text-primary">
-                          {search ? 'No bookings match your search' : 'No bookings yet'}
+                          {search
+                            ? 'No bookings match your search'
+                            : 'No bookings yet'}
                         </p>
                         <p className="text-xs text-muted">
                           {search
@@ -268,7 +313,6 @@ export default function EventBookingsPage() {
             </table>
           </div>
         </div>
-
       </main>
       <Footer />
     </div>
