@@ -39,6 +39,7 @@ function SkeletonRow() {
     <tr className="animate-pulse border-t border-border">
       <td className="px-4 py-3.5"><div className="h-3 bg-border rounded w-24" /></td>
       <td className="px-4 py-3.5"><div className="h-3 bg-border rounded w-32" /></td>
+      <td className="px-4 py-3.5"><div className="h-3 bg-border rounded w-28" /></td>
       <td className="px-4 py-3.5"><div className="h-3 bg-border rounded w-20" /></td>
       <td className="px-4 py-3.5"><div className="h-3 bg-border rounded w-8" /></td>
       <td className="px-4 py-3.5"><div className="h-3 bg-border rounded w-16" /></td>
@@ -62,7 +63,7 @@ export default function MyTransactionsPage() {
 
   useEffect(() => {
     fetchMyTransactions();
-  }, [page]);
+  }, [page, fetchMyTransactions]);
 
   const filtered = search
     ? myTransactions.filter(
@@ -116,12 +117,13 @@ export default function MyTransactionsPage() {
         {/* Table */}
         <div className="bg-card border border-border rounded-card overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-160">
+            <table className="w-full min-w-max">
               <thead>
                 <tr className="bg-main-bg">
                   {[
                     'Date',
                     'Event',
+                    'Reference',
                     'Ticket Type',
                     'Qty',
                     'Amount',
@@ -161,6 +163,11 @@ export default function MyTransactionsPage() {
                         </p>
                       </td>
                       <td className="px-4 py-3.5">
+                        <p className="text-sm font-semibold text-primary truncate max-w-45">
+                          {t.paystack_reference ?? '—'}
+                        </p>
+                      </td>
+                      <td className="px-4 py-3.5">
                         <span className="text-xs text-secondary">
                           {t.ticket_type_name ?? '—'}
                         </span>
@@ -185,7 +192,7 @@ export default function MyTransactionsPage() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={6} className="px-4 py-16 text-center">
+                    <td colSpan={7} className="px-4 py-16 text-center">
                       <div className="flex flex-col items-center gap-4">
                         <div className="w-14 h-14 rounded-card bg-accent-text border border-accent-border flex items-center justify-center">
                           <CreditCard
