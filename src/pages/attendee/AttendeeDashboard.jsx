@@ -97,7 +97,7 @@ export default function AttendeeDashboard() {
     if (!user) return;
     fetchProfile();
     fetchMyBookings();
-  }, [user]);
+  }, [user, fetchProfile, fetchMyBookings]);
 
   const totalBookings = bookings?.length ?? 0;
   const confirmedBookings =
@@ -361,7 +361,7 @@ export default function AttendeeDashboard() {
         </div>
       </main>
 
-      <Footer />
+      <Footer variant="minimal" />
     </div>
   );
 }
