@@ -291,7 +291,7 @@ export default function CheckinPage() {
             {/* Table */}
             <div className="bg-card border border-border rounded-card overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full min-w-160">
+                <table className="w-full min-w-max">
                   <thead>
                     <tr className="bg-main-bg">
                       {TABLE_HEADERS.map((h) => (
