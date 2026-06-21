@@ -83,7 +83,7 @@ export default function OrganizerTransactionsPage() {
 
   useEffect(() => {
     fetchOrganizerTransactions();
-  }, [page, fromDate, toDate, typeFilter]);
+  }, [page, fromDate, toDate, typeFilter, fetchOrganizerTransactions]);
 
   const hasFilters = fromDate || toDate || typeFilter;
 
@@ -192,7 +192,7 @@ export default function OrganizerTransactionsPage() {
         {/* Transactions table */}
         <div className="bg-card border border-border rounded-card overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-205">
+            <table className="w-full min-w-max">
               <thead>
                 <tr className="bg-main-bg">
                   {['Date', 'Event', 'Attendee', 'Ticket Type', 'Qty', 'Amount', 'Your Cut', 'Type'].map((h) => (
