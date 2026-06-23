@@ -14,7 +14,7 @@ export default function CategoryEventCard({ event }) {
   }, null);
 
   const categoryName = event.category_name;
-  const CategoryIcon = getCategoryIcon(categoryName);
+  const Icon = getCategoryIcon(categoryName);
 
   return (
     <Link
@@ -42,7 +42,7 @@ export default function CategoryEventCard({ event }) {
         {/* Category badge — top-left, matches the Featured Events pill style */}
         {categoryName && (
           <span className="absolute top-2.5 left-2.5 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-black/40 backdrop-blur-sm text-white text-[10px] font-medium">
-            <CategoryIcon size={10} strokeWidth={2} />
+            <Icon size={10} strokeWidth={2} />
             {categoryName}
           </span>
         )}
