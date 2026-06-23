@@ -17,6 +17,7 @@ import Sidebar from '../../components/layout/Sidebar';
 import Footer from '../../components/layout/Footer';
 import EventGrid from '../../components/events/EventGrid';
 import CategoryScroller from '../../components/events/CategoryScroller';
+import CategoryEventRow from '../../components/events/CategoryEventRow';
 
 const STATS = [
   { label: 'Events hosted', value: '1,200+' },
@@ -45,6 +46,11 @@ const HOW_STEPS = [
     desc: 'Scan your QR at the gate and walk straight in. No printing needed.',
   },
 ];
+
+// How many category rows to render on the homepage. Categories with zero
+// upcoming events quietly render nothing (handled inside CategoryEventRow),
+// so we ask for a few more than we need to land on a good number visually.
+const MAX_CATEGORY_ROWS = 6;
 
 // ── Search bar ───────────────────────────────────────────────────────────────
 function HeroSearch() {
@@ -118,7 +124,7 @@ export default function HomePage() {
       .finally(() => setLoadingEvents(false));
   }, []);
 
-  // Fetch all categories with event_count for the scroller
+  // Fetch all categories with event_count for the scroller + category rows
   useEffect(() => {
     CategoryService.getCategories()
       .then((data) => setCategories(data.categories ?? []))
@@ -140,6 +146,11 @@ export default function HomePage() {
       heroRef.current.style.transform = 'translateY(0)';
     });
   }, []);
+
+  // Only bother rendering rows for categories that actually have events at all
+  const categoryRowCandidates = categories
+    .filter((c) => (c.event_count ?? 0) > 0)
+    .slice(0, MAX_CATEGORY_ROWS);
 
   return (
     <div className="flex flex-col min-h-screen bg-main-bg">
@@ -238,7 +249,42 @@ export default function HomePage() {
           />
         </section>
 
-        {/* Categories */}
+        {/* ── Browse by category — Ticketmaster-style horizontal rows ── */}
+        <section className="max-w-6xl mx-auto px-6 py-16 flex flex-col gap-12">
+          <div>
+            <p className="text-xs font-semibold text-accent uppercase tracking-widest mb-1">
+              Explore
+            </p>
+            <h2 className="text-2xl sm:text-3xl font-black text-primary tracking-tight">
+              Browse by Category
+            </h2>
+          </div>
+
+          {loadingCategories ? (
+            // Reuse the row skeleton shape inline so something shows immediately
+            <div className="flex flex-col gap-12">
+              {[0, 1].map((i) => (
+                <div key={i} className="flex flex-col gap-4 animate-pulse">
+                  <div className="h-6 bg-border rounded w-40" />
+                  <div className="flex gap-4">
+                    {[0, 1, 2, 3].map((j) => (
+                      <div
+                        key={j}
+                        className="w-44 sm:w-52 lg:w-56 aspect-[4/3] bg-border rounded-card shrink-0"
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            categoryRowCandidates.map((category) => (
+              <CategoryEventRow key={category.id} category={category} />
+            ))
+          )}
+        </section>
+
+        {/* Categories scroller (browse-all pills) */}
         <section className="bg-card border-y border-border py-16">
           <div className="max-w-6xl mx-auto px-6">
             <div className="flex items-end justify-between mb-8 gap-5">
@@ -247,7 +293,7 @@ export default function HomePage() {
                   Browse by type
                 </p>
                 <h2 className="text-2xl sm:text-3xl font-black text-primary tracking-tight">
-                  Explore Categories
+                  All Categories
                 </h2>
               </div>
               <Link
