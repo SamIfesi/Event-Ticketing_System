@@ -21,11 +21,8 @@ export default function Footer({ variant }) {
         <div className="max-w-6xl mx-auto px-6 py-10">
           <div className="flex flex-col items-center gap-2">
             <img src={logo} alt="Ticketer logo" className="h-5" />
-            <p className="text-xs text-muted">
-              Nigeria's event ticketing platform
-            </p>
-          </div>
-          <div className="mt-8 pt-6 border-t border-border text-center">
+                     </div>
+          <div className="mt-4 text-center">
             <p className="text-xs text-muted">
               © {new Date().getFullYear()} Ticketer.
             </p>
