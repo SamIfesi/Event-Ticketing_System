@@ -412,7 +412,7 @@ export default function TicketDetailPage() {
         ) : null}
       </main>
 
-      <Footer />
+      <Footer variant="minimal" />
     </div>
   );
 }

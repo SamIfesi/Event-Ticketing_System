@@ -174,7 +174,7 @@ export default function OrganizerEventDetailPage() {
           </div>
         )}
       </main>
-      <Footer />
+      <Footer variant="minimal" />
     </div>
   );
 }
