@@ -1,5 +1,30 @@
 @import 'tailwindcss';
 
+/* Register your custom local fonts */
+@font-face {
+  font-family: 'Fractul';
+  src: url('/fonts/fractul/Fractul-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Fractul';
+  src: url('/fonts/fractul/Fractul-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Fractul';
+  src: url('/fonts/fractul/Fractul-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --color-primary: #0f172a;
   --color-secondary: #475569;
