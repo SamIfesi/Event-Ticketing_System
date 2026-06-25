@@ -63,7 +63,7 @@ export default function BookingDetailPage() {
         ) : (
           <div className="flex flex-col gap-6">
             {/* Summary card */}
-            <div className="bg-card border border-border rounded-card p-5">
+            <div className="border border-border rounded-card p-5">
               <div className="flex items-start justify-between gap-3 mb-4">
                 <div>
                   <h1 className="text-lg font-black text-primary leading-snug">
@@ -92,7 +92,7 @@ export default function BookingDetailPage() {
 
             {/* Tickets */}
             {isPaid && (
-              <div className="bg-card border border-border rounded-card p-5">
+              <div className="border border-border rounded-card p-5">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-sm font-bold text-primary">
                     {tickets.length} Ticket{tickets.length !== 1 ? 's' : ''}
@@ -122,7 +122,7 @@ export default function BookingDetailPage() {
           </div>
         )}
       </main>
-      <Footer />
+      <Footer variant="minimal" />
     </div>
   );
 }
