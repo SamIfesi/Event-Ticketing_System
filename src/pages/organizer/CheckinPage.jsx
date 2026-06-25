@@ -338,7 +338,7 @@ export default function CheckinPage() {
         )}
 
       </main>
-      <Footer />
+      <Footer variant="minimal"/>
     </div>
   );
 }

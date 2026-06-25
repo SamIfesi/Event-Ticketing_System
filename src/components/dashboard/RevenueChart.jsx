@@ -104,6 +104,7 @@ export default function RevenueChart({
       ) : data.length > 0 ? (
         <div className="flex items-end gap-1.5">
           {data.map((d) => (
+            console.log(d),
             <Bar
               key={d.label}
               label={d.label}
