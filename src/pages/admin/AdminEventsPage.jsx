@@ -106,7 +106,7 @@ export default function AdminEventsPage() {
         />
       </main>
 
-      <Footer />
+      <Footer variant="minimal"/>
     </div>
   );
 }

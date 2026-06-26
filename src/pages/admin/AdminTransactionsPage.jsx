@@ -417,7 +417,7 @@ export default function AdminTransactionsPage() {
         )}
       </main>
 
-      <Footer />
+      <Footer variant="minimal"/>
     </div>
   );
 }

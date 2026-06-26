@@ -402,7 +402,7 @@ export default function AdminDashboard() {
           />
         </div>
       </main>
-      <Footer />
+      <Footer variant="minimal" />
     </div>
   );
 }

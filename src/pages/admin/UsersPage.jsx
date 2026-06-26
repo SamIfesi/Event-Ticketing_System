@@ -487,7 +487,7 @@ export default function UsersPage() {
           </div>
         </div>
       </main>
-      <Footer />
+      <Footer variant="minimal"/>
     </div>
   );
 }

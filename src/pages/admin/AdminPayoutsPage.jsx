@@ -698,7 +698,7 @@ export default function AdminPayoutsPage() {
         )}
       </main>
 
-      <Footer />
+      <Footer variant="minimal"/>
     </div>
   );
 }
