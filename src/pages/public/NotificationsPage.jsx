@@ -25,6 +25,7 @@ import Sidebar from '../../components/layout/Sidebar';
 import Button from '../../components/ui/Button';
 import Pagination from '../../components/ui/Pagination';
 import NotificationDetailModal from '../../components/notifications/NotificationDetailModal';
+import Footer from '../../components/layout/Footer';
 
 const TYPE_ICONS = {
   booking_confirmed: { icon: CheckCircle2, color: '#22c55e' },
@@ -181,133 +182,136 @@ export default function NotificationsPage() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-main-bg">
-      <Navbar onMenuClick={() => setSidebarOpen(true)} />
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+    <>
+      <div className="flex flex-col min-h-screen bg-main-bg">
+        <Navbar onMenuClick={() => setSidebarOpen(true)} />
+        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-      <main className="flex-1 max-w-3xl mx-auto w-full px-6 py-8">
-        {/* Header */}
-        <div className="flex items-start justify-between gap-4 mb-6">
-          <div>
-            <div className="flex items-center gap-2.5 mb-1">
-              <h1 className="text-2xl sm:text-3xl font-black text-primary tracking-tight">
-                Notifications
-              </h1>
-              {unreadCount > 0 && (
-                <span className="px-2 py-0.5 rounded-full bg-error text-white text-xs font-bold">
-                  {unreadCount > 99 ? '99+' : unreadCount}
-                </span>
-              )}
+        <main className="flex-1 max-w-3xl mx-auto w-full px-6 py-8">
+          {/* Header */}
+          <div className="flex items-start justify-between gap-4 mb-6">
+            <div>
+              <div className="flex items-center gap-2.5 mb-1">
+                <h1 className="text-2xl sm:text-3xl font-black text-primary tracking-tight">
+                  Notifications
+                </h1>
+                {unreadCount > 0 && (
+                  <span className="px-2 py-0.5 rounded-full bg-error text-white text-xs font-bold">
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </span>
+                )}
+              </div>
+              <p className="text-sm text-secondary">
+                Stay up to date with your bookings, events, and account.
+              </p>
             </div>
-            <p className="text-sm text-secondary">
-              Stay up to date with your bookings, events, and account.
-            </p>
+            {unreadCount > 0 && (
+              <Button
+                variant="secondary"
+                size="sm"
+                icon={<CheckCheck size={15} />}
+                loading={mutating}
+                onClick={handleMarkAllRead}
+              >
+                Mark all read
+              </Button>
+            )}
           </div>
-          {unreadCount > 0 && (
-            <Button
-              variant="secondary"
-              size="sm"
-              icon={<CheckCheck size={15} />}
-              loading={mutating}
-              onClick={handleMarkAllRead}
-            >
-              Mark all read
-            </Button>
-          )}
-        </div>
 
-        {/* Filter pills */}
-        <div className="flex items-center gap-2 mb-6">
-          {[
-            { value: 'all', label: 'All' },
-            {
-              value: 'unread',
-              label: `Unread${unreadCount > 0 ? ` (${unreadCount})` : ''}`,
-            },
-          ].map((f) => (
-            <button
-              key={f.value}
-              onClick={() => handleFilterChange(f.value)}
-              className={`h-9 px-4 rounded-btn text-xs font-semibold border transition-colors ${
-                filter === f.value
-                  ? 'bg-accent text-white border-accent'
-                  : 'bg-card text-secondary border-border hover:text-primary hover:border-accent/40'
-              }`}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Notification list */}
-        {notificationsLoading ? (
-          <div className="flex flex-col gap-3">
-            {[0, 1, 2, 3, 4].map((i) => (
-              <NotificationSkeleton key={i} />
+          {/* Filter pills */}
+          <div className="flex items-center gap-2 mb-6">
+            {[
+              { value: 'all', label: 'All' },
+              {
+                value: 'unread',
+                label: `Unread${unreadCount > 0 ? ` (${unreadCount})` : ''}`,
+              },
+            ].map((f) => (
+              <button
+                key={f.value}
+                onClick={() => handleFilterChange(f.value)}
+                className={`h-9 px-4 rounded-btn text-xs font-semibold border transition-colors ${
+                  filter === f.value
+                    ? 'bg-accent text-white border-accent'
+                    : 'bg-card text-secondary border-border hover:text-primary hover:border-accent/40'
+                }`}
+              >
+                {f.label}
+              </button>
             ))}
           </div>
-        ) : notifications.length > 0 ? (
-          <>
+
+          {/* Notification list */}
+          {notificationsLoading ? (
             <div className="flex flex-col gap-3">
-              {notifications.map((n) => (
-                <NotificationCard
-                  key={n.id}
-                  notification={n}
-                  onOpen={setSelectedNotification}
-                  onDelete={deleteNotification}
-                />
+              {[0, 1, 2, 3, 4].map((i) => (
+                <NotificationSkeleton key={i} />
               ))}
             </div>
-
-            {pagination?.total_pages > 1 && (
-              <div className="mt-8">
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={pagination.total_pages}
-                  onPageChange={handlePageChange}
-                />
+          ) : notifications.length > 0 ? (
+            <>
+              <div className="flex flex-col gap-3">
+                {notifications.map((n) => (
+                  <NotificationCard
+                    key={n.id}
+                    notification={n}
+                    onOpen={setSelectedNotification}
+                    onDelete={deleteNotification}
+                  />
+                ))}
               </div>
-            )}
-          </>
-        ) : (
-          <div className="flex flex-col items-center justify-center py-20 gap-5 text-center">
-            <div className="w-16 h-16 rounded-card bg-accent-text border border-accent-border flex items-center justify-center">
-              <Bell size={28} strokeWidth={1.5} className="text-accent" />
-            </div>
-            <div>
-              <p className="font-bold text-primary text-lg">
-                {filter === 'unread'
-                  ? 'All caught up!'
-                  : 'No notifications yet'}
-              </p>
-              <p className="text-sm text-secondary mt-1 max-w-xs">
-                {filter === 'unread'
-                  ? 'You have no unread notifications.'
-                  : "You'll see updates about your bookings, events, and account here."}
-              </p>
-            </div>
-            {filter === 'unread' && (
-              <button
-                onClick={() => handleFilterChange('all')}
-                className="text-sm font-semibold text-accent hover:text-accent-hover transition-colors"
-              >
-                View all notifications
-              </button>
-            )}
-          </div>
-        )}
-      </main>
 
-      <NotificationDetailModal 
-      notification={selectedNotification}
-      isOpen={Boolean(selectedNotification)}
-      onClose={() => setSelectedNotification(null)}
-      onMarkRead={markRead}
-      onDelete={(id) => {
-        deleteNotification(id);
-        setSelectedNotification(null); // Close modal after deletion
-      }}
-      />
-    </div>
+              {pagination?.total_pages > 1 && (
+                <div className="mt-8">
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={pagination.total_pages}
+                    onPageChange={handlePageChange}
+                  />
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-20 gap-5 text-center">
+              <div className="w-16 h-16 rounded-card bg-accent-text border border-accent-border flex items-center justify-center">
+                <Bell size={28} strokeWidth={1.5} className="text-accent" />
+              </div>
+              <div>
+                <p className="font-bold text-primary text-lg">
+                  {filter === 'unread'
+                    ? 'All caught up!'
+                    : 'No notifications yet'}
+                </p>
+                <p className="text-sm text-secondary mt-1 max-w-xs">
+                  {filter === 'unread'
+                    ? 'You have no unread notifications.'
+                    : "You'll see updates about your bookings, events, and account here."}
+                </p>
+              </div>
+              {filter === 'unread' && (
+                <button
+                  onClick={() => handleFilterChange('all')}
+                  className="text-sm font-semibold text-accent hover:text-accent-hover transition-colors"
+                >
+                  View all notifications
+                </button>
+              )}
+            </div>
+          )}
+        </main>
+
+        <NotificationDetailModal
+          notification={selectedNotification}
+          isOpen={Boolean(selectedNotification)}
+          onClose={() => setSelectedNotification(null)}
+          onMarkRead={markRead}
+          onDelete={(id) => {
+            deleteNotification(id);
+            setSelectedNotification(null); // Close modal after deletion
+          }}
+        />
+      </div>
+      <Footer variant="minimal" />
+    </>
   );
 }
