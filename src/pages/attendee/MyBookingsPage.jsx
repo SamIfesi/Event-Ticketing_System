@@ -184,7 +184,7 @@ export default function MyBookingsPage() {
         )}
       </main>
 
-      <Footer />
+      <Footer variant="minimal"/>
     </div>
   );
 }

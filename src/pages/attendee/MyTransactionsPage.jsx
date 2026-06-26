@@ -232,7 +232,7 @@ export default function MyTransactionsPage() {
         )}
       </main>
 
-      <Footer />
+      <Footer variant="minimal"/>
     </div>
   );
 }
