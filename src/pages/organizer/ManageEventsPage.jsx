@@ -393,7 +393,7 @@ export default function ManageEventsPage() {
           )}
         </div>
       </main>
-      <Footer />
+      <Footer variant="minimal"/>
     </div>
   );
 }

@@ -314,7 +314,7 @@ export default function EventBookingsPage() {
           </div>
         </div>
       </main>
-      <Footer />
+      <Footer variant="minimal"/>
     </div>
   );
 }

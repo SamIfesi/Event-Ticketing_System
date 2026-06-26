@@ -292,7 +292,7 @@ export default function OrganizerDashboard() {
           />
         </div>
       </main>
-      <Footer />
+      <Footer variant="minimal"/>
     </div>
   );
 }

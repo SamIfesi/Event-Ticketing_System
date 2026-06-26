@@ -606,7 +606,7 @@ export default function OrganizerPaymentPage() {
         )}
       </main>
 
-      <Footer />
+      <Footer variant="minimal"/>
     </div>
   );
 }

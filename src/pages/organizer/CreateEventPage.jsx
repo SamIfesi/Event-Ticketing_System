@@ -218,7 +218,7 @@ export default function CreateEventPage() {
         </p>
       </main>
 
-      <Footer />
+      <Footer variant="minimal"/>
     </div>
   );
 }

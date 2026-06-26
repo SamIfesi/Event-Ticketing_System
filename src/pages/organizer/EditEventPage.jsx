@@ -165,7 +165,7 @@ export default function EditEventPage() {
           )}
         </div>
       </main>
-      <Footer />
+      <Footer variant="minimal"/>
     </div>
   );
 }

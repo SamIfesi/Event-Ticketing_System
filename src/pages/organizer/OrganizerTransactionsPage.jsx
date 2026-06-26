@@ -20,33 +20,37 @@ import StatCard from '../../components/dashboard/StatCard';
 const TYPE_LABELS = {
   payment_initiated: 'Initiated',
   payment_confirmed: 'Confirmed',
-  payment_failed:    'Failed',
-  refund_processed:  'Refunded',
-  payout_sent:       'Payout Sent',
-  payout_failed:     'Payout Failed',
-  force_payment:     'Force Paid',
+  payment_failed: 'Failed',
+  refund_processed: 'Refunded',
+  payout_sent: 'Payout Sent',
+  payout_failed: 'Payout Failed',
+  force_payment: 'Force Paid',
 };
 
 const TYPE_VARIANTS = {
   payment_confirmed: 'success',
-  payment_failed:    'error',
-  refund_processed:  'neutral',
-  payout_sent:       'info',
-  force_payment:     'info',
+  payment_failed: 'error',
+  refund_processed: 'neutral',
+  payout_sent: 'info',
+  force_payment: 'info',
   payment_initiated: 'warning',
 };
 
 const TYPE_FILTERS = [
-  { value: '',                  label: 'All' },
+  { value: '', label: 'All' },
   { value: 'payment_confirmed', label: 'Confirmed' },
-  { value: 'refund_processed',  label: 'Refunded' },
-  { value: 'payout_sent',       label: 'Payout' },
+  { value: 'refund_processed', label: 'Refunded' },
+  { value: 'payout_sent', label: 'Payout' },
 ];
 
 function TypeBadge({ type }) {
-  const label   = TYPE_LABELS[type]   ?? type;
+  const label = TYPE_LABELS[type] ?? type;
   const variant = TYPE_VARIANTS[type] ?? 'neutral';
-  return <Badge variant={variant} size="sm">{label}</Badge>;
+  return (
+    <Badge variant={variant} size="sm">
+      {label}
+    </Badge>
+  );
 }
 
 function SkeletonRow() {
@@ -99,7 +103,8 @@ export default function OrganizerTransactionsPage() {
             Revenue Ledger
           </h1>
           <p className="text-sm text-secondary mt-1">
-            A detailed breakdown of all earnings, refunds, and payouts for your events.
+            A detailed breakdown of all earnings, refunds, and payouts for your
+            events.
           </p>
         </div>
 
@@ -108,7 +113,9 @@ export default function OrganizerTransactionsPage() {
           {/* Date range */}
           <div className="flex items-center gap-2">
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-semibold text-muted uppercase tracking-wider">From</label>
+              <label className="text-xs font-semibold text-muted uppercase tracking-wider">
+                From
+              </label>
               <input
                 type="date"
                 value={fromDate}
@@ -117,7 +124,9 @@ export default function OrganizerTransactionsPage() {
               />
             </div>
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-semibold text-muted uppercase tracking-wider">To</label>
+              <label className="text-xs font-semibold text-muted uppercase tracking-wider">
+                To
+              </label>
               <input
                 type="date"
                 value={toDate}
@@ -158,7 +167,11 @@ export default function OrganizerTransactionsPage() {
           <StatCard
             icon={TrendingUp}
             label="Gross Revenue"
-            value={organizerSummary ? formatCurrency(organizerSummary.gross_revenue ?? 0) : '—'}
+            value={
+              organizerSummary
+                ? formatCurrency(organizerSummary.gross_revenue ?? 0)
+                : '—'
+            }
             sub="total from ticket sales"
             accent="#2563eb"
             loading={organizerTransactionsLoading && !organizerSummary}
@@ -166,7 +179,11 @@ export default function OrganizerTransactionsPage() {
           <StatCard
             icon={Wallet}
             label="Your Revenue"
-            value={organizerSummary ? formatCurrency(organizerSummary.organizer_revenue ?? 0) : '—'}
+            value={
+              organizerSummary
+                ? formatCurrency(organizerSummary.organizer_revenue ?? 0)
+                : '—'
+            }
             sub="after platform fees"
             accent="#10b981"
             loading={organizerTransactionsLoading && !organizerSummary}
@@ -174,7 +191,11 @@ export default function OrganizerTransactionsPage() {
           <StatCard
             icon={BarChart3}
             label="Platform Fees"
-            value={organizerSummary ? formatCurrency(organizerSummary.platform_fees ?? 0) : '—'}
+            value={
+              organizerSummary
+                ? formatCurrency(organizerSummary.platform_fees ?? 0)
+                : '—'
+            }
             sub="deducted from gross"
             accent="#f59e0b"
             loading={organizerTransactionsLoading && !organizerSummary}
@@ -182,7 +203,11 @@ export default function OrganizerTransactionsPage() {
           <StatCard
             icon={ArrowDownLeft}
             label="Total Refunded"
-            value={organizerSummary ? formatCurrency(organizerSummary.total_refunded ?? 0) : '—'}
+            value={
+              organizerSummary
+                ? formatCurrency(organizerSummary.total_refunded ?? 0)
+                : '—'
+            }
             sub="returned to attendees"
             accent="#ef4444"
             loading={organizerTransactionsLoading && !organizerSummary}
@@ -195,8 +220,20 @@ export default function OrganizerTransactionsPage() {
             <table className="w-full min-w-max">
               <thead>
                 <tr className="bg-main-bg">
-                  {['Date', 'Event', 'Attendee', 'Ticket Type', 'Qty', 'Amount', 'Your Cut', 'Type'].map((h) => (
-                    <th key={h} className="px-4 py-3 text-left text-xs font-bold text-muted uppercase tracking-wider">
+                  {[
+                    'Date',
+                    'Event',
+                    'Attendee',
+                    'Ticket Type',
+                    'Qty',
+                    'Amount',
+                    'Your Cut',
+                    'Type',
+                  ].map((h) => (
+                    <th
+                      key={h}
+                      className="px-4 py-3 text-left text-xs font-bold text-muted uppercase tracking-wider"
+                    >
                       {h}
                     </th>
                   ))}
@@ -204,13 +241,22 @@ export default function OrganizerTransactionsPage() {
               </thead>
               <tbody>
                 {organizerTransactionsLoading ? (
-                  Array.from({ length: 8 }).map((_, i) => <SkeletonRow key={i} />)
+                  Array.from({ length: 8 }).map((_, i) => (
+                    <SkeletonRow key={i} />
+                  ))
                 ) : organizerTransactions.length > 0 ? (
                   organizerTransactions.map((t) => (
-                    <tr key={t.id} className="border-t border-border hover:bg-main-bg transition-colors duration-150">
+                    <tr
+                      key={t.id}
+                      className="border-t border-border hover:bg-main-bg transition-colors duration-150"
+                    >
                       <td className="px-4 py-3.5">
-                        <p className="text-xs font-semibold text-primary">{formatShortDate(t.created_at)}</p>
-                        <p className="text-[11px] text-muted">{formatTime(t.created_at)}</p>
+                        <p className="text-xs font-semibold text-primary">
+                          {formatShortDate(t.created_at)}
+                        </p>
+                        <p className="text-[11px] text-muted">
+                          {formatTime(t.created_at)}
+                        </p>
                       </td>
                       <td className="px-4 py-3.5">
                         <p className="text-sm font-semibold text-primary truncate max-w-40">
@@ -221,22 +267,33 @@ export default function OrganizerTransactionsPage() {
                         <p className="text-xs font-semibold text-primary truncate max-w-30">
                           {t.attendee_name ?? '—'}
                         </p>
-                        <p className="text-[11px] text-muted truncate max-w-30">{t.attendee_email}</p>
+                        <p className="text-[11px] text-muted truncate max-w-30">
+                          {t.attendee_email}
+                        </p>
                       </td>
                       <td className="px-4 py-3.5">
-                        <span className="text-xs text-secondary">{t.ticket_type_name ?? '—'}</span>
+                        <span className="text-xs text-secondary">
+                          {t.ticket_type_name ?? '—'}
+                        </span>
                       </td>
                       <td className="px-4 py-3.5">
-                        <span className="text-xs font-semibold text-primary">{t.quantity ?? 1}</span>
+                        <span className="text-xs font-semibold text-primary">
+                          {t.quantity ?? 1}
+                        </span>
                       </td>
                       <td className="px-4 py-3.5">
-                        <span className={`text-sm font-bold ${t.amount < 0 ? 'text-error' : 'text-primary'}`}>
-                          {t.amount < 0 ? '-' : ''}{formatCurrency(Math.abs(t.amount))}
+                        <span
+                          className={`text-sm font-bold ${t.amount < 0 ? 'text-error' : 'text-primary'}`}
+                        >
+                          {t.amount < 0 ? '-' : ''}
+                          {formatCurrency(Math.abs(t.amount))}
                         </span>
                       </td>
                       <td className="px-4 py-3.5">
                         <span className="text-sm font-semibold text-success">
-                          {t.organizer_amount != null ? formatCurrency(t.organizer_amount) : '—'}
+                          {t.organizer_amount != null
+                            ? formatCurrency(t.organizer_amount)
+                            : '—'}
                         </span>
                       </td>
                       <td className="px-4 py-3.5">
@@ -249,11 +306,19 @@ export default function OrganizerTransactionsPage() {
                     <td colSpan={8} className="px-4 py-16 text-center">
                       <div className="flex flex-col items-center gap-3">
                         <div className="w-12 h-12 rounded-card bg-accent-text border border-accent-border flex items-center justify-center">
-                          <Banknote size={20} strokeWidth={1.5} className="text-accent" />
+                          <Banknote
+                            size={20}
+                            strokeWidth={1.5}
+                            className="text-accent"
+                          />
                         </div>
-                        <p className="text-sm font-semibold text-primary">No transactions found</p>
+                        <p className="text-sm font-semibold text-primary">
+                          No transactions found
+                        </p>
                         <p className="text-xs text-muted">
-                          {hasFilters ? 'Try adjusting your filters.' : 'Transactions will appear here once attendees book your events.'}
+                          {hasFilters
+                            ? 'Try adjusting your filters.'
+                            : 'Transactions will appear here once attendees book your events.'}
                         </p>
                       </div>
                     </td>
@@ -276,7 +341,7 @@ export default function OrganizerTransactionsPage() {
         )}
       </main>
 
-      <Footer />
+      <Footer variant="minimal" />
     </div>
   );
 }
