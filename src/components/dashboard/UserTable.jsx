@@ -26,7 +26,7 @@ function UserRow({ user, onRoleChange, onStatusChange, mutating }) {
   const isActive = user?.is_active !== 0;
   const role = user?.role?.trim().toLowerCase();
   const color = ROLE_COLORS[role] ?? '#ff0303';
-
+  
   return (
     <tr className="border-t border-border hover:bg-main-bg transition-colors duration-150">
       {/* User + email */}
