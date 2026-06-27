@@ -188,11 +188,11 @@ function CompactRow({ ticket, gradientIndex, onExpand, expanded }) {
   return (
     <button
       onClick={onExpand}
-      className="w-full text-left flex items-center gap-4 p-4 bg-card border border-border rounded-card hover:border-accent/30 hover:shadow-sm transition-all duration-200 touch-manipulation group"
+      className="w-full text-left flex items-start gap-3 p-3 bg-card border border-border rounded-card hover:border-accent/30 hover:shadow-sm transition-all duration-200 touch-manipulation group"
     >
       {/* Gradient icon swatch */}
       <div
-        className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 shadow-sm"
+        className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-sm"
         style={{ background: ICON_GRADIENTS[gradientIndex] }}
       >
         <Ticket size={24} className="text-white" strokeWidth={1.75} />
@@ -200,14 +200,14 @@ function CompactRow({ ticket, gradientIndex, onExpand, expanded }) {
 
       {/* Info */}
       <div className="flex-1 min-w-0">
-        <p className="text-base font-bold text-primary leading-snug truncate">
+        <p className="text-sm font-bold text-primary leading-snug truncate">
           {title}
         </p>
-        <p className="text-sm text-secondary mt-0.5 truncate">{sub}</p>
+        <p className="text-[11px] text-secondary mt-0.5 truncate">{sub}</p>
       </div>
 
       {/* Status pill + chevron */}
-      <div className="flex items-center gap-2 shrink-0">
+      <div className="flex items-start gap-2 shrink-0">
         <StatusPill status={ticket?.status} />
         <div className="text-muted transition-transform duration-200 group-hover:text-primary">
           {expanded ? (
@@ -232,7 +232,7 @@ function ExpandedCard({ ticket, gradientIndex, onCollapse }) {
   const startDate = ticket?.event_start_date ?? event?.start_date;
   const location = ticket?.event_location ?? event?.location;
   const ticketAmount =
-    ticket?.total_amount === 0.00 ? 'FREE' : ticket?.total_amount;
+    ticket?.total_amount === 0.0 ? 'FREE' : ticket?.total_amount;
 
   return (
     <div className="bg-card border border-accent/20 rounded-card overflow-hidden shadow-lg transition-all duration-300">
@@ -396,7 +396,10 @@ function ExpandedCard({ ticket, gradientIndex, onCollapse }) {
 }
 
 // ── Main export ───────────────────────────────────────────────
-export default function ExpandableTicketCard({ ticket, defaultExpanded = false }) {
+export default function ExpandableTicketCard({
+  ticket,
+  defaultExpanded = false,
+}) {
   const [expanded, setExpanded] = useState(defaultExpanded);
   const gradientIndex = getGradientIndex(ticket?.id);
 
