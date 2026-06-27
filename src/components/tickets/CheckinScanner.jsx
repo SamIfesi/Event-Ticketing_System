@@ -34,16 +34,10 @@ export default function CheckinScanner({ eventId, onCheckin }) {
       // Activate loading indicators before entering the promise stream
       scannerStateRef.current = 'STARTING';
       setCameraLoading(true);
-      console.log(
-        '[Scanner Trace]: HTML5 QR Code library loaded successfully.'
-      );
 
       const scanner = new Html5Qrcode('qr-scanner-container');
       scannerRef.current = scanner;
 
-      console.log(
-        '[Scanner Trace]: Requesting camera hardware stream via facingMode...'
-      );
       await scanner.start(
         { facingMode: 'environment' },
         { fps: 10, qrbox: { width: 220, height: 220 } },
@@ -56,9 +50,6 @@ export default function CheckinScanner({ eventId, onCheckin }) {
         () => {}
       );
 
-      console.log(
-        '[Scanner Trace]: Camera stream bound to element and active!'
-      );
 
       // Handle edge case where component unmounts while camera was opening
       if (scannerStateRef.current === 'UNMOUNTED') {
