@@ -149,7 +149,7 @@ export default function MyTicketsPage() {
         )}
       </main>
 
-      <Footer variant="minimal"/>
+      <Footer variant="minimal" />
     </div>
   );
 }
