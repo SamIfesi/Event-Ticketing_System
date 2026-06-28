@@ -3,13 +3,12 @@ import { useLoaderStore } from '../store/loaderStore';
 import { useAuthStore } from '../store/authStore';
 
 const getBaseURL = () => {
-  if(window.location.hostname.includes('devtunnels.ms')) {
-    return 'https://w6v6qlwv-80.usw3.devtunnels.ms/ticketer/api';
-  }
-  return import.meta.env.VITE_API_URL;
-}
+  return window.location.hostname.includes('devtunnels.ms') 
+    ? import.meta.env.VITE_PORT_API_URL 
+    : import.meta.env.VITE_API_URL;
+};
 
-const SLOW_THRESHOLD_MS = 800;
+const SLOW_THRESHOLD_MS = 1200;
 
 const api = axios.create({
   // baseURL: import.meta.env.VITE_API_URL,
