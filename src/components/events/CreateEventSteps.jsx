@@ -63,7 +63,7 @@ export function StepIndicator({ current }) {
             {/* Connector line */}
             {i < STEPS.length - 1 && (
               <div
-                className={`w-16 sm:w-24 h-px mx-2 mb-5 transition-all duration-500 ${
+                className={`w-12 sm:w-20 h-px mx-1 mb-5 transition-all duration-500 ${
                   current > step.id ? 'bg-accent' : 'bg-border'
                 }`}
               />
