@@ -62,7 +62,7 @@ function EventRow({
   const [menuOpen, setMenuOpen] = useState(false);
   const ticketsSold = event.tickets_sold ?? 0;
   const totalTickets = event.total_tickets ?? 0;
-  const soldPct = totalTickets > 0 ? (ticketsSold / totalTickets) * 100 : 0;
+  const soldPct = totalTickets > 0 ? (ticketsSold / totalTickets) * 100 : 0; 
 
   return (
     <tr className="border-t border-border hover:bg-main-bg transition-colors duration-150">
@@ -99,12 +99,10 @@ function EventRow({
           </div>
         </div>
       </td>
-
       {/* Status */}
       <td className="px-4 py-3">
         <Badge status={event.status} size="sm" dot />
       </td>
-
       {/* Tickets sold */}
       <td className="px-4 py-3">
         <div className="flex flex-col gap-1">
@@ -126,21 +124,18 @@ function EventRow({
           )}
         </div>
       </td>
-
       {/* Revenue */}
       <td className="px-4 py-3">
         <span className="text-xs font-semibold text-primary">
-          {event.revenue != null ? formatCurrency(event.revenue) : '—'}
+          {event.total_revenue != null ? formatCurrency(event.total_revenue) : '—'}
         </span>
       </td>
-
       {/* Date */}
       <td className="px-4 py-3 min-w-30">
         <span className="text-xs text-secondary">
           {event.start_date ? formatShortDate(event.start_date) : '—'}
         </span>
       </td>
-
       {/* Actions */}
       <td className="px-4 py-3">
         {showActions && (
@@ -248,16 +243,14 @@ export default function EventTable({
         <table className="w-full min-w-max">
           <thead>
             <tr className="bg-main-bg">
-              {EVENT_TABLE_HEADS.map(
-                (header) => (
-                  <th
-                    key={header}
-                    className="px-4 py-3 text-left text-xs font-bold text-muted uppercase tracking-wider"
-                  >
-                    {header}
-                  </th>
-                )
-              )}
+              {EVENT_TABLE_HEADS.map((header) => (
+                <th
+                  key={header}
+                  className="px-4 py-3 text-left text-xs font-bold text-muted uppercase tracking-wider"
+                >
+                  {header}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
