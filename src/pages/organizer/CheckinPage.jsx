@@ -22,7 +22,13 @@ import CheckinScanner from '../../components/tickets/CheckinScanner';
 
 // ── Tab enum ──────────────────────────────────────────────────
 const TABS = { SCANNER: 'scanner', LIST: 'list' };
-const TABLE_HEADERS = ['Attendee', 'Ticket Type', 'Ticket ID', 'Status', 'Checked In At'];
+const TABLE_HEADERS = [
+  'Attendee',
+  'Ticket Type',
+  'Ticket ID',
+  'Status',
+  'Checked In At',
+];
 
 // ── Stat card ─────────────────────────────────────────────────
 function StatPill({ label, value, color }) {
@@ -31,7 +37,9 @@ function StatPill({ label, value, color }) {
       className="flex flex-col items-center justify-center px-5 py-3 rounded-card border"
       style={{ borderColor: `${color}30`, background: `${color}0d` }}
     >
-      <p className="text-2xl font-black" style={{ color }}>{value}</p>
+      <p className="text-2xl font-black" style={{ color }}>
+        {value}
+      </p>
       <p className="text-xs text-muted mt-0.5">{label}</p>
     </div>
   );
@@ -52,7 +60,9 @@ function AttendeeRow({ ticket }) {
               isCheckedIn ? 'bg-success/10' : 'bg-border'
             }`}
           >
-            <span className={`text-xs font-bold ${isCheckedIn ? 'text-success' : 'text-muted'}`}>
+            <span
+              className={`text-xs font-bold ${isCheckedIn ? 'text-success' : 'text-muted'}`}
+            >
               {(ticket.attendee_name ?? 'A')?.charAt(0)?.toUpperCase()}
             </span>
           </div>
@@ -69,7 +79,9 @@ function AttendeeRow({ ticket }) {
 
       {/* Ticket type */}
       <td className="px-4 py-3.5">
-        <span className="text-xs font-semibold text-primary">{ticket.ticket_type ?? '—'}</span>
+        <span className="text-xs font-semibold text-primary">
+          {ticket.ticket_type ?? '—'}
+        </span>
       </td>
 
       <td className="px-4 py-3.5">
@@ -80,7 +92,7 @@ function AttendeeRow({ ticket }) {
       <td className="px-4 py-3.5">
         {isCheckedIn ? (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-success/10 text-success">
-            <CheckCircle2 size={11} strokeWidth={2.5} /> Checked{""}in
+            <CheckCircle2 size={11} strokeWidth={2.5} /> Checked in
           </span>
         ) : (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-border text-muted">
@@ -129,7 +141,8 @@ export default function CheckinPage() {
   const [activeTab, setActiveTab] = useState(TABS.SCANNER);
   const [search, setSearch] = useState('');
 
-  const { checkinData, checkinLoading, fetchCheckinList } = useOrganizerEvents();
+  const { checkinData, checkinLoading, fetchCheckinList } =
+    useOrganizerEvents();
   const { event, eventLoading, fetchEvent } = useEvents();
 
   useEffect(() => {
@@ -137,18 +150,18 @@ export default function CheckinPage() {
       fetchEvent(id);
       fetchCheckinList(id);
     }
-  }, [id]);
+  }, [id, fetchCheckinList, fetchEvent]);
 
   // Refresh checkin list after a successful scan
   function handleCheckin() {
     fetchCheckinList(id);
   }
 
-  const tickets    = checkinData?.tickets ?? [];
-  const summary    = checkinData?.summary ?? {};
-  const total      = summary.total ?? 0;
-  const checkedIn  = summary.checked_in ?? 0;
-  const remaining  = summary.remaining ?? 0;
+  const tickets = checkinData?.tickets ?? [];
+  const summary = checkinData?.summary ?? {};
+  const total = summary.total ?? 0;
+  const checkedIn = summary.checked_in ?? 0;
+  const remaining = summary.remaining ?? 0;
 
   // Client-side search on the list tab
   const filtered = tickets.filter((t) => {
@@ -169,7 +182,6 @@ export default function CheckinPage() {
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <main className="flex-1 max-w-4xl mx-auto w-full px-6 py-8">
-
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-xs text-secondary mb-6">
           <Link
@@ -196,16 +208,16 @@ export default function CheckinPage() {
             {eventLoading ? (
               <span className="inline-block h-8 w-64 bg-border rounded animate-pulse" />
             ) : (
-              event?.title ?? 'Check-in'
+              (event?.title ?? 'Check-in')
             )}
           </h1>
         </div>
 
         {/* Summary pills */}
         <div className="grid grid-cols-3 gap-3 mb-8">
-          <StatPill label="Total"      value={total}      color="#2563eb" />
-          <StatPill label="Checked in" value={checkedIn}  color="#22c55e" />
-          <StatPill label="Remaining"  value={remaining}  color="#f59e0b" />
+          <StatPill label="Total" value={total} color="#2563eb" />
+          <StatPill label="Checked in" value={checkedIn} color="#22c55e" />
+          <StatPill label="Remaining" value={remaining} color="#f59e0b" />
         </div>
 
         {/* Progress bar */}
@@ -220,7 +232,9 @@ export default function CheckinPage() {
             <div className="h-3 bg-border rounded-full overflow-hidden">
               <div
                 className="h-full bg-success rounded-full transition-all duration-700"
-                style={{ width: `${Math.min((checkedIn / total) * 100, 100)}%` }}
+                style={{
+                  width: `${Math.min((checkedIn / total) * 100, 100)}%`,
+                }}
               />
             </div>
           </div>
@@ -257,7 +271,7 @@ export default function CheckinPage() {
 
         {/* ── Scanner tab ───────────────────────────────────── */}
         {activeTab === TABS.SCANNER && (
-          <div className="bg-card border border-border rounded-card p-6">
+          <div className="p-6 md:bg-card md:border md:border-border md:rounded-card">
             <p className="text-sm text-secondary mb-6 text-center">
               Point the camera at an attendee's ticket QR code to check them in.
             </p>
@@ -270,7 +284,10 @@ export default function CheckinPage() {
           <div>
             {/* Search */}
             <div className="relative mb-4 max-w-sm">
-              <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none" />
+              <Search
+                size={15}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none"
+              />
               <input
                 type="text"
                 value={search}
@@ -306,7 +323,9 @@ export default function CheckinPage() {
                   </thead>
                   <tbody>
                     {checkinLoading ? (
-                      Array.from({ length: 8 }).map((_, i) => <SkeletonRow key={i} />)
+                      Array.from({ length: 8 }).map((_, i) => (
+                        <SkeletonRow key={i} />
+                      ))
                     ) : filtered.length > 0 ? (
                       filtered.map((ticket) => (
                         <AttendeeRow key={ticket.id} ticket={ticket} />
@@ -316,10 +335,16 @@ export default function CheckinPage() {
                         <td colSpan={4} className="px-4 py-16 text-center">
                           <div className="flex flex-col items-center gap-3">
                             <div className="w-12 h-12 rounded-card bg-accent-text border border-accent-border flex items-center justify-center">
-                              <Users size={20} strokeWidth={1.5} className="text-accent" />
+                              <Users
+                                size={20}
+                                strokeWidth={1.5}
+                                className="text-accent"
+                              />
                             </div>
                             <p className="text-sm font-semibold text-primary">
-                              {search ? 'No attendees match your search' : 'No attendees yet'}
+                              {search
+                                ? 'No attendees match your search'
+                                : 'No attendees yet'}
                             </p>
                             <p className="text-xs text-muted">
                               {search
@@ -336,9 +361,8 @@ export default function CheckinPage() {
             </div>
           </div>
         )}
-
       </main>
-      <Footer variant="minimal"/>
+      <Footer variant="minimal" />
     </div>
   );
 }
