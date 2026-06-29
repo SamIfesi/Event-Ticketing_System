@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => {
       host: true,
       port: 5173,
       allowedHosts: true, // Allow all hosts for development
-      strictport: true, // fail if port 5173 is already in use instead of picking another random port
+      strictPort: true, // Fixed typo: strictport -> strictPort
 
       // Development caching
       headers: {
@@ -29,20 +29,8 @@ export default defineConfig(({ mode }) => {
 
     build: {
       target: 'esnext',
-      minify: 'esbuild', // Better production optimization
       sourcemap: !isProduction, // Generate source maps only in development
       chunkSizeWarningLimit: 1000, // Helps with chunk warnings
-
-      rollupOptions: {
-        output: {
-          manualChunks: {
-            vendor: ['react', 'react-dom', 'react-router-dom', 'axios'], // Core framework
-            state: ['zustand'], // State management
-            icons: ['lucide-react'], // Icons
-            pdf: ['@react-pdf/renderer'], // Heavy libraries
-          },
-        },
-      },
     },
 
     optimizeDeps: {
