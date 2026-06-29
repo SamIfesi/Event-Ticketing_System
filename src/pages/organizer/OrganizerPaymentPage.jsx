@@ -14,7 +14,7 @@ import {
   Pencil,
   X,
 } from 'lucide-react';
-import { useOrganizerPayment } from '../../hooks/useOrganizerpayment';
+import { useOrganizerPayment } from '../../hooks/useOrganizerPayment';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { formatShortDate } from '../../utils/formatDate';
 import Navbar from '../../components/layout/Navbar';
