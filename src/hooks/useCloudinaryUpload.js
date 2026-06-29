@@ -110,7 +110,6 @@ export function useCloudinaryUpload() {
       };
 
     } catch (err) {
-      console.error('Error uploading image:', err);
       const msg = err?.message ?? 'Upload failed. Please try again.';
       setError(msg);
       return null;
