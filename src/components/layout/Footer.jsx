@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
-import logo from '/src/assets/icons/logo.svg';
+import logo from '/assets/icons/logo.svg';
 
 // variant: 'guest' | 'auth' | 'minimal'
 // If omitted, falls back to the old auto-detect-by-auth-state behavior

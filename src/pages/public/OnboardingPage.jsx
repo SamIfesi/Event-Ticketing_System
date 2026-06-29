@@ -7,7 +7,7 @@ import { ArrowRight, ChevronRight } from 'lucide-react';
 function IllustrationTrack() {
   return (
     <img
-      src="/src/assets/illustrations/party.svg"
+      src="/assets/illustrations/party.svg"
       alt=""
       className="w-full h-full"
     />
@@ -17,7 +17,7 @@ function IllustrationTrack() {
 function IllustrationTeam() {
   return (
     <img
-      src="/src/assets/illustrations/tickets.svg"
+      src="/assets/illustrations/tickets.svg"
       alt=""
       className="w-full h-full"
     />
@@ -26,7 +26,7 @@ function IllustrationTeam() {
 
 function IllustrationNotify() {
   return (
-    <img src="/src/assets/illustrations/notice.svg" alt="" className="w-full h-full"/>
+    <img src="/assets/illustrations/notice.svg" alt="" className="w-full h-full"/>
   );
 }
 
@@ -152,7 +152,7 @@ export default function OnboardingPage() {
             className="rounded-xl flex items-center justify-center shadow p-3"
             style={{ background: slide.accentColor }}
           >
-            <img src="/src/assets/icons/logo-white.svg" alt="" className=" w-29" />
+            <img src="/assets/icons/logo-white.svg" alt="" className=" w-29" />
           </div>
           {!isLast && (
             <button

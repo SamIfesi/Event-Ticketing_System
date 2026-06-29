@@ -16,7 +16,7 @@ import { useThemeStore } from '../../store/themeStore';
 import { useNotifications } from '../../hooks/useNotification';
 import { ROLES, NAV_GROUPS, PROFILE_MENU } from '../../config/constants';
 import Dropdown from '../ui/Dropdown';
-import logo from '/src/assets/icons/logo.svg';
+import logo from '/assets/icons/logo.svg';
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 

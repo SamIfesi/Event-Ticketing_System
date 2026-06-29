@@ -28,7 +28,7 @@ import { useAuthStore } from '../../store/authStore';
 import { useAuth } from '../../hooks/useAuth';
 import { useProfile } from '../../hooks/useProfile';
 import { ROLES } from '../../config/constants';
-import logo from '/src/assets/icons/logo.svg';
+import logo from '/assets/icons/logo.svg';
 import { useThemeStore } from '../../store/themeStore';
 import { useNotifications } from '../../hooks/useNotification';
 

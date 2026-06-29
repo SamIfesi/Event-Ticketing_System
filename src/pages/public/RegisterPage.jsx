@@ -6,7 +6,7 @@ import PasswordStrength from './PasswordStrength';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
 import GoogleSignInButton from '../../components/auth/GoogleSignInButton';
-import logo from '/src/assets/icons/logo.svg';
+import logo from '/assets/icons/logo.svg';
 
 export default function RegisterPage() {
   const { register, googleLogin, loading, fieldErrors } = useAuth();
