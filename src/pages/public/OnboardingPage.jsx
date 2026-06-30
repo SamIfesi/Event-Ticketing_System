@@ -152,7 +152,7 @@ export default function OnboardingPage() {
             className="rounded-xl flex items-center justify-center shadow p-3"
             style={{ background: slide.accentColor }}
           >
-            <img src="/assets/icons/logo-white.svg" alt="" className=" w-29" />
+            <img src="/assets/icons/logo-white.svg" alt="Ticketer Logo" className=" w-29" />
           </div>
           {!isLast && (
             <button
