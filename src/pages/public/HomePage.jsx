@@ -11,7 +11,7 @@ import {
 import { useAuthStore } from '../../store/authStore';
 import EventsService from '../../services/events.service';
 import CategoryService from '../../services/category.service';
-import line from '/src/assets/illustrations/line.svg';
+import line from '/assets/illustrations/line.svg';
 import Navbar from '../../components/layout/Navbar';
 import Sidebar from '../../components/layout/Sidebar';
 import Footer from '../../components/layout/Footer';
