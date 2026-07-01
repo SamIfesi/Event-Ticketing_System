@@ -46,7 +46,7 @@ export default function Footer({ variant }) {
             <nav className="flex items-center gap-6 flex-wrap justify-center">
               {[
                 { label: 'Browse Events', to: '/events' },
-                { label: 'Sign In', to: '/login' },
+                { label: 'Login', to: '/login' },
                 { label: 'Register', to: '/register' },
               ].map((link) => (
                 <Link
