@@ -127,9 +127,11 @@ export default function HomePage() {
   // Fetch all categories with event_count for the scroller + category rows
   useEffect(() => {
     CategoryService.getCategories()
-      .then((data) => setCategories(data.categories ?? []))
-      .catch(() => setCategories([]))
-      .finally(() => setLoadingCategories(false));
+      .then((data) => {
+        setCategories(data.categories ?? []);
+        setLoadingCategories(false);
+      })
+      .catch(() => {});
   }, []);
 
   // Fade-in hero on mount
