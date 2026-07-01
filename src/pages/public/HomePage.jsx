@@ -253,6 +253,32 @@ export default function HomePage() {
           />
         </section>
 
+        {/* Categories scroller (browse-all pills) */}
+        <section className="bg-card border-y border-border py-16">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="flex items-end justify-between mb-8 gap-5">
+              <div>
+                <p className="text-xs font-semibold text-accent uppercase tracking-widest mb-1">
+                  Browse by type
+                </p>
+                <h2 className="text-2xl sm:text-3xl font-black text-primary tracking-tight">
+                  All Categories
+                </h2>
+              </div>
+              <Link
+                to="/events"
+                className="flex items-center gap-1 text-sm font-semibold text-accent hover:text-accent-hover transition-colors duration-150 shrink-0"
+              >
+                All categories <ChevronRight size={16} strokeWidth={2.5} />
+              </Link>
+            </div>
+            <CategoryScroller
+              categories={categories}
+              loading={loadingCategories}
+            />
+          </div>
+        </section>
+
         {/* ── Browse by category — Ticketmaster-style horizontal rows ── */}
         <section className="max-w-6xl mx-auto px-6 py-16 flex flex-col gap-12">
           <div>
@@ -288,31 +314,6 @@ export default function HomePage() {
           )}
         </section>
 
-        {/* Categories scroller (browse-all pills) */}
-        <section className="bg-card border-y border-border py-16">
-          <div className="max-w-6xl mx-auto px-6">
-            <div className="flex items-end justify-between mb-8 gap-5">
-              <div>
-                <p className="text-xs font-semibold text-accent uppercase tracking-widest mb-1">
-                  Browse by type
-                </p>
-                <h2 className="text-2xl sm:text-3xl font-black text-primary tracking-tight">
-                  All Categories
-                </h2>
-              </div>
-              <Link
-                to="/events"
-                className="flex items-center gap-1 text-sm font-semibold text-accent hover:text-accent-hover transition-colors duration-150 shrink-0"
-              >
-                All categories <ChevronRight size={16} strokeWidth={2.5} />
-              </Link>
-            </div>
-            <CategoryScroller
-              categories={categories}
-              loading={loadingCategories}
-            />
-          </div>
-        </section>
 
         {/* How it works */}
         <section className="max-w-6xl mx-auto px-6 py-16">
