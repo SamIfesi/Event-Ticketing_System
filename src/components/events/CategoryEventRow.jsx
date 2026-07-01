@@ -11,7 +11,7 @@ function RowSkeleton() {
       className="flex gap-4 overflow-x-auto scroll-smooth pb-1"
       style={{ scrollbarWidth: 'none' }}
     >
-      {[0, 1, 2, 3].map((i) => (
+      {[0, 1, 2, 3, 4, 5].map((i) => (
         <div key={i} className="shrink-0 w-44 sm:w-52 lg:w-56 animate-pulse">
           <div className="w-full aspect-[4/3] bg-border rounded-card" />
           <div className="mt-3 flex flex-col gap-2">
