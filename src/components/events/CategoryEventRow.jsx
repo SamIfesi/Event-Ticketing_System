@@ -9,7 +9,7 @@ function RowSkeleton() {
   return (
     <div className="flex gap-4 overflow-hidden">
       {[0, 1, 2, 3].map((i) => (
-        <div key={i} className="shrink-0 w-44 sm:w-52 lg:w-56 animate-pulse">
+        <div key={i} className="shrink-0 w-44 sm:w-52 lg:w-56 animate-pulse flex-none">
           <div className="w-full aspect-[4/3] bg-border rounded-card" />
           <div className="mt-3 flex flex-col gap-2">
             <div className="h-3 bg-border rounded w-full" />
