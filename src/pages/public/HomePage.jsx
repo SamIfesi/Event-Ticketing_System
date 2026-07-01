@@ -119,9 +119,11 @@ export default function HomePage() {
   // Fetch 4 upcoming published events for the featured grid
   useEffect(() => {
     EventsService.getEvents({ page: 1, limit: 4, date: 'upcoming' })
-      .then((data) => setFeaturedEvents(data.events ?? []))
-      .catch(() => setFeaturedEvents([]))
-      .finally(() => setLoadingEvents(false));
+      .then((data) => {
+        setFeaturedEvents(data.events ?? []);
+        setLoadingEvents(false);
+      })
+      .catch(() => {});
   }, []);
 
   // Fetch all categories with event_count for the scroller + category rows
