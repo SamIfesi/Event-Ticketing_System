@@ -101,15 +101,15 @@ export default function CategoryEventRow({ category, limit = 8 }) {
 
       {/* Scrollable strip */}
       <div className="relative group/row">
+{loading ? (
+          <RowSkeleton />
+        ) : (
 <div
             ref={scrollerRef}
             onScroll={updateScrollState}
             className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-1"
             style={{ scrollbarWidth: 'none' }}
           >
-        {loading ? (
-          <RowSkeleton />
-        ) : (
             {events.map((event) => (
               <CategoryEventCard key={event.id} event={event} />
             ))}
