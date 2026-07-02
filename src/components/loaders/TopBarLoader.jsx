@@ -69,7 +69,7 @@ export default function TopBarLoader() {
       aria-hidden="true"
       className="fixed top-0 left-0 right-0 z-9999 pointer-events-none"
     >
-      <div className="w-full h-[5px] bg-transparent">
+      <div className="w-full h-[3px] bg-transparent">
         <div
           ref={fillRef}
           className="relative h-full w-0 bg-accent will-change-[width]"
