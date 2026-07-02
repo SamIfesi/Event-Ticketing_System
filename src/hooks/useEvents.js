@@ -46,14 +46,9 @@ export function useEvents() {
       });
       setEvents(data.events);
       setPagination(data.pagination);
-    } catch (err) {
-      const msg = err?.response?.data?.message ?? 'Failed to load events.';
-      setError(msg);
-      toastError(msg);
-    } finally {
       setLoading(false);
-    }
-  }, [page, limit, search, category, date, toastError]);
+    } catch (err) {}
+  }, [page, limit, search, category, date]);
 
   // Re-fetch whenever URL params change
   useEffect(() => {
@@ -61,20 +56,23 @@ export function useEvents() {
   }, [fetchEvents]);
 
   // ── Fetch single event ────────────────────────────────────────
-  const fetchEvent = useCallback(async (id) => {
-    setEventLoading(true);
-    setEventError(null);
-    try {
-      const data = await EventsService.getEvent(id);
-      setEvent(data.event);
-    } catch (err) {
-      const msg = err?.response?.data?.message ?? 'Event not found.';
-      setEventError(msg);
-      toastError(msg);
-    } finally {
-      setEventLoading(false);
-    }
-  }, [toastError]);
+  const fetchEvent = useCallback(
+    async (id) => {
+      setEventLoading(true);
+      setEventError(null);
+      try {
+        const data = await EventsService.getEvent(id);
+        setEvent(data.event);
+      } catch (err) {
+        const msg = err?.response?.data?.message ?? 'Event not found.';
+        setEventError(msg);
+        toastError(msg);
+      } finally {
+        setEventLoading(false);
+      }
+    },
+    [toastError]
+  );
 
   // ── URL param setters ─────────────────────────────────────────
   // These update the URL which triggers a re-fetch automatically.
