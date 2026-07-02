@@ -19,7 +19,7 @@ function NavigationLoader() {
       clearTimeout(t);
       stopTopBar();
     };
-  }, [location.pathname]);
+  }, [location.pathname, startTopBar, stopTopBar]);
 
   return null;
 }
