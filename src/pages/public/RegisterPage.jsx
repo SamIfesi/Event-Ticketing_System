@@ -159,13 +159,15 @@ export default function RegisterPage() {
               )}
             </div>
 
-            <p className="text-xs text-muted leading-relaxed -mt-1">
+            <p className="text-xs text-muted leading-relaxed -mt-1 text-center">
               By creating an account you agree to our{' '}
-              <span className="text-secondary font-medium">
+              <Link to="/terms" className="text-accent-hover font-medium">
                 Terms of Service
-              </span>{' '}
+              </Link>{' '}
               and{' '}
-              <span className="text-secondary font-medium">Privacy Policy</span>
+              <Link to="/privacy" className="text-accent-hover font-medium">
+                Privacy Policy
+              </Link>
               .
             </p>
 
