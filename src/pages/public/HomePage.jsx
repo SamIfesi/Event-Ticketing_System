@@ -280,7 +280,7 @@ export default function HomePage() {
         </section>
 
         {/* ── Browse by category — Ticketmaster-style horizontal rows ── */}
-        <section className="max-w-6xl mx-auto px-6 py-16 flex flex-col gap-12 overflow-hidden">
+        <section className="max-w-6xl mx-auto px-6 py-16 flex flex-col gap-12">
           <div>
             <p className="text-xs font-semibold text-accent uppercase tracking-widest mb-1">
               Explore
