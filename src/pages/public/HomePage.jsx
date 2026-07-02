@@ -280,7 +280,7 @@ export default function HomePage() {
         </section>
 
         {/* ── Browse by category — Ticketmaster-style horizontal rows ── */}
-        <section className="max-w-6xl mx-auto px-6 py-16 flex flex-col gap-12">
+        <section className="max-w-6xl mx-auto px-6 py-16 flex flex-col gap-12 overflow-x-hidden">
           <div>
             <p className="text-xs font-semibold text-accent uppercase tracking-widest mb-1">
               Explore
@@ -296,14 +296,17 @@ export default function HomePage() {
               {[0, 1].map((i) => (
                 <div key={i} className="flex flex-col gap-4 animate-pulse">
                   <div className="h-6 bg-border rounded w-40" />
-                  <div className="flex gap-4">
-                    {[0, 1, 2, 3].map((j) => (
-                      <div
-                        key={j}
-                        className="w-44 sm:w-52 lg:w-56 aspect-[4/3] bg-border rounded-card shrink-0"
-                      />
-                    ))}
-                  </div>
+                  <div
+  className="flex gap-4 overflow-x-auto pb-1"
+  style={{ scrollbarWidth: 'none' }}
+>
+  {[0, 1, 2, 3, 4, 5].map((j) => (
+    <div
+      key={j}
+      className="shrink-0 w-44 sm:w-52 lg:w-56 aspect-[4/3] bg-border rounded-card"
+    />
+  ))}
+</div>
                 </div>
               ))}
             </div>
