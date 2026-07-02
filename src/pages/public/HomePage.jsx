@@ -293,7 +293,7 @@ export default function HomePage() {
           {loadingCategories ? (
             // Reuse the row skeleton shape inline so something shows immediately
             <div className="flex flex-col gap-12">
-              {[0, 1].map((i) => (
+              {[0, 1, 2, 3, 4].map((i) => (
                 <div key={i} className="flex flex-col gap-4 animate-pulse">
                   <div className="h-6 bg-border rounded w-40" />
                   <div
