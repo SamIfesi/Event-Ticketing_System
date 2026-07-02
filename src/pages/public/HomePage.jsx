@@ -293,20 +293,20 @@ export default function HomePage() {
           {loadingCategories ? (
             // Reuse the row skeleton shape inline so something shows immediately
             <div className="flex flex-col gap-12">
-              {[0, 1, 2, 3, 4].map((i) => (
+              {[0, 1, 2, 3].map((i) => (
                 <div key={i} className="flex flex-col gap-4 animate-pulse">
                   <div className="h-6 bg-border rounded w-40" />
                   <div
-  className="flex gap-4 overflow-x-auto pb-1"
-  style={{ scrollbarWidth: 'none' }}
->
-  {[0, 1, 2, 3, 4, 5].map((j) => (
-    <div
-      key={j}
-      className="shrink-0 w-44 sm:w-52 lg:w-56 aspect-[4/3] bg-border rounded-card"
-    />
-  ))}
-</div>
+                    className="flex gap-4 overflow-x-auto pb-1"
+                    style={{ scrollbarWidth: 'none' }}
+                  >
+                    {[0, 1, 2, 3, 4, 5].map((j) => (
+                      <div
+                        key={j}
+                        className="shrink-0 w-44 sm:w-52 lg:w-56 aspect-[4/3] bg-border rounded-card"
+                      />
+                    ))}
+                  </div>
                 </div>
               ))}
             </div>
@@ -316,7 +316,6 @@ export default function HomePage() {
             ))
           )}
         </section>
-
 
         {/* How it works */}
         <section className="max-w-6xl mx-auto px-6 py-16">
