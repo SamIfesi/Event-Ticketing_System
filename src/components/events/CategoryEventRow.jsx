@@ -5,25 +5,6 @@ import EventsService from '../../services/events.service';
 import CategoryEventCard from './CategoryEventCard';
 import { getCategoryIcon } from '../../utils/categoryIcons';
 
-function RowSkeleton() {
-  return (
-    <div
-      className="flex gap-4 overflow-x-auto scroll-smooth pb-1"
-      style={{ scrollbarWidth: 'none' }}
-    >
-      {[0, 1, 2, 3, 4, 5].map((i) => (
-        <div key={i} className="shrink-0 w-44 sm:w-52 lg:w-56 animate-pulse">
-          <div className="w-full aspect-[4/3] bg-border rounded-card" />
-          <div className="mt-3 flex flex-col gap-2">
-            <div className="h-3 bg-border rounded w-full" />
-            <div className="h-3 bg-border rounded w-2/3" />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 // One Ticketmaster-style row: category title + "See all" link, with a
 // horizontally scrolling, snap-aligned strip of event cards and optional
 // arrow controls on desktop.
@@ -64,8 +45,12 @@ export default function CategoryEventRow({ category, limit = 8 }) {
   }
 
   useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
     updateScrollState();
-  }, [events]);
+    el.addEventListener('scroll', updateScrollState, { passive: true });
+    return () => el.removeEventListener('scroll', updateScrollState);
+  }, [loading]);
 
   function scrollByCards(direction) {
     const el = scrollerRef.current;
@@ -78,6 +63,10 @@ export default function CategoryEventRow({ category, limit = 8 }) {
   if (!loading && events.length === 0) return null;
 
   const CategoryIcon = getCategoryIcon(category.name);
+
+  const SCROLLER_CLASSES =
+    'flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-1';
+  const SCROLLER_STYLE = { scrollbarWidth: 'none', msOverflowStyle: 'none' };
 
   return (
     <div className="relative">
@@ -99,24 +88,33 @@ export default function CategoryEventRow({ category, limit = 8 }) {
         </Link>
       </div>
 
-      {/* Scrollable strip */}
+      {/* Scrollable strip — skeleton and real cards share the same scroller div
+          so scroll behaviour is identical in both states                        */}
       <div className="relative group/row">
-{loading ? (
-          <RowSkeleton />
-        ) : (
-<div
-            ref={scrollerRef}
-            onScroll={updateScrollState}
-            className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-1"
-            style={{ scrollbarWidth: 'none' }}
-          >
-            {events.map((event) => (
-              <CategoryEventCard key={event.id} event={event} />
-            ))}
-          </div>
-        )}
+        <div
+          ref={scrollerRef}
+          className={SCROLLER_CLASSES}
+          style={SCROLLER_STYLE}
+        >
+          {loading
+            ? [0, 1, 2, 3, 4, 5].map((i) => (
+                <div
+                  key={i}
+                  className="shrink-0 w-44 sm:w-52 lg:w-56 snap-start animate-pulse"
+                >
+                  <div className="w-full aspect-[4/3] bg-border rounded-card" />
+                  <div className="mt-3 flex flex-col gap-2">
+                    <div className="h-3 bg-border rounded w-full" />
+                    <div className="h-3 bg-border rounded w-2/3" />
+                  </div>
+                </div>
+              ))
+            : events.map((event) => (
+                <CategoryEventCard key={event.id} event={event} />
+              ))}
+        </div>
 
-        {/* Desktop arrow controls — only show when there's somewhere to scroll */}
+        {/* Desktop arrow controls */}
         {!loading && canScrollLeft && (
           <button
             onClick={() => scrollByCards(-1)}
