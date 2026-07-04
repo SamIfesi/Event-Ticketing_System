@@ -117,7 +117,7 @@ export function StepBasicInfo({ form, setForm, categories, fieldErrors }) {
       {/* Category */}
       <div className="flex flex-col gap-1.5">
         <label className="text-sm font-medium text-primary select-none">
-          Category <span className="text-muted font-normal">(optional)</span>
+          Category <span className="text-muted font-normal">(compulsory)</span>
         </label>
         <div className="relative">
           <Tag
