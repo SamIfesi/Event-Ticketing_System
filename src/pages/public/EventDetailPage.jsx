@@ -30,6 +30,7 @@ import Sidebar from '../../components/layout/Sidebar';
 import Navbar from '../../components/layout/Navbar';
 import { TicketTypeSelector } from '../../components/events/TicketTypeSelector';
 import { ROLES, PAYSTACK_PUBLIC_KEY } from '../../config/constants';
+import { Helmet } from 'react-helmet-async';
 
 // ── Page skeleton ─────────────────────────────────────────────
 function PageSkeleton() {
@@ -56,7 +57,7 @@ function PageSkeleton() {
 }
 
 // ── Revenue panel (admin + organizer only) ────────────────────
-function RevenuePannel({ event, ticketTypes }) {
+function RevenuePannel({ ticketTypes }) {
   // Calculate total revenue: sum of (price × quantity_sold) per ticket type
   const revenue = (ticketTypes ?? []).reduce(
     (acc, tt) =>
@@ -175,10 +176,11 @@ export default function EventDetailPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { event, eventLoading, eventError, fetchEvent } = useEvents();
   const { initiateBooking, payLoading } = useBookings();
+  console.log(event);
 
   useEffect(() => {
     if (id) fetchEvent(id);
-  }, [id]);
+  }, [id, fetchEvent]);
 
   const isPast = event
     ? isEventPast(event.end_date ?? event.start_date)
@@ -248,140 +250,131 @@ export default function EventDetailPage() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-main-bg">
-      {/* Navbar */}
-      <Navbar onMenuClick={() => setSidebarOpen(true)} />
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-
-      {/* ── Breadcrumb ────────────────────────────────────── */}
-      {!eventLoading && event && (
-        <nav className="bg-card border-b border-border">
-          <div className="max-w-6xl mx-auto px-6 h-10 flex items-center gap-2 text-xs text-secondary">
-            <Link to="/events" className="hover:text-primary transition-colors">
-              Events
-            </Link>
-            <ChevronRight size={12} className="text-muted" />
-            {event.category_name && (
-              <>
-                <Link
-                  to={`/events?category=${event.category_id ?? ''}`}
-                  className="hover:text-primary transition-colors"
-                >
-                  {event.category_name}
-                </Link>
-                <ChevronRight size={12} className="text-muted" />
-              </>
-            )}
-            <span className="text-primary font-medium truncate max-w-50">
-              {event.title}
-            </span>
-          </div>
-        </nav>
+    <>
+      {event && (
+        <Helmet>
+          <title>{event.title} | Ticketer</title>
+          <meta
+            name="description"
+            content={event.description?.slice(0, 160) ?? ''}
+          />
+        </Helmet>
       )}
 
-      {/* ── Main content ──────────────────────────────────── */}
-      {eventLoading ? (
-        <PageSkeleton />
-      ) : event ? (
-        <>
-          {/* Hero banner */}
-          <div
-            className="relative w-full bg-linear-to-br from-blue-600 to-indigo-800 overflow-hidden"
-            style={{ height: '360px' }}
-          >
-            {event.banner_image ? (
-              <img
-                src={event.banner_image}
-                alt={event.title}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span
-                  className="text-white/10 font-black select-none"
-                  style={{
-                    fontSize: 'clamp(8rem, 20vw, 16rem)',
-                    lineHeight: 1,
-                  }}
-                >
-                  {event.title.charAt(0)}
-                </span>
-              </div>
-            )}
-            {event.banner_image && (
-              <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent" />
-            )}
-            <div className="absolute top-4 left-4 flex items-center gap-2">
+      <div className="flex flex-col min-h-screen bg-main-bg">
+        {/* Navbar */}
+        <Navbar onMenuClick={() => setSidebarOpen(true)} />
+        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+
+        {/* ── Breadcrumb ────────────────────────────────────── */}
+        {!eventLoading && event && (
+          <nav className="bg-card border-b border-border">
+            <div className="max-w-6xl mx-auto px-6 h-10 flex items-center gap-2 text-xs text-secondary">
+              <Link
+                to="/events"
+                className="hover:text-primary transition-colors"
+              >
+                Events
+              </Link>
+              <ChevronRight size={12} className="text-muted" />
               {event.category_name && (
-                <span className="px-2.5 py-1 bg-black/50 backdrop-blur-sm text-white text-xs font-semibold rounded-full">
-                  {event.category_name}
-                </span>
+                <>
+                  <Link
+                    to={`/events?category=${event.category_id ?? ''}`}
+                    className="hover:text-primary transition-colors"
+                  >
+                    {event.category_name}
+                  </Link>
+                  <ChevronRight size={12} className="text-muted" />
+                </>
               )}
-              {isPast && (
-                <span className="px-2.5 py-1 bg-black/50 backdrop-blur-sm text-white text-xs font-semibold rounded-full">
-                  Past event
-                </span>
-              )}
+              <span className="text-primary font-medium truncate max-w-50">
+                {event.title}
+              </span>
             </div>
-            <button
-              onClick={handleShare}
-              aria-label="Share this event"
-              className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/60 transition-colors"
+          </nav>
+        )}
+
+        {/* ── Main content ──────────────────────────────────── */}
+        {eventLoading ? (
+          <PageSkeleton />
+        ) : event ? (
+          <>
+            {/* Hero banner */}
+            <div
+              className="relative w-full bg-linear-to-br from-blue-600 to-indigo-800 overflow-hidden"
+              style={{ height: '360px' }}
             >
-              <Share2 size={16} strokeWidth={2} />
-            </button>
-          </div>
-
-          {/* Body */}
-          <div className="max-w-6xl mx-auto px-6 py-10 w-full">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-              {/* ── Left: event details ────────────────────── */}
-              <div className="lg:col-span-2 flex flex-col gap-6">
-                <div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <Badge status={event.status} size="sm" dot />
-                  </div>
-                  <h1 className="text-2xl sm:text-3xl font-black text-primary tracking-tight leading-tight">
-                    {event.title}
-                  </h1>
-                  {event.organizer_name && (
-                    <p className="text-sm text-secondary mt-2">
-                      Hosted by{' '}
-                      <span className="font-semibold text-primary">
-                        {event.organizer_name}
-                      </span>
-                    </p>
-                  )}
+              {event.banner_image ? (
+                <img
+                  src={event.banner_image}
+                  alt={event.title}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span
+                    className="text-white/10 font-black select-none"
+                    style={{
+                      fontSize: 'clamp(8rem, 20vw, 16rem)',
+                      lineHeight: 1,
+                    }}
+                  >
+                    {event.title.charAt(0)}
+                  </span>
                 </div>
+              )}
+              {event.banner_image && (
+                <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent" />
+              )}
+              <div className="absolute top-4 left-4 flex items-center gap-2">
+                {event.category_name && (
+                  <span className="px-2.5 py-1 bg-black/50 backdrop-blur-sm text-white text-xs font-semibold rounded-full">
+                    {event.category_name}
+                  </span>
+                )}
+                {isPast && (
+                  <span className="px-2.5 py-1 bg-black/50 backdrop-blur-sm text-white text-xs font-semibold rounded-full">
+                    Past event
+                  </span>
+                )}
+              </div>
+              <button
+                onClick={handleShare}
+                aria-label="Share this event"
+                className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/60 transition-colors"
+              >
+                <Share2 size={16} strokeWidth={2} />
+              </button>
+            </div>
 
-                {/* Key detail cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="flex items-start gap-3 p-4 bg-card border border-border rounded-card">
-                    <div className="w-9 h-9 rounded-btn bg-accent-text flex items-center justify-center shrink-0">
-                      <Calendar
-                        size={17}
-                        className="text-accent"
-                        strokeWidth={1.75}
-                      />
+            {/* Body */}
+            <div className="max-w-6xl mx-auto px-6 py-10 w-full">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                {/* ── Left: event details ────────────────────── */}
+                <div className="lg:col-span-2 flex flex-col gap-6">
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Badge status={event.status} size="sm" dot />
                     </div>
-                    <div>
-                      <p className="text-xs font-semibold text-muted uppercase tracking-wide">
-                        Date
+                    <h1 className="text-2xl sm:text-3xl font-black text-primary tracking-tight leading-tight">
+                      {event.title}
+                    </h1>
+                    {event.organizer_name && (
+                      <p className="text-sm text-secondary mt-2">
+                        Hosted by{' '}
+                        <span className="font-semibold text-primary">
+                          {event.organizer_name}
+                        </span>
                       </p>
-                      <p className="text-sm font-semibold text-primary mt-0.5">
-                        {formatEventDate(event.start_date)}
-                      </p>
-                      <p className="text-xs text-secondary mt-0.5">
-                        {formatTime(event.start_date)}
-                        {event.end_date && ` – ${formatTime(event.end_date)}`}
-                      </p>
-                    </div>
+                    )}
                   </div>
 
-                  {event.location && (
+                  {/* Key detail cards */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="flex items-start gap-3 p-4 bg-card border border-border rounded-card">
                       <div className="w-9 h-9 rounded-btn bg-accent-text flex items-center justify-center shrink-0">
-                        <MapPin
+                        <Calendar
                           size={17}
                           className="text-accent"
                           strokeWidth={1.75}
@@ -389,184 +382,208 @@ export default function EventDetailPage() {
                       </div>
                       <div>
                         <p className="text-xs font-semibold text-muted uppercase tracking-wide">
-                          Location
+                          Date
                         </p>
                         <p className="text-sm font-semibold text-primary mt-0.5">
-                          {event.location}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {event.total_tickets > 0 && (
-                    <div className="flex items-start gap-3 p-4 bg-card border border-border rounded-card">
-                      <div className="w-9 h-9 rounded-btn bg-accent-text flex items-center justify-center shrink-0">
-                        <Ticket
-                          size={17}
-                          className="text-accent"
-                          strokeWidth={1.75}
-                        />
-                      </div>
-                      <div>
-                        <p className="text-xs font-semibold text-muted uppercase tracking-wide">
-                          Tickets
-                        </p>
-                        <p className="text-sm font-semibold text-primary mt-0.5">
-                          {(
-                            event.total_tickets - (event.tickets_sold ?? 0)
-                          ).toLocaleString()}{' '}
-                          remaining
+                          {formatEventDate(event.start_date)}
                         </p>
                         <p className="text-xs text-secondary mt-0.5">
-                          of {event.total_tickets.toLocaleString()} total
+                          {formatTime(event.start_date)}
+                          {event.end_date && ` – ${formatTime(event.end_date)}`}
                         </p>
                       </div>
                     </div>
-                  )}
 
-                  {event.tickets_sold > 0 && (
-                    <div className="flex items-start gap-3 p-4 bg-card border border-border rounded-card">
-                      <div className="w-9 h-9 rounded-btn bg-accent-text flex items-center justify-center shrink-0">
-                        <Users
-                          size={17}
-                          className="text-accent"
-                          strokeWidth={1.75}
-                        />
+                    {event.location && (
+                      <div className="flex items-start gap-3 p-4 bg-card border border-border rounded-card">
+                        <div className="w-9 h-9 rounded-btn bg-accent-text flex items-center justify-center shrink-0">
+                          <MapPin
+                            size={17}
+                            className="text-accent"
+                            strokeWidth={1.75}
+                          />
+                        </div>
+                        <div>
+                          <p className="text-xs font-semibold text-muted uppercase tracking-wide">
+                            Location
+                          </p>
+                          <p className="text-sm font-semibold text-primary mt-0.5">
+                            {event.location}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-xs font-semibold text-muted uppercase tracking-wide">
-                          Attending
-                        </p>
-                        <p className="text-sm font-semibold text-primary mt-0.5">
-                          {event.tickets_sold.toLocaleString()} people
-                        </p>
+                    )}
+
+                    {event.total_tickets > 0 && (
+                      <div className="flex items-start gap-3 p-4 bg-card border border-border rounded-card">
+                        <div className="w-9 h-9 rounded-btn bg-accent-text flex items-center justify-center shrink-0">
+                          <Ticket
+                            size={17}
+                            className="text-accent"
+                            strokeWidth={1.75}
+                          />
+                        </div>
+                        <div>
+                          <p className="text-xs font-semibold text-muted uppercase tracking-wide">
+                            Tickets
+                          </p>
+                          <p className="text-sm font-semibold text-primary mt-0.5">
+                            {(
+                              event.total_tickets - (event.tickets_sold ?? 0)
+                            ).toLocaleString()}{' '}
+                            remaining
+                          </p>
+                          <p className="text-xs text-secondary mt-0.5">
+                            of {event.total_tickets.toLocaleString()} total
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
+                    )}
 
-                {/* Description */}
-                {event.description && (
-                  <div>
-                    <h2 className="text-base font-bold text-primary mb-3">
-                      About this event
-                    </h2>
-                    <div className="text-sm text-secondary leading-relaxed whitespace-pre-wrap">
-                      {event.description}
-                    </div>
-                  </div>
-                )}
-
-                <div className="pt-4 border-t border-border">
-                  <button
-                    onClick={() => navigate(-1)}
-                    className="inline-flex items-center gap-1.5 text-sm font-medium text-secondary hover:text-primary transition-colors"
-                  >
-                    <ArrowLeft size={15} strokeWidth={2.5} />
-                    Back
-                  </button>
-                </div>
-              </div>
-
-              {/* ── Right: ticket panel + revenue (if privileged) ── */}
-              <div className="flex flex-col gap-4 lg:sticky lg:top-24 lg:self-start">
-                {/* Revenue panel — organizer / admin / dev only */}
-                {isOrganizerOrAbove && (
-                  <RevenuePannel
-                    event={event}
-                    ticketTypes={event.ticket_types ?? []}
-                  />
-                )}
-
-                {/* Ticket purchase panel */}
-                <div className="bg-card border border-border rounded-card p-4">
-                  <h2 className="font-bold text-primary mb-1">Get tickets</h2>
-
-                  {isPast && (
-                    <div className="flex items-start gap-2 p-3 bg-border rounded-btn mb-3 mt-2">
-                      <AlertCircle
-                        size={15}
-                        className="text-muted shrink-0 mt-0.5"
-                      />
-                      <p className="text-xs text-secondary">
-                        This event has already taken place.
-                      </p>
-                    </div>
-                  )}
-
-                  {!isPast && isFullySoldOut && (
-                    <div className="flex items-start gap-2 p-3 bg-border rounded-btn mb-3 mt-2">
-                      <AlertCircle
-                        size={15}
-                        className="text-error shrink-0 mt-0.5"
-                      />
-                      <p className="text-xs text-secondary">
-                        All ticket types are sold out.
-                      </p>
-                    </div>
-                  )}
-
-                  <div className="flex flex-col gap-3 mt-3">
-                    {event.ticket_types && event.ticket_types.length > 0 ? (
-                      <TicketTypeSelector
-                        ticketTypes={event.ticket_types}
-                        disabled={
-                          isPast || event.status !== 'published' || payLoading
-                        }
-                        onSelect={handleSelectTicket}
-                        loading={payLoading}
-                      />
-                    ) : (
-                      <div className="text-center py-6">
-                        <Ticket
-                          size={24}
-                          className="text-muted mx-auto mb-2"
-                          strokeWidth={1.5}
-                        />
-                        <p className="text-sm text-secondary">
-                          Ticket details not yet available.
-                        </p>
-                        <p className="text-xs text-muted mt-1">
-                          Check back closer to the event date.
-                        </p>
+                    {event.tickets_sold > 0 && (
+                      <div className="flex items-start gap-3 p-4 bg-card border border-border rounded-card">
+                        <div className="w-9 h-9 rounded-btn bg-accent-text flex items-center justify-center shrink-0">
+                          <Users
+                            size={17}
+                            className="text-accent"
+                            strokeWidth={1.75}
+                          />
+                        </div>
+                        <div>
+                          <p className="text-xs font-semibold text-muted uppercase tracking-wide">
+                            Attending
+                          </p>
+                          <p className="text-sm font-semibold text-primary mt-0.5">
+                            {event.tickets_sold.toLocaleString()} people
+                          </p>
+                        </div>
                       </div>
                     )}
                   </div>
+
+                  {/* Description */}
+                  {event.description && (
+                    <div>
+                      <h2 className="text-base font-bold text-primary mb-3">
+                        About this event
+                      </h2>
+                      <div className="text-sm text-secondary leading-relaxed whitespace-pre-wrap">
+                        {event.description}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="pt-4 border-t border-border">
+                    <button
+                      onClick={() => navigate(-1)}
+                      className="inline-flex items-center gap-1.5 text-sm font-medium text-secondary hover:text-primary transition-colors"
+                    >
+                      <ArrowLeft size={15} strokeWidth={2.5} />
+                      Back
+                    </button>
+                  </div>
                 </div>
 
-                {/* Login nudge for guests */}
-                {!isLoggedIn && event.ticket_types?.length > 0 && !isPast && (
-                  <div className="bg-accent-text border border-accent-border rounded-card p-4 flex flex-col gap-2">
-                    <p className="text-xs font-semibold text-accent">
-                      Sign in to book
-                    </p>
-                    <p className="text-xs text-secondary">
-                      Create a free account to purchase tickets and manage your
-                      bookings.
-                    </p>
-                    <Link
-                      to="/register"
-                      state={{ from: `/events/${id}` }}
-                      className="mt-1 text-xs font-semibold text-accent hover:text-accent-hover transition-colors"
-                    >
-                      Create account →
-                    </Link>
-                  </div>
-                )}
+                {/* ── Right: ticket panel + revenue (if privileged) ── */}
+                <div className="flex flex-col gap-4 lg:sticky lg:top-24 lg:self-start">
+                  {/* Revenue panel — organizer / admin / dev only */}
+                  {isOrganizerOrAbove && (
+                    <RevenuePannel
+                      event={event}
+                      ticketTypes={event.ticket_types ?? []}
+                    />
+                  )}
 
-                {/* Share button */}
-                <button
-                  onClick={handleShare}
-                  className="flex items-center justify-center gap-2 h-10 border border-border rounded-btn text-sm font-medium text-secondary hover:text-primary hover:border-accent/40 transition-all duration-150"
-                >
-                  <Share2 size={15} strokeWidth={2} />
-                  Share event
-                </button>
+                  {/* Ticket purchase panel */}
+                  <div className="bg-card border border-border rounded-card p-4">
+                    <h2 className="font-bold text-primary mb-1">Get tickets</h2>
+
+                    {isPast && (
+                      <div className="flex items-start gap-2 p-3 bg-border rounded-btn mb-3 mt-2">
+                        <AlertCircle
+                          size={15}
+                          className="text-muted shrink-0 mt-0.5"
+                        />
+                        <p className="text-xs text-secondary">
+                          This event has already taken place.
+                        </p>
+                      </div>
+                    )}
+
+                    {!isPast && isFullySoldOut && (
+                      <div className="flex items-start gap-2 p-3 bg-border rounded-btn mb-3 mt-2">
+                        <AlertCircle
+                          size={15}
+                          className="text-error shrink-0 mt-0.5"
+                        />
+                        <p className="text-xs text-secondary">
+                          All ticket types are sold out.
+                        </p>
+                      </div>
+                    )}
+
+                    <div className="flex flex-col gap-3 mt-3">
+                      {event.ticket_types && event.ticket_types.length > 0 ? (
+                        <TicketTypeSelector
+                          ticketTypes={event.ticket_types}
+                          disabled={
+                            isPast || event.status !== 'published' || payLoading
+                          }
+                          onSelect={handleSelectTicket}
+                          loading={payLoading}
+                        />
+                      ) : (
+                        <div className="text-center py-6">
+                          <Ticket
+                            size={24}
+                            className="text-muted mx-auto mb-2"
+                            strokeWidth={1.5}
+                          />
+                          <p className="text-sm text-secondary">
+                            Ticket details not yet available.
+                          </p>
+                          <p className="text-xs text-muted mt-1">
+                            Check back closer to the event date.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Login nudge for guests */}
+                  {!isLoggedIn && event.ticket_types?.length > 0 && !isPast && (
+                    <div className="bg-accent-text border border-accent-border rounded-card p-4 flex flex-col gap-2">
+                      <p className="text-xs font-semibold text-accent">
+                        Sign in to book
+                      </p>
+                      <p className="text-xs text-secondary">
+                        Create a free account to purchase tickets and manage
+                        your bookings.
+                      </p>
+                      <Link
+                        to="/register"
+                        state={{ from: `/events/${id}` }}
+                        className="mt-1 text-xs font-semibold text-accent hover:text-accent-hover transition-colors"
+                      >
+                        Create account →
+                      </Link>
+                    </div>
+                  )}
+
+                  {/* Share button */}
+                  <button
+                    onClick={handleShare}
+                    className="flex items-center justify-center gap-2 h-10 border border-border rounded-btn text-sm font-medium text-secondary hover:text-primary hover:border-accent/40 transition-all duration-150"
+                  >
+                    <Share2 size={15} strokeWidth={2} />
+                    Share event
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        </>
-      ) : null}
-    </div>
+          </>
+        ) : null}
+      </div>
+    </>
   );
 }
