@@ -303,7 +303,7 @@ export default function HomePage() {
                     {[0, 1, 2, 3, 4, 5].map((j) => (
                       <div
                         key={j}
-                        className="shrink-0 w-44 sm:w-52 lg:w-56 aspect-[4/3] bg-border rounded-card"
+                        className="shrink-0 w-44 sm:w-52 lg:w-56 aspect-4/3 bg-border rounded-card"
                       />
                     ))}
                   </div>
