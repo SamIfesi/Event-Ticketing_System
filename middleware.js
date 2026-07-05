@@ -21,8 +21,9 @@ export default function middleware(request) {
   );
 
   if (isBot) {
-    const slug = request.nextUrl.pathname.split('/events/')[1];
-    const backendUrl = `https://api-ticketer-e.up.railway.app/api/events/${slug}/meta`;
-    return Response.redirect(backendUrl, 307);
+    const url = new URL(request.url);
+    const slug = url.pathname.split('/events/')[1];
+    const backendUrl = process.env.BACKEND_URL || 'https://api-ticketer-e.up.railway.app';
+    return Response.redirect(`${backendUrl}/api/events/${slug}/meta`, 307);
   }
 }
