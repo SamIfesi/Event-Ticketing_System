@@ -252,14 +252,24 @@ export default function EventDetailPage() {
   return (
     <>
       {event && (
-        <Helmet>
-          <title>{event.title} | Ticketer</title>
-          <meta
-            name="description"
-            content={event.description?.slice(0, 160) ?? ''}
-          />
-        </Helmet>
-      )}
+  <Helmet>
+    <title>{event.title} | Ticketer</title>
+    <meta name="description" content={event.description?.slice(0, 160) ?? ''} />
+
+    {/* Open Graph (WhatsApp, Facebook, Telegram, LinkedIn) */}
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={event.title} />
+    <meta property="og:description" content={event.description?.slice(0, 160) ?? ''} />
+    <meta property="og:url" content={window.location.href} />
+    {event.banner_image && <meta property="og:image" content={event.banner_image} />}
+
+    {/* Twitter Card */}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={event.title} />
+    <meta name="twitter:description" content={event.description?.slice(0, 160) ?? ''} />
+    {event.banner_image && <meta name="twitter:image" content={event.banner_image} />}
+  </Helmet>
+)}
 
       <div className="flex flex-col min-h-screen bg-main-bg">
         {/* Navbar */}
