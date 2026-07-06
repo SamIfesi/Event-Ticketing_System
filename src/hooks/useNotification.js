@@ -11,9 +11,11 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import NotificationService from '../services/notification.service';
+import { useAuthStore } from '../store/authStore';
 import { useUiStore } from '../store/uiStore';
 
 export function useNotifications({ pollInterval = 15000 } = {}) {
+  const token = useAuthStore((s) => s.token);
   const toastError = useUiStore((s) => s.toastError);
   const toastSuccess = useUiStore((s) => s.toastSuccess);
 
@@ -32,6 +34,8 @@ export function useNotifications({ pollInterval = 15000 } = {}) {
   // ── Fetch paginated notifications ─────────────────────────────
   // ?unread=1 to show unread only
   const fetchNotifications = useCallback(async (params = {}) => {
+    if (!token) return;
+
     setNotificationsLoading(true);
     try {
       const data = await NotificationService.getNotifications(params);
@@ -48,10 +52,15 @@ export function useNotifications({ pollInterval = 15000 } = {}) {
     } finally {
       setNotificationsLoading(false);
     }
-  }, [toastError]);
+  }, [token, toastError]);
 
   // ── Fetch unread count only (lightweight, used for polling) ───
   const fetchUnreadCount = useCallback(async () => {
+    if (!token) {
+      setUnreadCount(0);
+      return;
+    }
+
     setUnreadCountLoading(true);
     try {
       const data = await NotificationService.getUnreadCount();
@@ -61,18 +70,29 @@ export function useNotifications({ pollInterval = 15000 } = {}) {
     } finally {
       setUnreadCountLoading(false);
     }
-  }, []);
+  }, [token]);
 
   // ── Poll unread count every `pollInterval` ms ─────────────────
   // Default: every 30 seconds — cheap endpoint, keeps badge fresh
   useEffect(() => {
-    fetchUnreadCount(); // fetch immediately on mount
+    if (!token) {
+      return;
+    }
+
+    const initialFetchTimeout = setTimeout(() => {
+      void fetchUnreadCount();
+    }, 0);
 
     if (!pollInterval) return;
 
     const interval = setInterval(fetchUnreadCount, pollInterval);
-    return () => clearInterval(interval);
-  }, [fetchUnreadCount, pollInterval]);
+    return () => {
+      clearTimeout(initialFetchTimeout);
+      clearInterval(interval);
+    };
+  }, [fetchUnreadCount, pollInterval, token]);
+
+  const visibleUnreadCount = token ? unreadCount : 0;
 
   // ── Mark one notification as read ────────────────────────────
   const markRead = useCallback(async (id) => {
@@ -149,7 +169,7 @@ export function useNotifications({ pollInterval = 15000 } = {}) {
     fetchNotifications,
 
     // ── Bell badge
-    unreadCount,
+    unreadCount: visibleUnreadCount,
     unreadCountLoading,
     fetchUnreadCount,
 
