@@ -89,7 +89,7 @@ function NotificationCard({ notification, onOpen, onDelete }) {
     >
       {/* Unread dot */}
       {!notification.is_read && (
-        <span className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-card bg-accent" />
+        <span className="absolute left-0 top-0 bottom-0 w-0.75 rounded-l-card bg-accent" />
       )}
 
       <div className="flex items-start gap-1 pl-1">

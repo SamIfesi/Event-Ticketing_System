@@ -176,7 +176,6 @@ export default function EventDetailPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { event, eventLoading, eventError, fetchEvent } = useEvents();
   const { initiateBooking, payLoading } = useBookings();
-  console.log(event);
 
   useEffect(() => {
     if (id) fetchEvent(id);
