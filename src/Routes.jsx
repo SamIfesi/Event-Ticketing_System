@@ -105,369 +105,369 @@ function GuestOnly({ children }) {
 export default function AppRoutes() {
   return (
     <Suspense
-    fallback={
-      <div className="min-h-screen flex items-center justify-center">
-        <Spinner size={35} className='text-accent' />
-      </div>
-    }
-  >
-    <Routes>
-      <Route path="/" element={<RootRedirect />} />
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <Spinner size={35} className="text-accent" />
+        </div>
+      }
+    >
+      <Routes>
+        <Route path="/" element={<RootRedirect />} />
 
-      {/* Onboarding */}
-      <Route
-        path="/onboarding"
-        element={
-          <GuestOnly>
-            <OnboardingPage />
-          </GuestOnly>
-        }
-      />
+        {/* Onboarding */}
+        <Route
+          path="/onboarding"
+          element={
+            <GuestOnly>
+              <OnboardingPage />
+            </GuestOnly>
+          }
+        />
 
-<Route path="/terms" element={<TermsPage />} />
-<Route path="/privacy" element={<PrivacyPolicyPage />} />
+        <Route path="/terms" element={<TermsPage />} />
+        <Route path="/privacy" element={<PrivacyPolicyPage />} />
 
-      {/* Public */}
-      <Route path="/home" element={<HomePage />} />
-      <Route path="/events" element={<EventsPage />} />
-      <Route path="/events/:id" element={<EventDetailPage />} />
-      <Route path="/unauthorized" element={<UnauthorizedPage />} />
-      <Route path="/theme" element={<ThemePage />} />
+        {/* Public */}
+        <Route path="/home" element={<HomePage />} />
+        <Route path="/events" element={<EventsPage />} />
+        <Route path="/events/:id" element={<EventDetailPage />} />
+        <Route path="/unauthorized" element={<UnauthorizedPage />} />
+        <Route path="/theme" element={<ThemePage />} />
 
-      {/* Auth — guest only */}
-      <Route
-        path="/login"
-        element={
-          <GuestOnly>
-            <LoginPage />
-          </GuestOnly>
-        }
-      />
-      <Route
-        path="/register"
-        element={
-          <GuestOnly>
-            <RegisterPage />
-          </GuestOnly>
-        }
-      />
-      <Route
-        path="/forgot-password"
-        element={
-          <GuestOnly>
-            <ForgotPasswordPage />
-          </GuestOnly>
-        }
-      />
-      <Route
-        path="/verify-otp"
-        element={
-          <GuestOnly>
-            <VerifyOtpPage />
-          </GuestOnly>
-        }
-      />
-      <Route
-        path="/reset-password"
-        element={
-          <GuestOnly>
-            <ResetPassworPage />
-          </GuestOnly>
-        }
-      />
+        {/* Auth — guest only */}
+        <Route
+          path="/login"
+          element={
+            <GuestOnly>
+              <LoginPage />
+            </GuestOnly>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <GuestOnly>
+              <RegisterPage />
+            </GuestOnly>
+          }
+        />
+        <Route
+          path="/forgot-password"
+          element={
+            <GuestOnly>
+              <ForgotPasswordPage />
+            </GuestOnly>
+          }
+        />
+        <Route
+          path="/verify-otp"
+          element={
+            <GuestOnly>
+              <VerifyOtpPage />
+            </GuestOnly>
+          }
+        />
+        <Route
+          path="/reset-password"
+          element={
+            <GuestOnly>
+              <ResetPassworPage />
+            </GuestOnly>
+          }
+        />
 
-      {/* Verify email — needs token but not verified */}
-      <Route
-        path="/verify-email"
-        element={
-          <ProtectedRoute requireVerified={false}>
-            <VerifyEmailPage />
-          </ProtectedRoute>
-        }
-      />
+        {/* Verify email — needs token but not verified */}
+        <Route
+          path="/verify-email"
+          element={
+            <ProtectedRoute requireVerified={false}>
+              <VerifyEmailPage />
+            </ProtectedRoute>
+          }
+        />
 
-      {/* Attendee */}
-      <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute>
-            <AttendeeDashboard />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/my-bookings"
-        element={
-          <ProtectedRoute>
-            <MyBookingsPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/bookings/:id"
-        element={
-          <ProtectedRoute>
-            <BookingDetailPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/become-organizer"
-        element={
-          <ProtectedRoute>
-            <BecomeOrganizerPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/my-tickets"
-        element={
-          <ProtectedRoute>
-            <MyTicketsPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/ticket/:id"
-        element={
-          <ProtectedRoute>
-            <TicketDetailPage />
-          </ProtectedRoute>
-        }
-      />
+        {/* Attendee */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <AttendeeDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-bookings"
+          element={
+            <ProtectedRoute>
+              <MyBookingsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/bookings/:id"
+          element={
+            <ProtectedRoute>
+              <BookingDetailPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/become-organizer"
+          element={
+            <ProtectedRoute>
+              <BecomeOrganizerPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-tickets"
+          element={
+            <ProtectedRoute>
+              <MyTicketsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/ticket/:id"
+          element={
+            <ProtectedRoute>
+              <TicketDetailPage />
+            </ProtectedRoute>
+          }
+        />
 
-      {/* ── NEW: All logged-in users ── */}
-      <Route
-        path="/notifications"
-        element={
-          <ProtectedRoute>
-            <NotificationsPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/my-transactions"
-        element={
-          <ProtectedRoute>
-            <MyTransactionsPage />
-          </ProtectedRoute>
-        }
-      />
+        {/* ── NEW: All logged-in users ── */}
+        <Route
+          path="/notifications"
+          element={
+            <ProtectedRoute>
+              <NotificationsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-transactions"
+          element={
+            <ProtectedRoute>
+              <MyTransactionsPage />
+            </ProtectedRoute>
+          }
+        />
 
-      {/* Profile */}
-      <Route
-        path="/profile"
-        element={
-          <ProtectedRoute>
-            <ProfilePage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/profile/edit"
-        element={
-          <ProtectedRoute>
-            <EditProfilePage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/profile/change-password"
-        element={
-          <ProtectedRoute>
-            <ChangePasswordPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/profile/change-email"
-        element={
-          <ProtectedRoute>
-            <ChangeEmailPage />
-          </ProtectedRoute>
-        }
-      />
+        {/* Profile */}
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile/edit"
+          element={
+            <ProtectedRoute>
+              <EditProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile/change-password"
+          element={
+            <ProtectedRoute>
+              <ChangePasswordPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile/change-email"
+          element={
+            <ProtectedRoute>
+              <ChangeEmailPage />
+            </ProtectedRoute>
+          }
+        />
 
-      {/* Organizer */}
-      <Route
-        path="/organizer/dashboard"
-        element={
-          <ProtectedRoute>
-            <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
-              <OrganizerDashboard />
-            </RoleRoute>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/organizer/events"
-        element={
-          <ProtectedRoute>
-            <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
-              <ManageEventsPage />
-            </RoleRoute>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/organizer/events/:slug"
-        element={
-          <ProtectedRoute>
-            <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
-              <OrganizerEventDetailPage />
-            </RoleRoute>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/organizer/create/event"
-        element={
-          <ProtectedRoute>
-            <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
-              <CreateEventPage />
-            </RoleRoute>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path={`/organizer/events/${event.slug}/edit`}
-        element={
-          <ProtectedRoute>
-            <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
-              <EditEventPage />
-            </RoleRoute>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path={`/organizer/events/${event.slug}/bookings`}
-        element={
-          <ProtectedRoute>
-            <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
-              <EventBookingsPage />
-            </RoleRoute>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path={`/organizer/events/${event.slug}/checkin`}
-        element={
-          <ProtectedRoute>
-            <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
-              <CheckinPage />
-            </RoleRoute>
-          </ProtectedRoute>
-        }
-      />
+        {/* Organizer */}
+        <Route
+          path="/organizer/dashboard"
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
+                <OrganizerDashboard />
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/organizer/events"
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
+                <ManageEventsPage />
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/organizer/events/:slug"
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
+                <OrganizerEventDetailPage />
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/organizer/create/event"
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
+                <CreateEventPage />
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/organizer/events/:slug/edit"
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
+                <EditEventPage />
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/organizer/events/:slug/bookings"
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
+                <EventBookingsPage />
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/organizer/events/:slug/checkin"
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
+                <CheckinPage />
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+        />
 
-      {/* ── NEW: Organizer only ── */}
-      <Route
-        path="/organizer/payment-details"
-        element={
-          <ProtectedRoute>
-            <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.DEV]}>
-              <OrganizerPaymentPage />
-            </RoleRoute>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/organizer/transactions"
-        element={
-          <ProtectedRoute>
-            <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.DEV]}>
-              <OrganizerTransactionsPage />
-            </RoleRoute>
-          </ProtectedRoute>
-        }
-      />
+        {/* ── NEW: Organizer only ── */}
+        <Route
+          path="/organizer/payment-details"
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.DEV]}>
+                <OrganizerPaymentPage />
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/organizer/transactions"
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.DEV]}>
+                <OrganizerTransactionsPage />
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+        />
 
-      {/* Admin */}
-      <Route
-        path="/admin/dashboard"
-        element={
-          <ProtectedRoute>
-            <RoleRoute allowed={[ROLES.ADMIN, ROLES.DEV]}>
-              <AdminDashboard />
-            </RoleRoute>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin/users"
-        element={
-          <ProtectedRoute>
-            <RoleRoute allowed={[ROLES.ADMIN, ROLES.DEV]}>
-              <UsersPage />
-            </RoleRoute>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin/users/:id"
-        element={
-          <ProtectedRoute>
-            <RoleRoute allowed={[ROLES.ADMIN, ROLES.DEV]}>
-              <AdminUserDetailPage />
-            </RoleRoute>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin/events"
-        element={
-          <ProtectedRoute>
-            <RoleRoute allowed={[ROLES.ADMIN, ROLES.DEV]}>
-              <AdminEventsPage />
-            </RoleRoute>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin/organizer/applications"
-        element={
-          <ProtectedRoute>
-            <RoleRoute allowed={[ROLES.ADMIN, ROLES.DEV]}>
-              <OrgApplicationsPage />
-            </RoleRoute>
-          </ProtectedRoute>
-        }
-      />
+        {/* Admin */}
+        <Route
+          path="/admin/dashboard"
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowed={[ROLES.ADMIN, ROLES.DEV]}>
+                <AdminDashboard />
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowed={[ROLES.ADMIN, ROLES.DEV]}>
+                <UsersPage />
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/users/:id"
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowed={[ROLES.ADMIN, ROLES.DEV]}>
+                <AdminUserDetailPage />
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/events"
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowed={[ROLES.ADMIN, ROLES.DEV]}>
+                <AdminEventsPage />
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/organizer/applications"
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowed={[ROLES.ADMIN, ROLES.DEV]}>
+                <OrgApplicationsPage />
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+        />
 
-      {/* ── NEW: Admin only ── */}
-      <Route
-        path="/admin/transactions"
-        element={
-          <ProtectedRoute>
-            <RoleRoute allowed={[ROLES.ADMIN, ROLES.DEV]}>
-              <AdminTransactionsPage />
-            </RoleRoute>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin/payouts"
-        element={
-          <ProtectedRoute>
-            <RoleRoute allowed={[ROLES.ADMIN, ROLES.DEV]}>
-              <AdminPayoutsPage />
-            </RoleRoute>
-          </ProtectedRoute>
-        }
-      />
+        {/* ── NEW: Admin only ── */}
+        <Route
+          path="/admin/transactions"
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowed={[ROLES.ADMIN, ROLES.DEV]}>
+                <AdminTransactionsPage />
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/payouts"
+          element={
+            <ProtectedRoute>
+              <RoleRoute allowed={[ROLES.ADMIN, ROLES.DEV]}>
+                <AdminPayoutsPage />
+              </RoleRoute>
+            </ProtectedRoute>
+          }
+        />
 
-      {/* Payment */}
-      <Route
-        path="/payment/callback"
-        element={
-          <ProtectedRoute>
-            <PaymentCallbackPage />
-          </ProtectedRoute>
-        }
-      />
+        {/* Payment */}
+        <Route
+          path="/payment/callback"
+          element={
+            <ProtectedRoute>
+              <PaymentCallbackPage />
+            </ProtectedRoute>
+          }
+        />
 
-      <Route path="*" element={<NotFoundPage />} />
-    </Routes>
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
     </Suspense>
   );
 }
