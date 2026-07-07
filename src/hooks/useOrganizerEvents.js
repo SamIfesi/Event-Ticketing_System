@@ -1,6 +1,7 @@
 // useOrganizerEvents — organizer-scoped event management.
 //
-// Covers: myEvents, create, update, delete, eventBookings, checkinList.
+// Covers: myEvents, single event fetch, create, update, delete,
+// eventBookings, checkinList.
 // Assumes the consuming component is already behind ProtectedRoute + RoleRoute.
 // This hook does not re-check roles — that is the route layer's job.
 
@@ -17,7 +18,13 @@ export function useOrganizerEvents() {
   const [myEventsLoading, setMyEventsLoading] = useState(false);
   const [myEventsError, setMyEventsError] = useState(null);
 
-  // ── Single event detail (for edit page) ──────────────────────
+  // ── Single event detail (for edit/manage page) ────────────────
+  // NEW: separate from myEvents — loaded via slug or id from the URL.
+  const [event, setEvent] = useState(null);
+  const [eventLoading, setEventLoading] = useState(false);
+  const [eventError, setEventError] = useState(null);
+
+  // ── Mutation state ─────────────────────────────────────────────
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [fieldErrors, setFieldErrors] = useState({});
@@ -56,7 +63,7 @@ export function useOrganizerEvents() {
     return msg;
   }, []);
 
-  // ── Fetch my events ──────────────────────────────────────────
+  // ── Fetch my events (list) ────────────────────────────────────
   const fetchMyEvents = useCallback(async () => {
     setMyEventsLoading(true);
     setMyEventsError(null);
@@ -71,6 +78,28 @@ export function useOrganizerEvents() {
       setMyEventsLoading(false);
     }
   }, [toastError]);
+
+  // ── Fetch a single event — accepts slug OR numeric id ─────────
+  // Use this on edit/manage pages. The returned event.id is the
+  // trusted numeric id — use it for updateEvent/deleteEvent/etc.
+  const fetchMyEvent = useCallback(
+    async (slugOrId) => {
+      setEventLoading(true);
+      setEventError(null);
+      try {
+        const data = await OrganizerService.getMyEvent(slugOrId);
+        setEvent(data.event);
+        return data.event;
+      } catch (err) {
+        const msg = err?.response?.data?.message ?? 'Event not found.';
+        setEventError(msg);
+        toastError(msg);
+      } finally {
+        setEventLoading(false);
+      }
+    },
+    [toastError]
+  );
 
   // ── Create event ──────────────────────────────────────────────
   // eventData shape: { title, description, location, category_id,
@@ -100,6 +129,7 @@ export function useOrganizerEvents() {
   );
 
   // ── Update event ─────────────────────────────────────────────
+  // `id` MUST be the numeric event.id — never a slug.
   const updateEvent = useCallback(
     async (id, eventData, { onSuccess } = {}) => {
       setLoading(true);
@@ -110,11 +140,14 @@ export function useOrganizerEvents() {
 
         toastSuccess('Event updated successfully!');
 
-        // Patch local state instead of re-fetching.
+        // Patch local list state, if this event is in it.
         setMyEvents((prev) =>
-          prev.map((event) =>
-            event.id === id ? { ...event, ...data.event } : event
-          )
+          prev.map((e) => (e.id === id ? { ...e, ...data.event } : e))
+        );
+
+        // Patch single-event state, if this is the currently loaded event.
+        setEvent((prev) =>
+          prev && prev.id === id ? { ...prev, ...data.event } : prev
         );
 
         onSuccess?.(data.event);
@@ -128,6 +161,7 @@ export function useOrganizerEvents() {
   );
 
   // ── Delete event ─────────────────────────────────────────────
+  // `id` MUST be the numeric event.id — never a slug.
   const deleteEvent = useCallback(
     async (id, { onSuccess } = {}) => {
       setLoading(true);
@@ -139,7 +173,7 @@ export function useOrganizerEvents() {
         toastSuccess('Event cancelled.');
 
         // Remove locally instead of re-fetching.
-        setMyEvents((prev) => prev.filter((event) => event.id !== id));
+        setMyEvents((prev) => prev.filter((e) => e.id !== id));
 
         onSuccess?.();
       } catch (err) {
@@ -152,6 +186,7 @@ export function useOrganizerEvents() {
   );
 
   // ── Fetch event bookings ─────────────────────────────────────
+  // eventId MUST be numeric — this backend route is not slug-aware.
   const fetchEventBookings = useCallback(
     async (eventId) => {
       setBookingsLoading(true);
@@ -170,6 +205,7 @@ export function useOrganizerEvents() {
   );
 
   // ── Fetch check-in list ──────────────────────────────────────
+  // eventId MUST be numeric — this backend route is not slug-aware.
   const fetchCheckinList = useCallback(
     async (eventId) => {
       setCheckinLoading(true);
@@ -190,11 +226,17 @@ export function useOrganizerEvents() {
   );
 
   return {
-    // ── My events
+    // ── My events (list)
     myEvents,
     myEventsLoading,
     myEventsError,
     fetchMyEvents,
+
+    // ── Single event (edit/manage page)
+    event,
+    eventLoading,
+    eventError,
+    fetchMyEvent,
 
     // ── Mutations
     loading,
