@@ -86,7 +86,7 @@ function EventRow({
 
           <div className="min-w-0">
             <Link
-              to={`/organizer/events/${event.id}`}
+              to={`/organizer/events/${event.slug}`}
               className="text-sm font-semibold text-primary hover:text-accent transition-colors truncate block max-w-45"
             >
               {event.title}
@@ -157,7 +157,7 @@ function EventRow({
                 <div className="absolute right-0 top-9 z-20 w-44 bg-card border border-border rounded-card shadow-lg py-1 overflow-hidden">
                   {/* View */}
                   <Link
-                    to={`/events/${event.id}`}
+                    to={`/events/${event.slug}`}
                     onClick={() => setMenuOpen(false)}
                     className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-secondary hover:bg-main-bg hover:text-primary transition-colors duration-150"
                   >
@@ -190,14 +190,14 @@ function EventRow({
                   {(showActions === 'organizer' || showActions === 'admin') && (
                     <>
                       <Link
-                        to={`/organizer/events/${event.id}/edit`}
+                        to={`/organizer/events/${event.slug}/edit`}
                         onClick={() => setMenuOpen(false)}
                         className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-secondary hover:bg-main-bg hover:text-primary transition-colors duration"
                       >
                         <Pencil size={13} className="text-muted" /> Edit event
                       </Link>
                       <Link
-                        to={`/organizer/events/${event.id}/bookings`}
+                        to={`/organizer/events/${event.slug}/bookings`}
                         onClick={() => setMenuOpen(false)}
                         className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-secondary hover:bg-main-bg hover:text-primary transition-colors"
                       >
