@@ -10,7 +10,7 @@ import {
   QrCode,
 } from 'lucide-react';
 import { useOrganizerEvents } from '../../hooks/useOrganizerEvents';
-import { useEvents } from '../../hooks/useEvents';
+import EventsService from '../../services/events.service';
 import { formatShortDate } from '../../utils/formatDate';
 import { formatCurrency } from '../../utils/formatCurrency';
 import Navbar from '../../components/layout/Navbar';
@@ -18,7 +18,6 @@ import Sidebar from '../../components/layout/Sidebar';
 import Footer from '../../components/layout/Footer';
 import Badge from '../../components/ui/Badge';
 
-// ── Stat mini card ─────────────────────────────────────────────
 function MiniStat({ icon: Icon, label, value, color }) {
   return (
     <div className="bg-card border border-border rounded-card px-4 py-3.5 flex items-center gap-3">
@@ -38,7 +37,6 @@ function MiniStat({ icon: Icon, label, value, color }) {
   );
 }
 
-// ── Skeleton row ───────────────────────────────────────────────
 function SkeletonRow() {
   return (
     <tr className="animate-pulse border-t border-border">
@@ -60,14 +58,12 @@ function SkeletonRow() {
   );
 }
 
-// ── Booking row ────────────────────────────────────────────────
 function BookingRow({ booking, onView }) {
   return (
     <tr
       onClick={() => onView(booking.id)}
       className="border-t border-border hover:bg-main-bg transition-colors duration-150"
     >
-      {/* Attendee */}
       <td className="px-4 py-3.5">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-accent-text flex items-center justify-center shrink-0">
@@ -85,36 +81,26 @@ function BookingRow({ booking, onView }) {
           </div>
         </div>
       </td>
-
-      {/* Ticket type */}
       <td className="px-4 py-3.5">
         <span className="text-xs font-semibold text-primary">
           {booking.ticket_type ?? '—'}
         </span>
       </td>
-
-      {/* Qty */}
       <td className="px-4 py-3.5">
         <span className="text-xs font-semibold text-primary">
           {booking.quantity ?? 1}
         </span>
       </td>
-
-      {/* Amount */}
       <td className="px-4 py-3.5">
         <span className="text-sm font-bold text-primary">
           {formatCurrency(booking.total_amount ?? 0)}
         </span>
       </td>
-
-      {/* Paid at */}
       <td className="px-4 py-3.5">
         <span className="text-xs text-muted">
           {booking.paid_at ? formatShortDate(booking.paid_at) : '—'}
         </span>
       </td>
-
-      {/* Status */}
       <td className="px-4 py-3.5">
         <Badge status={booking.payment_status ?? 'paid'} size="sm" />
       </td>
@@ -123,23 +109,32 @@ function BookingRow({ booking, onView }) {
 }
 
 export default function EventBookingsPage() {
-  const { id } = useParams();
+  const { slug } = useParams();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
 
+  const [event, setEvent] = useState(null);
+  const [eventLoading, setEventLoading] = useState(false);
+
   const { bookings, bookingsLoading, fetchEventBookings } =
     useOrganizerEvents();
-  const { event, eventLoading, fetchEvent } = useEvents();
 
   useEffect(() => {
-    if (id) {
-      fetchEvent(id);
-      fetchEventBookings(id);
-    }
-  }, [id, fetchEvent, fetchEventBookings]);
+    if (!slug) return;
 
-  // Client-side search
+    setEventLoading(true);
+    EventsService.getMyEvent(slug)
+      .then((data) => {
+        setEvent(data.event);
+        // Resolved numeric id — the bookings endpoint is NOT slug-aware,
+        // so only call it after this resolves.
+        fetchEventBookings(data.event.id);
+      })
+      .catch(() => {})
+      .finally(() => setEventLoading(false));
+  }, [slug, fetchEventBookings]);
+
   const filtered = bookings.filter((b) => {
     if (!search) return true;
     const q = search.toLowerCase();
@@ -150,7 +145,6 @@ export default function EventBookingsPage() {
     );
   });
 
-  // Derived stats
   const totalRevenue = bookings.reduce(
     (acc, b) => acc + parseFloat(b.total_amount ?? 0),
     0
@@ -167,7 +161,6 @@ export default function EventBookingsPage() {
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <main className="flex-1 max-w-6xl mx-auto w-full px-6 py-8">
-        {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-xs text-secondary mb-6">
           <Link
             to="/organizer/events"
@@ -181,7 +174,6 @@ export default function EventBookingsPage() {
           </span>
         </div>
 
-        {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
           <div>
             <h1 className="text-2xl sm:text-3xl font-black text-primary tracking-tight">
@@ -194,7 +186,6 @@ export default function EventBookingsPage() {
             </p>
           </div>
 
-          {/* Quick links */}
           <div className="flex items-center gap-2 shrink-0">
             <Link
               to={`/organizer/events/${slug}/checkin`}
@@ -205,7 +196,6 @@ export default function EventBookingsPage() {
           </div>
         </div>
 
-        {/* Summary stats */}
         {!bookingsLoading && bookings.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
             <MiniStat
@@ -229,7 +219,6 @@ export default function EventBookingsPage() {
           </div>
         )}
 
-        {/* Search */}
         <div className="relative mb-6 max-w-sm">
           <Search
             size={15}
@@ -252,7 +241,6 @@ export default function EventBookingsPage() {
           )}
         </div>
 
-        {/* Table */}
         <div className="bg-card border border-border rounded-card overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full min-w-max">
@@ -282,7 +270,11 @@ export default function EventBookingsPage() {
                   ))
                 ) : filtered.length > 0 ? (
                   filtered.map((booking) => (
-                    <BookingRow key={booking.id} booking={booking} onView={(id)=>navigate(`/bookings/${id}`)}/>
+                    <BookingRow
+                      key={booking.id}
+                      booking={booking}
+                      onView={(id) => navigate(`/bookings/${id}`)}
+                    />
                   ))
                 ) : (
                   <tr>
@@ -314,7 +306,7 @@ export default function EventBookingsPage() {
           </div>
         </div>
       </main>
-      <Footer variant="minimal"/>
+      <Footer variant="minimal" />
     </div>
   );
 }
