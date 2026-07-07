@@ -310,7 +310,7 @@ export default function AppRoutes() {
         }
       />
       <Route
-        path="/organizer/events/:id"
+        path="/organizer/events/:slug"
         element={
           <ProtectedRoute>
             <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
@@ -330,7 +330,7 @@ export default function AppRoutes() {
         }
       />
       <Route
-        path="/organizer/events/:id/edit"
+        path={`/organizer/events/${event.slug}/edit`}
         element={
           <ProtectedRoute>
             <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
@@ -340,7 +340,7 @@ export default function AppRoutes() {
         }
       />
       <Route
-        path="/organizer/events/:id/bookings"
+        path={`/organizer/events/${event.slug}/bookings`}
         element={
           <ProtectedRoute>
             <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
@@ -350,7 +350,7 @@ export default function AppRoutes() {
         }
       />
       <Route
-        path="/organizer/events/:id/checkin"
+        path={`/organizer/events/${event.slug}/checkin`}
         element={
           <ProtectedRoute>
             <RoleRoute allowed={[ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV]}>
