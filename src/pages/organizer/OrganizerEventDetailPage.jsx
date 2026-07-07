@@ -42,19 +42,19 @@ function TicketTypeRow({ tt }) {
 }
 
 export default function OrganizerEventDetailPage() {
-  const { id } = useParams();
+  const { slug } = useParams();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!id) return;
+    if (!slug) return;
     setLoading(true);
-    EventsService.getMyEvent(id)
+    EventsService.getMyEvent(slug)
       .then((data) => setEvent(data.event))
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [slug]);
 
   const ticketTypes = event?.ticket_types ?? [];
   const totalSold = ticketTypes.reduce((acc, tt) => acc + (tt.quantity_sold ?? 0), 0);
@@ -113,7 +113,7 @@ export default function OrganizerEventDetailPage() {
                   <Eye size={13} /> Public page
                 </Link>
                 <Link
-                  to={`/organizer/events/${event.id}/edit`}
+                  to={`/organizer/events/${event.slug}/edit`}
                   className="flex items-center gap-1.5 h-9 px-3 bg-accent-text text-accent border border-accent-border rounded-btn text-xs font-semibold hover:bg-accent hover:text-white transition-colors"
                 >
                   <Pencil size={13} /> Edit
