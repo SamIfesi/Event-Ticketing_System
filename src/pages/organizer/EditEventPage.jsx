@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Pencil, AlertTriangle } from 'lucide-react';
 import { useOrganizerEvents } from '../../hooks/useOrganizerEvents';
@@ -31,13 +31,13 @@ export default function EditEventPage() {
     fetchPaymentDetails();
   }, [fetchPaymentDetails]);
 
-  function fetchEvent() {
+  const fetchEvent = useCallback(() => {
     setEventLoading(true);
-    EventsService.getMyEvent(id)
+    EventsService.getMyEvent(slug)
       .then((data) => setEvent(data.event))
       .catch(() => {})
       .finally(() => setEventLoading(false));
-  }
+  }, [slug]);
 
   useEffect(() => {
     if (!slug) return;
@@ -45,7 +45,7 @@ export default function EditEventPage() {
     CategoryService.getCategories()
       .then((data) => setCategories(data.categories ?? []))
       .catch(() => {});
-  }, [slug]);
+  }, [slug, fetchEvent]);
 
   // Map the API event object to EventForm's expected shape
   const initialValues = useMemo(() => {
@@ -165,7 +165,7 @@ export default function EditEventPage() {
           )}
         </div>
       </main>
-      <Footer variant="minimal"/>
+      <Footer variant="minimal" />
     </div>
   );
 }
