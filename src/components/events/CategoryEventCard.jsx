@@ -18,7 +18,7 @@ export default function CategoryEventCard({ event }) {
 
   return (
     <Link
-      to={`/events/${event.id}`}
+      to={`/events/${event.slug}`}
       className="group shrink-0 w-44 sm:w-52 lg:w-56 snap-start flex flex-col bg-card border border-border rounded-card overflow-hidden hover:border-accent/30 hover:shadow-md transition-all duration-200"
     >
       {/* Banner — fixed aspect box so every card is identical regardless

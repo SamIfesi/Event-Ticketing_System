@@ -30,7 +30,7 @@ export default function EventCard({ event, index = 0, compact = false }) {
 
   return (
     <Link
-      to={`/events/${event.id}`}
+      to={`/events/${event.slug}`}
       className={`group flex flex-col bg-card border border-border rounded-card overflow-hidden hover:shadow-lg hover:border-accent/30 transition-all duration-200 active:scale-[.99] ${compact ? '' : ''}`}
     >
       {/* Banner */}
