@@ -1,16 +1,14 @@
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Pencil, AlertTriangle } from 'lucide-react';
 import { useOrganizerEvents } from '../../hooks/useOrganizerEvents';
 import { useOrganizerPayment } from '../../hooks/useOrganizerPayment';
 import CategoryService from '../../services/category.service';
-import EventsService from '../../services/events.service';
 import Navbar from '../../components/layout/Navbar';
 import Sidebar from '../../components/layout/Sidebar';
 import Footer from '../../components/layout/Footer';
 import EventForm from '../../components/events/EventForm';
 
-// Convert backend datetime (2026-06-15 09:00:00) to datetime-local input format
 function toInputDate(str) {
   if (!str) return '';
   return str.replace(' ', 'T').slice(0, 16);
@@ -20,10 +18,17 @@ export default function EditEventPage() {
   const { slug } = useParams();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [categories, setCategories] = useState([]);
-  const [event, setEvent] = useState(null);
-  const [eventLoading, setEventLoading] = useState(false);
 
-  const { updateEvent, loading, error, fieldErrors } = useOrganizerEvents();
+  const {
+    event,
+    eventLoading,
+    fetchMyEvent,
+    updateEvent,
+    loading,
+    error,
+    fieldErrors,
+  } = useOrganizerEvents();
+
   const { hasPaymentDetails, paymentDetailsLoading, fetchPaymentDetails } =
     useOrganizerPayment();
 
@@ -31,23 +36,14 @@ export default function EditEventPage() {
     fetchPaymentDetails();
   }, [fetchPaymentDetails]);
 
-  const fetchEvent = useCallback(() => {
-    setEventLoading(true);
-    EventsService.getMyEvent(slug)
-      .then((data) => setEvent(data.event))
-      .catch(() => {})
-      .finally(() => setEventLoading(false));
-  }, [slug]);
-
   useEffect(() => {
     if (!slug) return;
-    fetchEvent();
+    fetchMyEvent(slug);
     CategoryService.getCategories()
       .then((data) => setCategories(data.categories ?? []))
       .catch(() => {});
-  }, [slug, fetchEvent]);
+  }, [slug, fetchMyEvent]);
 
-  // Map the API event object to EventForm's expected shape
   const initialValues = useMemo(() => {
     if (!event) return undefined;
     return {
@@ -74,7 +70,7 @@ export default function EditEventPage() {
 
   async function handleSubmit(formData) {
     await updateEvent(event.id, formData, {
-      onSuccess: () => fetchEvent(),
+      onSuccess: () => fetchMyEvent(slug),
     });
   }
 
@@ -84,7 +80,6 @@ export default function EditEventPage() {
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <main className="flex-1 max-w-3xl mx-auto w-full px-6 py-8">
-        {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-xs text-secondary mb-6">
           <Link
             to="/organizer/events"
@@ -98,7 +93,6 @@ export default function EditEventPage() {
           </span>
         </div>
 
-        {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-1">
             <Pencil size={14} className="text-accent" />
@@ -118,7 +112,6 @@ export default function EditEventPage() {
           </p>
         </div>
 
-        {/* Form */}
         <div className="bg-card border border-border rounded-card p-6 sm:p-8">
           {!paymentDetailsLoading && !hasPaymentDetails && (
             <div className="flex items-start gap-3 p-4 bg-warning/10 border border-warning/20 rounded-card mb-6">

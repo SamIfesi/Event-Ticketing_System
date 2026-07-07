@@ -10,7 +10,6 @@ import {
   QrCode,
 } from 'lucide-react';
 import { useOrganizerEvents } from '../../hooks/useOrganizerEvents';
-import EventsService from '../../services/events.service';
 import { formatShortDate } from '../../utils/formatDate';
 import { formatCurrency } from '../../utils/formatCurrency';
 import Navbar from '../../components/layout/Navbar';
@@ -114,26 +113,22 @@ export default function EventBookingsPage() {
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
 
-  const [event, setEvent] = useState(null);
-  const [eventLoading, setEventLoading] = useState(false);
-
-  const { bookings, bookingsLoading, fetchEventBookings } =
-    useOrganizerEvents();
+  const {
+    event,
+    eventLoading,
+    fetchMyEvent,
+    bookings,
+    bookingsLoading,
+    fetchEventBookings,
+  } = useOrganizerEvents();
 
   useEffect(() => {
     if (!slug) return;
 
-    setEventLoading(true);
-    EventsService.getMyEvent(slug)
-      .then((data) => {
-        setEvent(data.event);
-        // Resolved numeric id — the bookings endpoint is NOT slug-aware,
-        // so only call it after this resolves.
-        fetchEventBookings(data.event.id);
-      })
-      .catch(() => {})
-      .finally(() => setEventLoading(false));
-  }, [slug, fetchEventBookings]);
+      fetchMyEvent(slug).then((resolved) => {
+      if (resolved?.id) fetchEventBookings(resolved.id);
+    });
+  }, [slug, fetchMyEvent, fetchEventBookings]);
 
   const filtered = bookings.filter((b) => {
     if (!search) return true;
@@ -306,7 +301,7 @@ export default function EventBookingsPage() {
           </div>
         </div>
       </main>
-      <Footer variant="minimal" />
+      <Footer variant="minimal"/>
     </div>
   );
 }

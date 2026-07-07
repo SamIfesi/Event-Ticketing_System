@@ -3,7 +3,6 @@ import { Link, useParams } from 'react-router-dom';
 import {
   ArrowLeft,
   CheckCircle2,
-  XCircle,
   Clock,
   Users,
   QrCode,
@@ -13,7 +12,6 @@ import {
   Camera,
 } from 'lucide-react';
 import { useOrganizerEvents } from '../../hooks/useOrganizerEvents';
-import EventsService from '../../services/events.service';
 import { formatShortDate, formatTime } from '../../utils/formatDate';
 import Navbar from '../../components/layout/Navbar';
 import Sidebar from '../../components/layout/Sidebar';
@@ -129,26 +127,22 @@ export default function CheckinPage() {
   const [activeTab, setActiveTab] = useState(TABS.SCANNER);
   const [search, setSearch] = useState('');
 
-  const [event, setEvent] = useState(null);
-  const [eventLoading, setEventLoading] = useState(false);
-
-  const { checkinData, checkinLoading, fetchCheckinList } =
-    useOrganizerEvents();
+  const {
+    event,
+    eventLoading,
+    fetchMyEvent,
+    checkinData,
+    checkinLoading,
+    fetchCheckinList,
+  } = useOrganizerEvents();
 
   useEffect(() => {
     if (!slug) return;
 
-    setEventLoading(true);
-    EventsService.getMyEvent(slug)
-      .then((data) => {
-        setEvent(data.event);
-        // Resolved numeric id — the checkins endpoint is NOT slug-aware,
-        // so only call it after this resolves.
-        fetchCheckinList(data.event.id);
-      })
-      .catch(() => {})
-      .finally(() => setEventLoading(false));
-  }, [slug]);
+    fetchMyEvent(slug).then((resolved) => {
+      if (resolved?.id) fetchCheckinList(resolved.id);
+    });
+  }, [slug, fetchMyEvent, fetchCheckinList]);
 
   // Refresh checkin list after a successful scan
   function handleCheckin() {
