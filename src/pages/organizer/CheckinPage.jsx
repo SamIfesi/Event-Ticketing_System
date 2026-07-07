@@ -13,14 +13,13 @@ import {
   Camera,
 } from 'lucide-react';
 import { useOrganizerEvents } from '../../hooks/useOrganizerEvents';
-import { useEvents } from '../../hooks/useEvents';
+import EventsService from '../../services/events.service';
 import { formatShortDate, formatTime } from '../../utils/formatDate';
 import Navbar from '../../components/layout/Navbar';
 import Sidebar from '../../components/layout/Sidebar';
 import Footer from '../../components/layout/Footer';
 import CheckinScanner from '../../components/tickets/CheckinScanner';
 
-// ── Tab enum ──────────────────────────────────────────────────
 const TABS = { SCANNER: 'scanner', LIST: 'list' };
 const TABLE_HEADERS = [
   'Attendee',
@@ -30,7 +29,6 @@ const TABLE_HEADERS = [
   'Checked In At',
 ];
 
-// ── Stat card ─────────────────────────────────────────────────
 function StatPill({ label, value, color }) {
   return (
     <div
@@ -45,14 +43,12 @@ function StatPill({ label, value, color }) {
   );
 }
 
-// ── Attendee row in checkin list ──────────────────────────────
 function AttendeeRow({ ticket }) {
   const isCheckedIn = ticket.is_used === 1 || ticket.is_used === true;
   const ticketId = `#${String(ticket.id).padStart(6, '0')}`;
 
   return (
     <tr className="border-t border-border hover:bg-main-bg transition-colors duration-150">
-      {/* Name + email */}
       <td className="px-4 py-3.5">
         <div className="flex items-center gap-3">
           <div
@@ -76,19 +72,14 @@ function AttendeeRow({ ticket }) {
           </div>
         </div>
       </td>
-
-      {/* Ticket type */}
       <td className="px-4 py-3.5">
         <span className="text-xs font-semibold text-primary">
           {ticket.ticket_type ?? '—'}
         </span>
       </td>
-
       <td className="px-4 py-3.5">
         <span className="text-xs font-semibold text-primary">{ticketId}</span>
       </td>
-
-      {/* Status */}
       <td className="px-4 py-3.5">
         {isCheckedIn ? (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-success/10 text-success">
@@ -100,8 +91,6 @@ function AttendeeRow({ ticket }) {
           </span>
         )}
       </td>
-
-      {/* Time checked in */}
       <td className="px-4 py-3.5">
         <span className="text-xs text-muted">
           {isCheckedIn && ticket.used_at
@@ -113,7 +102,6 @@ function AttendeeRow({ ticket }) {
   );
 }
 
-// ── Skeleton row ──────────────────────────────────────────────
 function SkeletonRow() {
   return (
     <tr className="animate-pulse border-t border-border">
@@ -136,25 +124,35 @@ function SkeletonRow() {
 }
 
 export default function CheckinPage() {
-  const { id } = useParams();
+  const { slug } = useParams();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(TABS.SCANNER);
   const [search, setSearch] = useState('');
 
+  const [event, setEvent] = useState(null);
+  const [eventLoading, setEventLoading] = useState(false);
+
   const { checkinData, checkinLoading, fetchCheckinList } =
     useOrganizerEvents();
-  const { event, eventLoading, fetchEvent } = useEvents();
 
   useEffect(() => {
-    if (id) {
-      fetchEvent(id);
-      fetchCheckinList(id);
-    }
-  }, [id, fetchCheckinList, fetchEvent]);
+    if (!slug) return;
+
+    setEventLoading(true);
+    EventsService.getMyEvent(slug)
+      .then((data) => {
+        setEvent(data.event);
+        // Resolved numeric id — the checkins endpoint is NOT slug-aware,
+        // so only call it after this resolves.
+        fetchCheckinList(data.event.id);
+      })
+      .catch(() => {})
+      .finally(() => setEventLoading(false));
+  }, [slug]);
 
   // Refresh checkin list after a successful scan
   function handleCheckin() {
-    fetchCheckinList(id);
+    if (event?.id) fetchCheckinList(event.id);
   }
 
   const tickets = checkinData?.tickets ?? [];
@@ -163,7 +161,6 @@ export default function CheckinPage() {
   const checkedIn = summary.checked_in ?? 0;
   const remaining = summary.remaining ?? 0;
 
-  // Client-side search on the list tab
   const filtered = tickets.filter((t) => {
     if (!search) return true;
     const q = search.toLowerCase();
@@ -182,7 +179,6 @@ export default function CheckinPage() {
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <main className="flex-1 max-w-4xl mx-auto w-full px-6 py-8">
-        {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-xs text-secondary mb-6">
           <Link
             to="/organizer/events"
@@ -196,7 +192,6 @@ export default function CheckinPage() {
           </span>
         </div>
 
-        {/* Header */}
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-1">
             <QrCode size={14} className="text-accent" />
@@ -213,14 +208,12 @@ export default function CheckinPage() {
           </h1>
         </div>
 
-        {/* Summary pills */}
         <div className="grid grid-cols-3 gap-3 mb-8">
           <StatPill label="Total" value={total} color="#2563eb" />
           <StatPill label="Checked in" value={checkedIn} color="#22c55e" />
           <StatPill label="Remaining" value={remaining} color="#f59e0b" />
         </div>
 
-        {/* Progress bar */}
         {total > 0 && (
           <div className="mb-8">
             <div className="flex items-center justify-between mb-2">
@@ -240,7 +233,6 @@ export default function CheckinPage() {
           </div>
         )}
 
-        {/* Tabs */}
         <div className="flex items-center gap-1 p-1 bg-main-bg border border-border rounded-card mb-6 w-fit">
           <button
             onClick={() => setActiveTab(TABS.SCANNER)}
@@ -269,20 +261,17 @@ export default function CheckinPage() {
           </button>
         </div>
 
-        {/* ── Scanner tab ───────────────────────────────────── */}
         {activeTab === TABS.SCANNER && (
           <div className="p-6 md:bg-card md:border md:border-border md:rounded-card">
             <p className="text-sm text-secondary mb-6 text-center">
               Point the camera at an attendee's ticket QR code to check them in.
             </p>
-            <CheckinScanner eventId={id} onCheckin={handleCheckin} />
+            <CheckinScanner eventId={event?.id} onCheckin={handleCheckin} />
           </div>
         )}
 
-        {/* ── Attendee list tab ─────────────────────────────── */}
         {activeTab === TABS.LIST && (
           <div>
-            {/* Search */}
             <div className="relative mb-4 max-w-sm">
               <Search
                 size={15}
@@ -305,7 +294,6 @@ export default function CheckinPage() {
               )}
             </div>
 
-            {/* Table */}
             <div className="bg-card border border-border rounded-card overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full min-w-max">
@@ -332,7 +320,7 @@ export default function CheckinPage() {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={4} className="px-4 py-16 text-center">
+                        <td colSpan={5} className="px-4 py-16 text-center">
                           <div className="flex flex-col items-center gap-3">
                             <div className="w-12 h-12 rounded-card bg-accent-text border border-accent-border flex items-center justify-center">
                               <Users
