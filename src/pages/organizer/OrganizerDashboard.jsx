@@ -236,7 +236,7 @@ export default function OrganizerDashboard() {
                 {upcomingEvents.map((event) => (
                   <Link
                     key={event.id}
-                    to={`/organizer/events/${event.id}/bookings`}
+                    to={`/organizer/events/${event.slug}/bookings`}
                     className="py-3 flex flex-col gap-1 hover:opacity-80 transition-opacity"
                   >
                     <p className="text-sm font-semibold text-primary line-clamp-1">

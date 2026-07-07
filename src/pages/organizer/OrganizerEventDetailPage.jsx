@@ -107,7 +107,7 @@ export default function OrganizerEventDetailPage() {
 
               <div className="flex items-center gap-2 shrink-0">
                 <Link
-                  to={`/events/${event.id}`}
+                  to={`/events/${event.slug}`}
                   className="flex items-center gap-1.5 h-9 px-3 border border-border rounded-btn text-xs font-semibold text-secondary hover:text-primary hover:border-accent/40 transition-colors"
                 >
                   <Eye size={13} /> Public page
@@ -159,13 +159,13 @@ export default function OrganizerEventDetailPage() {
             {/* Quick actions */}
             <div className="grid grid-cols-2 gap-3">
               <Link
-                to={`/organizer/events/${event.id}/bookings`}
+                to={`/organizer/events/${event.slug}/bookings`}
                 className="flex items-center justify-center gap-2 h-11 rounded-btn bg-card border border-border text-sm font-semibold text-secondary hover:text-primary hover:border-accent/40 transition-colors"
               >
                 <Users size={15} strokeWidth={2} /> View Bookings
               </Link>
               <Link
-                to={`/organizer/events/${event.id}/checkin`}
+                to={`/organizer/events/${event.slug}/checkin`}
                 className="flex items-center justify-center gap-2 h-11 rounded-btn bg-card border border-border text-sm font-semibold text-secondary hover:text-primary hover:border-accent/40 transition-colors"
               >
                 <QrCode size={15} strokeWidth={2} /> Check-in Scanner

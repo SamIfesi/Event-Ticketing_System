@@ -17,7 +17,7 @@ function toInputDate(str) {
 }
 
 export default function EditEventPage() {
-  const { id } = useParams();
+  const { slug } = useParams();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [categories, setCategories] = useState([]);
   const [event, setEvent] = useState(null);
@@ -40,12 +40,12 @@ export default function EditEventPage() {
   }
 
   useEffect(() => {
-    if (!id) return;
+    if (!slug) return;
     fetchEvent();
     CategoryService.getCategories()
       .then((data) => setCategories(data.categories ?? []))
       .catch(() => {});
-  }, [id]);
+  }, [slug]);
 
   // Map the API event object to EventForm's expected shape
   const initialValues = useMemo(() => {
@@ -73,7 +73,7 @@ export default function EditEventPage() {
   }, [event]);
 
   async function handleSubmit(formData) {
-    await updateEvent(id, formData, {
+    await updateEvent(event.id, formData, {
       onSuccess: () => fetchEvent(),
     });
   }

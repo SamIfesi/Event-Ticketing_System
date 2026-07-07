@@ -105,28 +105,28 @@ function EventCard({ event, index, onDelete, mutating }) {
                 />
                 <div className="absolute bottom-9 right-0 z-20 w-44 bg-card border border-border rounded-card shadow-lg py-1 overflow-hidden">
                   <Link
-                    to={`/events/${event.id}`}
+                    to={`/events/${event.slug}`}
                     onClick={() => setMenuOpen(false)}
                     className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-secondary hover:bg-main-bg hover:text-primary transition-colors"
                   >
                     <Eye size={13} className="text-muted" /> View public page
                   </Link>
                   <Link
-                    to={`/organizer/events/${event.id}/edit`}
+                    to={`/organizer/events/${event.slug}/edit`}
                     onClick={() => setMenuOpen(false)}
                     className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-secondary hover:bg-main-bg hover:text-primary transition-colors"
                   >
                     <Pencil size={13} className="text-muted" /> Edit event
                   </Link>
                   <Link
-                    to={`/organizer/events/${event.id}/bookings`}
+                    to={`/organizer/events/${event.slug}/bookings`}
                     onClick={() => setMenuOpen(false)}
                     className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-secondary hover:bg-main-bg hover:text-primary transition-colors"
                   >
                     <Users size={13} className="text-muted" /> View bookings
                   </Link>
                   <Link
-                    to={`/organizer/events/${event.id}/checkin`}
+                    to={`/organizer/events/${event.slug}/checkin`}
                     onClick={() => setMenuOpen(false)}
                     className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-secondary hover:bg-main-bg hover:text-primary transition-colors"
                   >
@@ -189,13 +189,13 @@ function EventCard({ event, index, onDelete, mutating }) {
           {/* Quick action buttons */}
           <div className="flex items-center gap-2 mt-auto pt-1">
             <Link
-              to={`/organizer/events/${event.id}/edit`}
+              to={`/organizer/events/${event.slug}/edit`}
               className="flex-1 flex items-center justify-center gap-1.5 h-9 rounded-btn border border-border text-xs font-semibold text-secondary hover:text-primary hover:border-accent/40 transition-colors"
             >
               <Pencil size={12} strokeWidth={2.5} /> Edit
             </Link>
             <Link
-              to={`/organizer/events/${event.id}/bookings`}
+              to={`/organizer/events/${event.slug}/bookings`}
               className="flex-1 flex items-center justify-center gap-1.5 h-9 rounded-btn bg-accent-text text-accent border border-accent-border text-xs font-semibold hover:bg-accent hover:text-white transition-colors duration-150"
             >
               <Users size={12} strokeWidth={2.5} /> Bookings
@@ -277,13 +277,12 @@ export default function ManageEventsPage() {
     myEventsLoading,
     fetchMyEvents,
     deleteEvent,
-    mutating,
     loading,
   } = useOrganizerEvents();
 
   useEffect(() => {
     fetchMyEvents();
-  }, []);
+  }, [fetchMyEvents]);
 
   // Client-side filter (all events loaded at once for organizer)
   const filtered = myEvents.filter((e) => {

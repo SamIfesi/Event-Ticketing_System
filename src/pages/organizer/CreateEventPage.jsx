@@ -94,7 +94,7 @@ export default function CreateEventPage() {
       { ...form, total_tickets: totalFromTypes },
       {
         onSuccess: (event) => {
-          navigate(`/organizer/events/${event.id}/edit`);
+          navigate(`/organizer/events/${event.slug}/edit`);
         },
       }
     );

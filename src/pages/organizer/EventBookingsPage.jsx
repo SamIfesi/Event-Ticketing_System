@@ -197,7 +197,7 @@ export default function EventBookingsPage() {
           {/* Quick links */}
           <div className="flex items-center gap-2 shrink-0">
             <Link
-              to={`/organizer/events/${id}/checkin`}
+              to={`/organizer/events/${slug}/checkin`}
               className="flex items-center gap-1.5 h-10 px-4 bg-accent-text text-accent border border-accent-border text-xs font-semibold rounded-btn hover:bg-accent hover:text-white transition-colors duration-150"
             >
               <QrCode size={14} strokeWidth={2} /> Check-in Scanner
