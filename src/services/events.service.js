@@ -6,12 +6,17 @@ const EventsService = {
     return response.data.data; // returns {events: [], pagination: {}}
   },
 
-  async getEvent(id) {
-    const response = await api.get(`/events/${id}`);
+  // Public event page — accepts either a numeric event id OR a slug. 
+  async getEvent(slugOrId) {
+    const response = await api.get(`/events/${slugOrId}`);
     return response.data.data; // returns {event} - includes ticket_types[]
   },
-  async getMyEvent(id) {
-    const response = await api.get(`/organizer/events/${id}`);
+
+  // Organizer dashboard — accepts either a numeric id OR a slug.
+  // Always returns the full event object, including the real numeric event.id,
+  // which should be used for any subsequent mutation calls below.
+  async getMyEvent(slugOrId) {
+    const response = await api.get(`/organizer/events/${slugOrId}`);
     return response.data.data; // returns {event} - includes ticket_types[]
   },
 };
