@@ -5,6 +5,10 @@
       "destination": "https://api-ticketer-e.up.railway.app/api/sitemap.xml"
     },
     {
+      "source": "/events/:path*/meta",
+      "destination": "https://api-ticketer-e.up.railway.app/api/events/:path*/meta"
+    },
+    {
       "source": "/((?!assets|.*\\..*).*)",
       "destination": "/index.html"
     }
