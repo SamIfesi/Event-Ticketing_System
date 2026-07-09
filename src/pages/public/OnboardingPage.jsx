@@ -4,7 +4,7 @@ import { ArrowRight, ChevronRight } from 'lucide-react';
 
 // ── Slide illustrations (inline SVG scenes) ────────────────────
 
-function IllustrationTrack() {
+function IllustrationDiscover() {
   return (
     <img
       src="/assets/illustrations/party.svg"
@@ -14,7 +14,7 @@ function IllustrationTrack() {
   );
 }
 
-function IllustrationTeam() {
+function IllustrationTickets() {
   return (
     <img
       src="/assets/illustrations/tickets.svg"
@@ -26,7 +26,7 @@ function IllustrationTeam() {
 
 function IllustrationNotify() {
   return (
-    <img src="/assets/illustrations/notice.svg" alt="" className="w-full h-full"/>
+    <img src="/assets/illustrations/notice.svg" alt="" className="w-full h-full" />
   );
 }
 
@@ -34,33 +34,30 @@ function IllustrationNotify() {
 const SLIDES = [
   {
     id: 0,
-    Illustration: IllustrationTrack,
+    Illustration: IllustrationDiscover,
     accentColor: '#2563EB',
-    accentLight: '#EEF3FF',
-    tag: 'Stay On Top',
-    title: 'Track your work\nand get the result',
+    tag: 'Discover Events',
+    title: 'Find events\nhappening near you',
     description:
-      'Remember to keep track of your professional accomplishments. Your metrics, your momentum — all in one place.',
+      'Browse concerts, conferences, festivals and more — all in one place. Discover what\u2019s happening across Nigeria and never miss out.',
   },
   {
     id: 1,
-    Illustration: IllustrationTeam,
+    Illustration: IllustrationTickets,
     accentColor: '#F97316',
-    accentLight: '#FFF7ED',
-    tag: 'Collaborate',
-    title: 'Stay organized\nwith your team',
+    tag: 'Book Instantly',
+    title: 'Grab your ticket\nin just a few taps',
     description:
-      'Understanding the contributions our colleagues make to our teams and companies leads to better outcomes for everyone.',
+      'Pick your ticket type, pay securely with Paystack, and get your QR-coded ticket instantly. No printing, no stress.',
   },
   {
     id: 2,
     Illustration: IllustrationNotify,
     accentColor: '#16A34A',
-    accentLight: '#F0FDF4',
-    tag: 'Never Miss Out',
-    title: 'Get notified when\nwork happens',
+    tag: 'Stay Updated',
+    title: 'Show up with\njust your phone',
     description:
-      'Take control of notifications, collaborate live or on your own time. Your work, your schedule.',
+      'Get notified about your bookings, track your tickets, and scan your QR code straight at the gate for instant entry.',
   },
 ];
 
@@ -77,7 +74,7 @@ function Dots({ total, active, onDotClick, accent }) {
           style={{
             width: i === active ? 24 : 8,
             height: 8,
-            background: i === active ? accent : '#CBD5E1',
+            background: i === active ? accent : 'var(--color-border)',
           }}
         />
       ))}
@@ -139,7 +136,7 @@ export default function OnboardingPage() {
 
   return (
     <div
-      className="min-h-screen flex flex-col items-center justify-between"
+      className="min-h-screen bg-main-bg flex flex-col items-center justify-between"
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
@@ -167,9 +164,9 @@ export default function OnboardingPage() {
 
         {/* ── Illustration area */}
         <div
-          className="relative mx-6 mt-4 rounded-3xl overflow-hidden flex items-center justify-center"
+          className="relative mx-6 mt-4 rounded-3xl overflow-hidden flex items-center justify-center border border-border"
           style={{
-            background: slide.accentLight,
+            background: `${slide.accentColor}15`,
             height: 280,
             transition: 'background 0.4s ease',
           }}
@@ -224,9 +221,9 @@ export default function OnboardingPage() {
           <div
             className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold mb-3 tracking-wide uppercase"
             style={{
-              background: slide.accentLight,
+              background: `${slide.accentColor}18`,
               color: slide.accentColor,
-              border: `1.5px solid ${slide.accentColor}22`,
+              border: `1.5px solid ${slide.accentColor}33`,
             }}
           >
             <span
@@ -237,12 +234,12 @@ export default function OnboardingPage() {
           </div>
 
           <h1
-            className="text-[28px] leading-tight font-bold text-gray-900 mb-3 whitespace-pre-line"
+            className="text-[28px] leading-tight font-bold text-primary mb-3 whitespace-pre-line"
             style={{ letterSpacing: '-0.02em' }}
           >
             {slide.title}
           </h1>
-          <p className="text-sm leading-relaxed text-gray-500">
+          <p className="text-sm leading-relaxed text-secondary">
             {slide.description}
           </p>
         </div>
@@ -252,7 +249,7 @@ export default function OnboardingPage() {
           {/* Skip / Back */}
           <button
             onClick={() => (current > 0 ? goTo(current - 1) : skip())}
-            className="h-12 px-5 rounded-xl text-sm font-semibold text-gray-400 hover:text-gray-600 transition-colors"
+            className="h-12 px-5 rounded-xl text-sm font-semibold text-muted hover:text-primary transition-colors"
           >
             {current === 0 ? 'SKIP' : 'BACK'}
           </button>
