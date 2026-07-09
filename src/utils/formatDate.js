@@ -1,6 +1,24 @@
+
+function parseAsUTC(date) {
+  if (date instanceof Date) return date;
+
+  if (typeof date === 'string') {
+    const hasTimezoneInfo =
+      /Z$/i.test(date) || /[+-]\d{2}:?\d{2}$/.test(date);
+
+    if (!hasTimezoneInfo) {
+      // "2026-07-08 10:00:00" -> "2026-07-08T10:00:00Z"
+      const isoLike = date.includes('T') ? date : date.replace(' ', 'T');
+      return new Date(`${isoLike}Z`);
+    }
+  }
+
+  return new Date(date);
+}
+
 export function formatEventDate(date){
   if (!date) return '';
-  return new Date(date).toLocaleDateString('en-NG', {
+  return parseAsUTC(date).toLocaleDateString('en-NG', {
     weekday: 'long',
     day: 'numeric',
     month: 'long',
@@ -10,7 +28,7 @@ export function formatEventDate(date){
 
 export function formatShortDate(date){
   if (!date) return '';
-  return new Date(date).toLocaleDateString('en-NG', {
+  return parseAsUTC(date).toLocaleDateString('en-NG', {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
@@ -19,7 +37,7 @@ export function formatShortDate(date){
 
 export function formatTime(date){
   if (!date) return '';
-  return new Date(date).toLocaleTimeString('en-NG', {
+  return parseAsUTC(date).toLocaleTimeString('en-NG', {
     hour: '2-digit',
     minute: '2-digit',
     hour12: true,
@@ -31,17 +49,9 @@ export function formatEventDateTime(date){
   return `${formatShortDate(date)} . ${formatTime(date)}`;
 }
 
-function parseUTC(date) {
-  // MySQL DATETIME strings have no timezone; treat as UTC explicitly
-  if (typeof date === 'string' && !date.includes('T') && !date.endsWith('Z')) {
-    return new Date(date.replace(' ', 'T') + 'Z');
-  }
-  return new Date(date);
-}
-
 export function formateRelativeTime(date){
   if (!date) return '';
-  const diff = parseUTC(date) - new Date();
+  const diff = parseAsUTC(date) - new Date();
   const abs  = Math.abs(diff);
   const past = diff < 0;
 
@@ -57,11 +67,11 @@ export function formateRelativeTime(date){
 
 export function isEventPast(date){
   if (!date) return false;
-  return new Date(date) < new Date();
+  return parseAsUTC(date) < new Date();
 }
 
 export function isEventSoon(data, hours = 24){
   if (!data) return false;
-  const diff = new Date(data) - new Date();
+  const diff = parseAsUTC(data) - new Date();
   return diff > 0 && diff < hours * 3_600_000;
 }
