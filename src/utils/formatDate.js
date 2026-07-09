@@ -31,9 +31,17 @@ export function formatEventDateTime(date){
   return `${formatShortDate(date)} . ${formatTime(date)}`;
 }
 
+function parseUTC(date) {
+  // MySQL DATETIME strings have no timezone; treat as UTC explicitly
+  if (typeof date === 'string' && !date.includes('T') && !date.endsWith('Z')) {
+    return new Date(date.replace(' ', 'T') + 'Z');
+  }
+  return new Date(date);
+}
+
 export function formateRelativeTime(date){
   if (!date) return '';
-  const diff = new Date(date) - new Date();
+  const diff = parseUTC(date) - new Date();
   const abs  = Math.abs(diff);
   const past = diff < 0;
 
