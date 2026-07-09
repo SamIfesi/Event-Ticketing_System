@@ -170,7 +170,8 @@ export default function AdminUserDetailPage() {
           </div>
         )}
       </main>
-      <Footer />
+      <Footer variant="minimal" />
+      
 
       <ConfirmModal
         isOpen={confirmStatus}
