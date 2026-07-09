@@ -107,9 +107,10 @@ export default function OrganizerDashboard() {
   ).length;
   const totalSold = myEvents.reduce((acc, e) => acc + (e.tickets_sold ?? 0), 0);
   const totalRevenue = myEvents.reduce(
-    (acc, e) => acc + parseFloat(e.revenue ?? 0),
+    (acc, e) => acc + parseFloat(e.total_revenue ?? 0),
     0
   );
+  console.log(myEvents);
 
   const upcomingEvents = myEvents
     .filter((e) => e.status === 'published' && !isEventPast(e.start_date))
@@ -118,12 +119,12 @@ export default function OrganizerDashboard() {
 
   // Build a simple revenue chart from the top events
   const chartData = [...myEvents]
-    .filter((e) => parseFloat(e.revenue ?? 0) > 0)
-    .sort((a, b) => parseFloat(b.revenue) - parseFloat(a.revenue))
+    .filter((e) => parseFloat(e.total_revenue ?? 0) > 0)
+    .sort((a, b) => parseFloat(b.total_revenue) - parseFloat(a.total_revenue))
     .slice(0, 7)
     .map((e) => ({
       label: e.title?.slice(0, 12) + (e.title?.length > 12 ? '…' : ''),
-      value: parseFloat(e.revenue ?? 0),
+      value: parseFloat(e.total_revenue ?? 0),
     }));
 
   if (!user || !token) return <SkeletonDashboard />;
