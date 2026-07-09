@@ -231,8 +231,7 @@ function ExpandedCard({ ticket, gradientIndex, onCollapse }) {
   const title = ticket?.event_title ?? event?.title ?? 'Event';
   const startDate = ticket?.event_start_date ?? event?.start_date;
   const location = ticket?.event_location ?? event?.location;
-  const ticketAmount =
-    ticket?.total_amount === 0.0 ? 'FREE' : ticket?.total_amount;
+  const ticketAmount = ticket?.total_amount;
 
   return (
     <div className="bg-card border border-accent/20 rounded-card overflow-hidden shadow-lg transition-all duration-300">
@@ -319,7 +318,7 @@ function ExpandedCard({ ticket, gradientIndex, onCollapse }) {
             Ticket Amount
           </p>
           <p className="text-base font-semibold text-primary">
-            {formatCurrency(ticketAmount)}
+            {ticketAmount === '0.00' ? 'FREE' : formatCurrency(ticketAmount)}
           </p>
         </div>
 
