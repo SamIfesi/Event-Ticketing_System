@@ -226,7 +226,7 @@ export default function TicketDetailPage() {
   const event = ticket?.event ?? {};
   const startDate = ticket?.event_start_date ?? event?.start_date;
   const location = ticket?.event_location ?? event?.location;
-  const ticketAmount = ticket?.total_amount === 0 ? 'FREE' : ticket?.ticket_amount;
+  const ticketAmount = ticket?.total_amount;
 
   return (
     <div className="flex flex-col min-h-screen bg-main-bg">
@@ -325,7 +325,9 @@ export default function TicketDetailPage() {
                     Ticket Amount
                   </p>
                   <p className="text-base font-semibold text-primary">
-                    {formatCurrency(ticketAmount)}
+                    {ticketAmount === '0.00'
+                      ? 'FREE'
+                      : formatCurrency(ticketAmount)}
                   </p>
                 </div>
                 <div>
@@ -406,7 +408,7 @@ export default function TicketDetailPage() {
 
             {/* Fine print */}
             <p className="text-center text-xs text-muted pb-2">
-              Ticket #{String(ticket.id).padStart(8, '0')} · Issued via Ticketer
+              Ticket #{String(ticket.id).padStart(6, '0')} · Issued via Ticketer
             </p>
           </div>
         ) : null}
