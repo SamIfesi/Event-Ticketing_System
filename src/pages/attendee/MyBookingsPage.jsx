@@ -35,7 +35,7 @@ export default function MyBookingsPage() {
 
   useEffect(() => {
     fetchMyBookings();
-  }, []);
+  }, [fetchMyBookings]);
 
   const filtered = bookings.filter((b) => {
     const matchFilter = !filter || b.payment_status === filter;
