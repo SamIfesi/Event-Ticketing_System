@@ -162,7 +162,7 @@ function FullTicketCard({ ticket, showQr }) {
   const title = ticket?.event_title ?? event?.title ?? 'Event';
   const startDate = ticket?.event_start_date ?? event?.start_date;
   const location = ticket?.event_location ?? event?.location;
-  const ticketAmount = ticket?.total_amount === 0 ? 'FREE' : ticket?.ticket_amount;
+  const ticketAmount = ticket?.unit_price;
 
   return (
     <div className="bg-card border border-border rounded-card overflow-hidden shadow-md">
@@ -231,7 +231,7 @@ function FullTicketCard({ ticket, showQr }) {
             Ticket Amount
           </p>
           <p className="text-base font-semibold text-primary">
-            {formatCurrency(ticketAmount)}
+            {ticketAmount === '0.00' ? 'FREE' : formatCurrency(ticketAmount)}
           </p>
         </div>
         <div>

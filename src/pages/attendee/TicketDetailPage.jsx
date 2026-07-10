@@ -226,7 +226,7 @@ export default function TicketDetailPage() {
   const event = ticket?.event ?? {};
   const startDate = ticket?.event_start_date ?? event?.start_date;
   const location = ticket?.event_location ?? event?.location;
-  const ticketAmount = ticket?.total_amount;
+  const ticketAmount = ticket?.unit_price;
 
   return (
     <div className="flex flex-col min-h-screen bg-main-bg">
