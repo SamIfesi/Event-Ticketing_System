@@ -21,15 +21,15 @@ import { useUiStore } from '../store/uiStore';
 
 export function useTicketDownload() {
   const toastSuccess = useUiStore((s) => s.toastSuccess);
-  const toastError   = useUiStore((s) => s.toastError);
-  const toastInfo    = useUiStore((s) => s.toastInfo);
+  const toastError = useUiStore((s) => s.toastError);
+  const toastInfo = useUiStore((s) => s.toastInfo);
 
   // ── Attendee download states ───────────────────────────────
-  const [downloading,    setDownloading]    = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const [downloadingPng, setDownloadingPng] = useState(false);
-  const [checking,       setChecking]       = useState(false);
-  const [isReady,        setIsReady]        = useState(null); // null=unknown true/false
-  const [isPngReady, setIsPngReady]         = useState(null);
+  const [checking, setChecking] = useState(false);
+  const [isReady, setIsReady] = useState(null); // null=unknown true/false
+  const [isPngReady, setIsPngReady] = useState(null);
 
   // ── Organizer check-in states ──────────────────────────────
   const [checkinList, setCheckinList] = useState(null);
@@ -67,6 +67,15 @@ export function useTicketDownload() {
       return { ticket_generated: false, png_generated: false };
     } finally {
       setChecking(false);
+    }
+  }, []);
+
+  const downloadAllTickets = useCallback(async (bookingId) => {
+    // Implementation for downloading all tickets
+    const { tickets } = await TicketsService.getTickets(bookingId);
+    for (const ticket of tickets) {
+      await TicketsService.downloadTicket(ticket.id);
+      await new Promise((r) => setTimeout(r, 600)); // 600ms delay between downloads
     }
   }, []);
 
@@ -171,42 +180,48 @@ export function useTicketDownload() {
 
   // Fetch the full check-in list + summary for an event.
   // Returns { summary: { total, checked_in, remaining }, tickets[] }
-  const fetchCheckinList = useCallback(async (eventId) => {
-    setCheckinListLoading(true);
-    try {
-      const data = await TicketsService.getCheckinList(eventId);
-      setCheckinList(data);
-      return data;
-    } catch (err) {
-      toastError(
-        err?.response?.data?.message ?? 'Could not load check-in list.'
-      );
-      return null;
-    } finally {
-      setCheckinListLoading(false);
-    }
-  }, [toastError]);
+  const fetchCheckinList = useCallback(
+    async (eventId) => {
+      setCheckinListLoading(true);
+      try {
+        const data = await TicketsService.getCheckinList(eventId);
+        setCheckinList(data);
+        return data;
+      } catch (err) {
+        toastError(
+          err?.response?.data?.message ?? 'Could not load check-in list.'
+        );
+        return null;
+      } finally {
+        setCheckinListLoading(false);
+      }
+    },
+    [toastError]
+  );
 
   // Submit a scanned QR token at the gate.
   // Stores result or error so the scanner UI can display it.
-  const checkin = useCallback(async (qrToken) => {
-    setCheckinLoading(true);
-    setCheckinResult(null);
-    setCheckinError(null);
-    try {
-      const data = await TicketsService.checkin(qrToken);
-      setCheckinResult(data);
-      toastSuccess(`✓ ${data.attendee_name} checked in.`);
-      return data;
-    } catch (err) {
-      const msg = err?.response?.data?.message ?? 'Invalid ticket.';
-      setCheckinError(msg);
-      toastError(msg);
-      return null;
-    } finally {
-      setCheckinLoading(false);
-    }
-  }, [toastError, toastSuccess]);
+  const checkin = useCallback(
+    async (qrToken) => {
+      setCheckinLoading(true);
+      setCheckinResult(null);
+      setCheckinError(null);
+      try {
+        const data = await TicketsService.checkin(qrToken);
+        setCheckinResult(data);
+        toastSuccess(`✓ ${data.attendee_name} checked in.`);
+        return data;
+      } catch (err) {
+        const msg = err?.response?.data?.message ?? 'Invalid ticket.';
+        setCheckinError(msg);
+        toastError(msg);
+        return null;
+      } finally {
+        setCheckinLoading(false);
+      }
+    },
+    [toastError, toastSuccess]
+  );
 
   function resetCheckin() {
     setCheckinResult(null);
@@ -218,19 +233,22 @@ export function useTicketDownload() {
   // ============================================================
 
   // Download any booking's PDF ticket (no ownership check).
-  const adminDownload = useCallback(async (bookingId) => {
-    setAdminDownloading(true);
-    try {
-      await TicketsService.adminDownloadTicket(bookingId);
-      toastSuccess('Ticket downloaded.');
-    } catch (err) {
-      toastError(
-        err?.response?.data?.message ?? 'Download failed. Please try again.'
-      );
-    } finally {
-      setAdminDownloading(false);
-    }
-  }, [toastError, toastSuccess]);
+  const adminDownload = useCallback(
+    async (bookingId) => {
+      setAdminDownloading(true);
+      try {
+        await TicketsService.adminDownloadTicket(bookingId);
+        toastSuccess('Ticket downloaded.');
+      } catch (err) {
+        toastError(
+          err?.response?.data?.message ?? 'Download failed. Please try again.'
+        );
+      } finally {
+        setAdminDownloading(false);
+      }
+    },
+    [toastError, toastSuccess]
+  );
 
   // Download any booking's PNG ticket (no ownership check).
   const adminDownloadPng = useCallback(
@@ -252,26 +270,30 @@ export function useTicketDownload() {
 
   // Force-clear the cached PDF + PNG and regenerate both.
   // Returns { booking_id, ticket_url, ticket_png_url, file_size }
-  const regenerate = useCallback(async (bookingId) => {
-    setRegenerating(true);
-    setRegenerateResult(null);
-    try {
-      const data = await TicketsService.regenerateTicket(bookingId);
-      setRegenerateResult(data);
-      toastSuccess('Ticket regenerated successfully.');
-      // Reset readiness so UI reflects the fresh files
-      setIsReady(true);
-      setIsPngReady(true);
-      return data;
-    } catch (err) {
-      toastError(
-        err?.response?.data?.message ?? 'Regeneration failed. Please try again.'
-      );
-      return null;
-    } finally {
-      setRegenerating(false);
-    }
-  }, [toastError, toastSuccess]);
+  const regenerate = useCallback(
+    async (bookingId) => {
+      setRegenerating(true);
+      setRegenerateResult(null);
+      try {
+        const data = await TicketsService.regenerateTicket(bookingId);
+        setRegenerateResult(data);
+        toastSuccess('Ticket regenerated successfully.');
+        // Reset readiness so UI reflects the fresh files
+        setIsReady(true);
+        setIsPngReady(true);
+        return data;
+      } catch (err) {
+        toastError(
+          err?.response?.data?.message ??
+            'Regeneration failed. Please try again.'
+        );
+        return null;
+      } finally {
+        setRegenerating(false);
+      }
+    },
+    [toastError, toastSuccess]
+  );
 
   // ============================================================
   // DEV
@@ -298,23 +320,26 @@ export function useTicketDownload() {
   // Manually mark a booking as paid and issue tickets.
   // No real Paystack transaction — dev tool only.
   // Returns { booking_id, tickets[] }
-  const devForcePay = useCallback(async (bookingId) => {
-    setForcePayLoading(true);
-    setForcePayResult(null);
-    try {
-      const data = await TicketsService.devForcePay(bookingId);
-      setForcePayResult(data);
-      toastSuccess(`Booking #${bookingId} force-paid. Tickets issued.`);
-      return data;
-    } catch (err) {
-      toastError(
-        err?.response?.data?.message ?? 'Force pay failed. Please try again.'
-      );
-      return null;
-    } finally {
-      setForcePayLoading(false);
-    }
-  }, [toastError, toastSuccess]);
+  const devForcePay = useCallback(
+    async (bookingId) => {
+      setForcePayLoading(true);
+      setForcePayResult(null);
+      try {
+        const data = await TicketsService.devForcePay(bookingId);
+        setForcePayResult(data);
+        toastSuccess(`Booking #${bookingId} force-paid. Tickets issued.`);
+        return data;
+      } catch (err) {
+        toastError(
+          err?.response?.data?.message ?? 'Force pay failed. Please try again.'
+        );
+        return null;
+      } finally {
+        setForcePayLoading(false);
+      }
+    },
+    [toastError, toastSuccess]
+  );
 
   // ============================================================
   // RETURN
@@ -330,6 +355,7 @@ export function useTicketDownload() {
     download,
     downloadPng,
     waitAndDownload,
+    downloadAllTickets,
 
     // ── Organizer ─────────────────────────────────────────────
     checkinList,

@@ -26,7 +26,30 @@ const TicketsService = {
   // ATTENDEE — ticket file downloads (PDF + PNG)
   // ============================================================
 
-  // GET /api/bookings/:id/ticket
+  // GET /api/tickets/:id/download
+  // Streams the server-generated PNG binary (2x devicePixelRatio).
+  // Must use responseType: 'blob' — Axios defaults to JSON.
+  // Both PDF and PNG are generated together on the first request
+  // so downloading either format warms the cache for the other.
+  async downloadSingleTicket(ticketId) {
+    const response = await api.get(`/tickets/${ticketId}/download`, {
+      responseType: 'blob',
+      skipLoader: true,
+    });
+
+    const blob = new Blob([response.data], { type: 'application/pdf' });
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Ticketer_Ticket_#${String(ticketId).padStart(6, '0')}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  },
+
+  // GET /api/tickets/:id/download/pdf
   // Streams the server-generated PDF binary.
   // Must use responseType: 'blob' — Axios defaults to JSON.
   // Both PDF and PNG are generated together on the first request
