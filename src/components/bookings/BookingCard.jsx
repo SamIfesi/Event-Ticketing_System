@@ -1,8 +1,10 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Badge from '../../components/ui/Badge';
 import { formatShortDate } from '../../utils/formatDate';
 import { formatCurrency } from '../../utils/formatCurrency';
 import DownloadTicketButton from '../tickets/DownloadTicketButton';
+import EventsService from '../../services/events.service';
 import {
   CreditCard,
   ArrowUpRight,
@@ -30,16 +32,52 @@ function StatusIcon({ status }) {
 }
 
 export default function BookingCard({ booking }) {
-  const event = booking?.event ?? {};
+  const eventData = booking?.event ?? {};
   const isPaid = booking?.payment_status === 'paid';
   const isFailed = booking?.payment_status === 'failed';
   const bannerImage = booking?.banner_image ?? '';
+  const totalAmount = booking?.total_amount;
 
-  const eventId = event?.id ?? booking?.event_id;
+  const eventId = eventData?.id ?? booking?.event_id;
   const bookingId = booking?.id;
 
+  // The booking payload doesn't include a slug, so fetch the single
+  // event to get it. Falls back to eventId if the fetch hasn't
+  // resolved yet or fails.
+  const [eventSlug, setEventSlug] = useState(eventData?.slug ?? null);
+
+  useEffect(() => {
+    if (eventData?.slug) {
+      setEventSlug(eventData.slug);
+      return;
+    }
+    if (!eventId) return;
+
+    let active = true;
+    EventsService.getEvent(eventId)
+      .then((data) => {
+        if (active) setEventSlug(data?.event?.slug ?? null);
+      })
+      .catch(() => {
+        if (active) setEventSlug(null);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [eventId, eventData?.slug]);
+
+  const eventLinkTarget = eventSlug ?? eventId;
+
   return (
-    <div className="bg-card border border-border rounded-card overflow-hidden hover:border-accent/30 hover:shadow-md transition-all duration-200 group">
+    <div className="relative bg-card border border-border rounded-card overflow-hidden hover:border-accent/30 hover:shadow-md transition-all duration-200 group">
+      {eventLinkTarget && (
+        <Link
+          to={`/events/${eventLinkTarget}`}
+          className="absolute inset-0 z-10"
+          aria-label={`View details for ${booking?.event_title ?? 'event'}`}
+        />
+      )}
       {/* Color accent strip */}
       <div
         className={`h-1 w-full ${isPaid ? 'bg-success' : isFailed ? 'bg-error' : 'bg-warning'}`}
@@ -52,12 +90,12 @@ export default function BookingCard({ booking }) {
             {bannerImage ? (
               <img
                 src={bannerImage}
-                alt={event.title}
+                alt={eventData.title}
                 className="w-full h-full object-cover"
               />
             ) : (
               <span className="text-xl font-black text-white/60">
-                {(booking?.event_title ?? event.title ?? 'E')?.charAt(0)}
+                {(booking?.event_title ?? eventData.title ?? 'E')?.charAt(0)}
               </span>
             )}
           </div>
@@ -67,7 +105,7 @@ export default function BookingCard({ booking }) {
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <h3 className="font-bold text-primary text-sm leading-snug line-clamp-1">
-                  {booking?.event_title ?? event.title ?? 'Event booking'}
+                  {booking?.event_title ?? eventData.title ?? 'Event booking'}
                 </h3>
                 <p className="text-xs text-muted mt-0.5">
                   Booking #{String(booking.id).padStart(6, '0')}
@@ -82,7 +120,9 @@ export default function BookingCard({ booking }) {
                 />
                 {booking?.total_amount != null && (
                   <span className="text-sm font-black text-primary">
-                    {formatCurrency(booking.total_amount)}
+                    {totalAmount === '0.00' || Number(totalAmount) === 0
+                      ? 'FREE'
+                      : formatCurrency(totalAmount)}
                   </span>
                 )}
               </div>
@@ -90,21 +130,21 @@ export default function BookingCard({ booking }) {
 
             {/* Details row */}
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-3">
-              {(event.start_date ?? booking?.event_start_date) && (
+              {(eventData.start_date ?? booking?.event_start_date) && (
                 <div className="flex items-center gap-1.5 text-xs text-secondary">
                   <Calendar size={11} className="text-muted shrink-0" />
                   <span>
                     {formatShortDate(
-                      event.start_date ?? booking?.event_start_date
+                      eventData.start_date ?? booking?.event_start_date
                     )}
                   </span>
                 </div>
               )}
-              {(event.location ?? booking?.event_location) && (
+              {(eventData.location ?? booking?.event_location) && (
                 <div className="flex items-center gap-1.5 text-xs text-secondary">
                   <MapPin size={11} className="text-muted shrink-0" />
                   <span className="truncate max-w-35">
-                    {event.location ?? booking?.event_location}
+                    {eventData.location ?? booking?.event_location}
                   </span>
                 </div>
               )}
@@ -140,7 +180,7 @@ export default function BookingCard({ booking }) {
                     : 'Awaiting payment'}
             </span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="relative z-20 flex items-center gap-3">
             {isPaid && bookingId && (
               <Link
                 to={`/my-tickets?booking=${bookingId}`}
@@ -148,21 +188,6 @@ export default function BookingCard({ booking }) {
               >
                 <Ticket size={12} strokeWidth={2.5} />
                 View tickets
-              </Link>
-            )}
-            {isPaid && bookingId && (
-              <DownloadTicketButton
-                bookingId={bookingId}
-                variant="link"
-                size="sm"
-              />
-            )}
-            {eventId && (
-              <Link
-                to={`/events/${eventId}`}
-                className="flex items-center gap-1 text-xs font-semibold text-secondary hover:text-primary transition-colors"
-              >
-                Event <ArrowUpRight size={12} strokeWidth={2.5} />
               </Link>
             )}
           </div>
