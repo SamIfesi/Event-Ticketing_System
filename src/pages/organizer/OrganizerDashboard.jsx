@@ -110,7 +110,6 @@ export default function OrganizerDashboard() {
     (acc, e) => acc + parseFloat(e.total_revenue ?? 0),
     0
   );
-  console.log(myEvents);
 
   const upcomingEvents = myEvents
     .filter((e) => e.status === 'published' && !isEventPast(e.start_date))
