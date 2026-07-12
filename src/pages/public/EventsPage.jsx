@@ -59,7 +59,7 @@ export default function EventsPage() {
       if (searchInput !== search) setSearch(searchInput);
     }, 500);
     return () => clearTimeout(t);
-  }, [searchInput]);
+  }, [searchInput, search, setSearch]);
 
   const hasFilters = Boolean(search || category || date);
   const totalResults = pagination?.total ?? 0;
