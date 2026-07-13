@@ -48,8 +48,7 @@ export default function Footer({ variant }) {
                 { label: 'Browse Events', to: '/events' },
                 { label: 'Login', to: '/login' },
                 { label: 'Register', to: '/register' },
-                { label: 'Terms', to: '/terms' },
-                { label: 'Privacy', to: '/privacy' },
+                { label: 'Legal', to: '/legal' },
               ].map((link) => (
                 <Link
                   key={link.to}
@@ -83,8 +82,7 @@ export default function Footer({ variant }) {
                 { label: 'My Bookings', to: '/my-bookings' },
                 { label: 'Profile', to: '/profile' },
                 { label: 'Dashboard', to: '/dashboard' },
-                { label: 'Terms', to: '/terms' },
-                { label: 'Privacy', to: '/privacy' },
+                { label: 'Legal', to: '/legal' },
               ].map((link) => (
                 <Link
                   key={link.to}
