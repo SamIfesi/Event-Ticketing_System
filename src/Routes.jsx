@@ -10,6 +10,8 @@ import RoleRoute from './components/auth/RoleRoute';
 // Terms of Service and Privacy Policy
 const TermsPage = lazy(() => import('./pages/public/TermsPage'));
 const PrivacyPolicyPage = lazy(() => import('./pages/public/PrivacyPolicyPage'));
+const LegalPage = lazy(() => import('./pages/public/LegalPage'));
+const RefundPolicyPage = lazy(() => import('./pages/public/RefundPolicyPage'));
 
 // auth Pages
 const LoginPage = lazy(() => import('./pages/public/LoginPage.jsx'));
@@ -124,8 +126,11 @@ export default function AppRoutes() {
           }
         />
 
+        {/* Legal pages */}
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/privacy" element={<PrivacyPolicyPage />} />
+        <Route path="/legal" element={<LegalPage />} />
+        <Route path="/refund-policy" element={<RefundPolicyPage />} />
 
         {/* Public */}
         <Route path="/home" element={<HomePage />} />
