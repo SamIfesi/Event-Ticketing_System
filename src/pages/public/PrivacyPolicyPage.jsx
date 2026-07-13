@@ -6,7 +6,7 @@
 // is live. Search for "TODO" to find remaining placeholders.
 
 import { Link } from 'react-router-dom';
-import { ShieldCheck, ArrowLeft } from 'lucide-react';
+import { ShieldCheck, ChevronRight } from 'lucide-react';
 import Navbar from '../../components/layout/Navbar';
 import Sidebar from '../../components/layout/Sidebar';
 import Footer from '../../components/layout/Footer';
@@ -57,13 +57,13 @@ export default function PrivacyPolicyPage() {
       {/* Header */}
       <div className="bg-card border-b border-border">
         <div className="max-w-5xl mx-auto px-6 py-10">
-          <Link
-            to="/home"
-            className="inline-flex items-center gap-1.5 mb-4 text-sm font-medium text-secondary hover:text-primary transition-colors duration-150"
-          >
-            <ArrowLeft size={15} strokeWidth={2.5} />
-            Back home
-          </Link>
+          <div className="flex items-center gap-2 text-xs text-secondary mb-3">
+            <Link to="/legal" className="hover:text-primary transition-colors">
+              Legal
+            </Link>
+            <ChevronRight size={12} className="text-muted" />
+            <span className="text-primary font-medium">Privacy Policy</span>
+          </div>
           <div className="flex items-center gap-3 mb-2">
             <div className="w-11 h-11 rounded-card bg-accent-text border border-accent-border flex items-center justify-center shrink-0">
               <ShieldCheck
