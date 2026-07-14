@@ -23,6 +23,8 @@ import {
   ScrollText,
   CreditCard,
   BarChart3,
+  Handshake,
+  Lock,
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useAuth } from '../../hooks/useAuth';
@@ -300,11 +302,6 @@ export default function Sidebar({ isOpen, onClose }) {
                   )}
                 </div>
                 <span className="flex-1">Notifications</span>
-                {/* {unreadCount > 0 && (
-                  <span className="text-[10px] font-bold text-error bg-error/10 px-1.5 py-0.5 rounded-full">
-                    {unreadCount}
-                  </span>
-                )} */}
                 {isActive('/notifications') && (
                   <ChevronRight size={14} className="text-accent/60" />
                 )}
@@ -317,13 +314,15 @@ export default function Sidebar({ isOpen, onClose }) {
                 active={isActive('/my-transactions')}
               />
 
-              <NavItem
-                to="/become-organizer"
-                icon={ShieldUser}
-                label="Become Organizer"
-                onClick={onClose}
-                active={isActive('/become-organizer')}
-              />
+              {(role === ROLES.ATTENDEE || role === ROLES.DEV) && (
+                <NavItem
+                  to="/become-organizer"
+                  icon={ShieldUser}
+                  label="Become Organizer"
+                  onClick={onClose}
+                  active={isActive('/become-organizer')}
+                />
+              )}
               <NavItem
                 to="/profile"
                 icon={User}
