@@ -23,7 +23,8 @@ export default function middleware(request) {
   if (isBot) {
     const url = new URL(request.url);
     const slug = url.pathname.split('/events/')[1];
-    const backendUrl = process.env.BACKEND_URL || 'https://api-ticketer-e.up.railway.app';
+    const backendUrl =
+      process.env.BACKEND_URL || 'https://api.ticketer.website';
     return Response.redirect(`${backendUrl}/api/events/${slug}/meta`, 307);
   }
 }
