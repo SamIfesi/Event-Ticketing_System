@@ -1,7 +1,7 @@
 import {
   CheckCircle2, XCircle, QrCode, CalendarX, CalendarClock,
   ShieldCheck, UserX, Megaphone, AlertTriangle, Banknote,
-  Flag, CreditCard, ThumbsUp, ThumbsDown, Bell,
+  Flag, CreditCard, ThumbsUp, ThumbsDown, Bell, ClipboardList
 } from 'lucide-react';
 
 // Icon + accent color per notification type — same pattern as your TOAST_CONFIG
@@ -24,6 +24,8 @@ export const NOTIFICATION_META = {
   admin_organizer_flagged:  { icon: Flag,         color: 'var(--color-error)' },
   organizer_approved:       { icon: ThumbsUp,      color: 'var(--color-success)' },
   organizer_rejected:       { icon: ThumbsDown,    color: 'var(--color-error)' },
+  new_organizer_application: { icon: Megaphone,    color: 'var(--color-accent)' },
+  organizer_application_submitted: { icon: ThumbsUp,    color: 'var(--color-success)' },
 };
 
 export function getNotificationMeta(type) {
