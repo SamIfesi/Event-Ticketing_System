@@ -1,11 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import {
-  ArrowLeft,
-  ArrowRight,
-  Send,
-  AlertTriangle
-} from 'lucide-react';
+import { ArrowLeft, ArrowRight, Send, AlertTriangle } from 'lucide-react';
 import { useOrganizerEvents } from '../../hooks/useOrganizerEvents';
 import { useOrganizerPayment } from '../../hooks/useOrganizerPayment';
 import { useUiStore } from '../../store/uiStore';
@@ -35,6 +30,17 @@ function validateStep(step, form) {
   if (step === 1) {
     if (!form.title.trim()) errors.push('Event title is required.');
     if (!form.location.trim()) errors.push('Location is required.');
+    if (
+      form.contact_email?.trim() &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.contact_email.trim())
+    ) {
+      errors.push('Enter a valid enquiry email address, or leave it blank.');
+    }
+    if (!form.contact_phone?.trim() || !/^\d{11}$/.test(form.contact_phone)) {
+      errors.push(
+        'Contact phone is required and must be a valid 10-digit number.'
+      );
+    }
   }
   if (step === 2) {
     if (!form.start_date) errors.push('Start date is required.');
@@ -57,7 +63,8 @@ export default function CreateEventPage() {
   const [form, setForm] = useState({ ...DEFAULT_FORM });
   const navigate = useNavigate();
 
-  const { hasPaymentDetails, paymentDetailsLoading, fetchPaymentDetails } = useOrganizerPayment();
+  const { hasPaymentDetails, paymentDetailsLoading, fetchPaymentDetails } =
+    useOrganizerPayment();
   const { createEvent, loading, error, fieldErrors } = useOrganizerEvents();
   const toastError = useUiStore((state) => state.toastError);
 
@@ -218,7 +225,7 @@ export default function CreateEventPage() {
         </p>
       </main>
 
-      <Footer variant="minimal"/>
+      <Footer variant="minimal" />
     </div>
   );
 }
