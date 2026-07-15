@@ -232,6 +232,12 @@ export const NAV_GROUPS = [
         label: 'Browse Events',
         description: 'Find and explore events',
       },
+      {
+        to: '/about',
+        icon: ShieldUser,
+        label: 'About',
+        description: 'Learn more about us',
+      },
     ],
   },
   {
