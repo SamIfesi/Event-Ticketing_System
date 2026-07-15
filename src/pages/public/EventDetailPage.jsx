@@ -29,6 +29,7 @@ import Button from '../../components/ui/Button';
 import Sidebar from '../../components/layout/Sidebar';
 import Navbar from '../../components/layout/Navbar';
 import { TicketTypeSelector } from '../../components/events/TicketTypeSelector';
+import ContactOrganizerCard from '../../components/events/ContactOrganizerCard.jsx';
 import { ROLES, PAYSTACK_PUBLIC_KEY } from '../../config/constants';
 import { Helmet } from 'react-helmet-async';
 
@@ -251,24 +252,37 @@ export default function EventDetailPage() {
   return (
     <>
       {event && (
-  <Helmet>
-    <title>{event.title} | Ticketer</title>
-    <meta name="description" content={event.description?.slice(0, 160) ?? ''} />
+        <Helmet>
+          <title>{event.title} | Ticketer</title>
+          <meta
+            name="description"
+            content={event.description?.slice(0, 160) ?? ''}
+          />
 
-    {/* Open Graph (WhatsApp, Facebook, Telegram, LinkedIn) */}
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content={event.title} />
-    <meta property="og:description" content={event.description?.slice(0, 160) ?? ''} />
-    <meta property="og:url" content={window.location.href} />
-    {event.banner_image && <meta property="og:image" content={event.banner_image} />}
+          {/* Open Graph (WhatsApp, Facebook, Telegram, LinkedIn) */}
+          <meta property="og:type" content="website" />
+          <meta property="og:title" content={event.title} />
+          <meta
+            property="og:description"
+            content={event.description?.slice(0, 160) ?? ''}
+          />
+          <meta property="og:url" content={window.location.href} />
+          {event.banner_image && (
+            <meta property="og:image" content={event.banner_image} />
+          )}
 
-    {/* Twitter Card */}
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={event.title} />
-    <meta name="twitter:description" content={event.description?.slice(0, 160) ?? ''} />
-    {event.banner_image && <meta name="twitter:image" content={event.banner_image} />}
-  </Helmet>
-)}
+          {/* Twitter Card */}
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content={event.title} />
+          <meta
+            name="twitter:description"
+            content={event.description?.slice(0, 160) ?? ''}
+          />
+          {event.banner_image && (
+            <meta name="twitter:image" content={event.banner_image} />
+          )}
+        </Helmet>
+      )}
 
       <div className="flex flex-col min-h-screen bg-main-bg">
         {/* Navbar */}
@@ -558,6 +572,12 @@ export default function EventDetailPage() {
                       )}
                     </div>
                   </div>
+
+                  <ContactOrganizerCard
+                    phone={event.contact_phone}
+                    email={event.contact_email}
+                    organizerName={event.organizer_name}
+                  />
 
                   {/* Login nudge for guests */}
                   {!isLoggedIn && event.ticket_types?.length > 0 && !isPast && (
