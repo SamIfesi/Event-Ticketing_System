@@ -46,6 +46,7 @@ export default function Footer({ variant }) {
             <nav className="flex items-center gap-6 flex-wrap justify-center">
               {[
                 { label: 'Browse Events', to: '/events' },
+                { label: 'About', to: '/about' },
                 { label: 'Login', to: '/login' },
                 { label: 'Register', to: '/register' },
                 { label: 'Legal', to: '/legal' },
@@ -79,6 +80,7 @@ export default function Footer({ variant }) {
               {[
                 { label: 'Home', to: '/home' },
                 { label: 'Browse Events', to: '/events' },
+                { label: 'About Us', to: '/about' },
                 { label: 'My Bookings', to: '/my-bookings' },
                 { label: 'Profile', to: '/profile' },
                 { label: 'Dashboard', to: '/dashboard' },
