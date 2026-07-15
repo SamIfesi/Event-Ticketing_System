@@ -248,6 +248,15 @@ export default function Sidebar({ isOpen, onClose }) {
             onClick={onClose}
             active={isActive('/events')}
           />
+          {!isLoggedIn && (
+            <NavItem
+              to="/about"
+              icon={ShieldUser}
+              label="About Us"
+              onClick={onClose}
+              active={isActive('/about')}
+            />
+          )}
 
           {isLoggedIn && (
             <>
