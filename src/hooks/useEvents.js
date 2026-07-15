@@ -57,11 +57,11 @@ export function useEvents() {
 
   // ── Fetch single event ────────────────────────────────────────
   const fetchEvent = useCallback(
-    async (id) => {
+    async (slug) => {
       setEventLoading(true);
       setEventError(null);
       try {
-        const data = await EventsService.getEvent(id);
+        const data = await EventsService.getEvent(slug);
         setEvent(data.event);
       } catch (err) {
         const msg = err?.response?.data?.message ?? 'Event not found.';
