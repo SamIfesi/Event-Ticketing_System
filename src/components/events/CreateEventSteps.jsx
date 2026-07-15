@@ -10,6 +10,8 @@ import {
   XCircle,
   Plus,
   Info,
+  Phone,
+  Mail,
 } from 'lucide-react';
 import CategoryService from '../../services/category.service';
 import { formatCurrency } from '../../utils/formatCurrency';
@@ -117,7 +119,7 @@ export function StepBasicInfo({ form, setForm, categories, fieldErrors }) {
       {/* Category */}
       <div className="flex flex-col gap-1.5">
         <label className="text-sm font-medium text-primary select-none">
-          Category <span className="text-muted font-normal">(compulsory)</span>
+          Category
         </label>
         <div className="relative">
           <Tag
@@ -151,6 +153,42 @@ export function StepBasicInfo({ form, setForm, categories, fieldErrors }) {
         error={fieldErrors?.location}
         icon={<MapPin size={15} />}
       />
+
+      {/* ── Contact Information ──────────────────────────────*/}
+      <div className="pt-2 mt-5 border-t border-border">
+        <div className="flex items-start gap-2 mb-4">
+          <div>
+            <p className="text-lg font-semibold text-primary">
+              Contact Information
+            </p>
+            <p className="text-xs text-muted mt-0.5">
+              Shown to attendees so they can reach you with questions about this
+              event. Leave blank to keep it private.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Input
+            label="Enquiry phone number"
+            type="tel"
+            placeholder="e.g. 08012345678"
+            value={form.contact_phone ?? ''}
+            onChange={(e) => set('contact_phone', e.target.value)}
+            error={fieldErrors?.contact_phone}
+            icon={<Phone size={15} />}
+          />
+          <Input
+            label="Enquiry email"
+            type="email"
+            placeholder="e.g. events@yourbrand.com"
+            value={form.contact_email ?? ''}
+            onChange={(e) => set('contact_email', e.target.value)}
+            error={fieldErrors?.contact_email}
+            icon={<Mail size={15} />}
+          />
+        </div>
+      </div>
     </div>
   );
 }
@@ -490,6 +528,15 @@ export function StepPublish({ form, setForm, error }) {
                 hasFreeTickets && minPrice === 0
                   ? 'Free'
                   : `From ${formatCurrency(minPrice)}`,
+            },
+            {
+              label: 'Enquiry contact',
+              value:
+                form.contact_phone || form.contact_email
+                  ? [form.contact_phone, form.contact_email]
+                      .filter(Boolean)
+                      .join(' · ')
+                  : 'Not provided',
             },
           ].map(({ label, value }) => (
             <div
