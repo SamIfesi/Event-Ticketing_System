@@ -20,12 +20,17 @@ import CategoryScroller from '../../components/events/CategoryScroller';
 import CategoryEventRow from '../../components/events/CategoryEventRow';
 
 const STATS = [
-  { label: 'Events hosted', value: '1,200+' },
-  { label: 'Tickets sold', value: '48,000+' },
-  { label: 'Active organisers', value: '340+' },
-  { label: 'Cities covered', value: '12' },
+  { label: 'Events hosted', value: '10+' },
+  { label: 'Tickets sold', value: '40+' },
+  { label: 'Active organisers', value: '10+' },
+  { label: 'Cities covered', value: '7' },
 ];
-
+// const STATS = [
+//   { label: 'Events hosted', value: '1,200+' },
+//   { label: 'Tickets sold', value: '48,000+' },
+//   { label: 'Active organisers', value: '340+' },
+//   { label: 'Cities covered', value: '12' },
+// ];
 const HOW_STEPS = [
   {
     step: '01',
