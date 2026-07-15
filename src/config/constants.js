@@ -414,6 +414,8 @@ export const DEFAULT_FORM = {
   location: '',
   banner_image: '',
   banner_public_id: '',
+  contact_email: '',
+  contact_phone: '',
   start_date: '',
   end_date: '',
   ticket_types: [{ ...EMPTY_TICKET }],
