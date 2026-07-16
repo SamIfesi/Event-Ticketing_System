@@ -9,6 +9,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
+import { ROLES } from '../../config/constants';
 import EventsService from '../../services/events.service';
 import CategoryService from '../../services/category.service';
 import line from '/assets/illustrations/line.svg';
@@ -113,7 +114,12 @@ function StatItem({ value, label }) {
 // ────────────────────────────────────────────────────────────────────────────
 export default function HomePage() {
   const token = useAuthStore((state) => state.token);
+  const user = useAuthStore((state) => state.user);
   const isLoggedIn = Boolean(token);
+  const role = user?.role;
+
+  const isAdmin = role === ROLES.ADMIN || role === ROLES.DEV;
+  const isOrganizer = role === ROLES.ORGANIZER || isAdmin;
 
   const [featuredEvents, setFeaturedEvents] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -389,12 +395,21 @@ export default function HomePage() {
             </div>
             <div className="flex flex-col sm:flex-row gap-3 shrink-0 w-full sm:w-auto">
               {isLoggedIn ? (
-                <Link
-                  to="/organizer/dashboard"
-                  className="flex items-center justify-center gap-2 h-12 px-6 bg-white text-accent font-bold text-sm rounded-btn hover:bg-white/90 transition-colors duration-180 active:scale-95 w-full sm:w-auto"
-                >
-                  Go to Dashboard <ArrowRight size={16} strokeWidth={2.5} />
-                </Link>
+                isOrganizer ? (
+                  <Link
+                    to="/organizer/dashboard"
+                    className="flex items-center justify-center gap-2 h-12 px-6 bg-white text-accent font-bold text-sm rounded-btn hover:bg-white/90 transition-colors duration-180 active:scale-95 w-full sm:w-auto"
+                  >
+                    Go to Dashboard <ArrowRight size={16} strokeWidth={2.5} />
+                  </Link>
+                ) : (
+                  <Link
+                    to="/become-organizer"
+                    className="flex items-center justify-center gap-2 h-12 px-6 bg-white text-accent font-bold text-sm rounded-btn hover:bg-white/90 transition-colors duration-180 active:scale-95 w-full sm:w-auto"
+                  >
+                    Become Organizer Today <ArrowRight size={16} strokeWidth={2.5} />
+                  </Link>
+                )
               ) : (
                 <>
                   <Link
