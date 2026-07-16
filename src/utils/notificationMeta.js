@@ -43,6 +43,8 @@ const SAFE_OVERRIDES = {
   payout_sent:             () => '/organizer/payment-details',
   payout_frozen:           () => '/organizer/payment-details',
   admin_organizer_flagged: () => '/admin/users',
+  new_organizer_application: () => '/admin/organizer/applications',
+  organizer_application_submitted: () => '/become-organizer',
 };
 
 export function resolveNotificationLink(notification) {
