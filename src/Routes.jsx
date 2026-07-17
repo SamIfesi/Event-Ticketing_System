@@ -26,6 +26,7 @@ const OnboardingPage = lazy(() => import('./pages/public/OnboardingPage.jsx'));
 // public
 const HomePage = lazy(() => import('./pages/public/HomePage'));
 const AboutPage = lazy(() => import('./pages/public/AboutPage'));
+const HowItWorksPage = lazy(() => import('./pages/public/HowItWorksPage'));
 const EventsPage = lazy(() => import('./pages/public/EventsPage'));
 const EventDetailPage = lazy(() => import('./pages/public/EventDetailPage'));
 const UnauthorizedPage = lazy(() => import('./pages/public/UnauthorizedPage'));
@@ -136,6 +137,7 @@ export default function AppRoutes() {
         {/* Public */}
         <Route path="/home" element={<HomePage />} />
         <Route path="/about" element={<AboutPage />} />
+        <Route path="/how-it-works" element={<HowItWorksPage />} />
         <Route path="/events" element={<EventsPage />} />
         <Route path="/events/:id" element={<EventDetailPage />} />
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
