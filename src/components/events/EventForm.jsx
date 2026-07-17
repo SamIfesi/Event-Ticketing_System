@@ -1,6 +1,7 @@
 // Shared form used by both CreateEventPage and EditEventPage.
 // Handles: title, description, category, location, banner_image URL,
-//          start_date, end_date, total_tickets, status, ticket_types[]
+//          contact_phone, contact_email, start_date, end_date,
+//          total_tickets, status, ticket_types[]
 //
 // Props:
 //   initialValues — pre-filled data (for edit mode)
@@ -24,6 +25,8 @@ import {
   ChevronDown,
   XCircle,
   Info,
+  Phone,
+  Mail,
 } from 'lucide-react';
 import Input from '../ui/Input';
 import Button from '../ui/Button';
@@ -151,6 +154,8 @@ const DEFAULT_VALUES = {
   location: '',
   banner_image: '',
   banner_public_id: '',
+  contact_email: '',
+  contact_phone: '',
   start_date: '',
   end_date: '',
   total_tickets: '',
@@ -264,7 +269,7 @@ export default function EventForm({
         {/* Category */}
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-medium text-primary select-none">
-            Category <span className="text-muted font-normal">(optional)</span>
+            Category
           </label>
           <div className="relative">
             <Tag
@@ -318,6 +323,46 @@ export default function EventForm({
           }}
         />
       </div>
+      </section>
+
+      {/* ── Section: Contact information ─────────────────────
+          Optional enquiry contact shown to attendees on the event
+          detail page — lets people reach the organizer directly. */}
+      <section className="flex flex-col gap-4">
+        <div className="flex items-center gap-2 pb-2 border-b border-border">
+          <Phone size={15} className="text-accent" />
+          <h3 className="text-sm font-bold text-primary">
+            Contact Information
+          </h3>
+        </div>
+
+        <p className="text-xs text-muted -mt-2">
+          Shown to attendees on the event page so they can reach you with
+          questions. Leave blank to keep it private.
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Input
+            label="Enquiry phone number"
+            type="tel"
+            placeholder="e.g. 08012345678"
+            value={form.contact_phone ?? ''}
+            onChange={(e) => set('contact_phone', e.target.value)}
+            error={fieldErrors.contact_phone}
+            disabled={loading}
+            icon={<Phone size={15} />}
+          />
+          <Input
+            label="Enquiry email"
+            type="email"
+            placeholder="e.g. events@yourbrand.com"
+            value={form.contact_email ?? ''}
+            onChange={(e) => set('contact_email', e.target.value)}
+            error={fieldErrors.contact_email}
+            disabled={loading}
+            icon={<Mail size={15} />}
+          />
+        </div>
       </section>
 
       {/* ── Section: Date & time ────────────────────────────── */}
