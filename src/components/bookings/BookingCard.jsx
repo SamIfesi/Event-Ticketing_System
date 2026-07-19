@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import Badge from '../../components/ui/Badge';
 import { formatShortDate } from '../../utils/formatDate';
 import { formatCurrency } from '../../utils/formatCurrency';
-import DownloadTicketButton from '../tickets/DownloadTicketButton';
 import EventsService from '../../services/events.service';
 import {
   CreditCard,
