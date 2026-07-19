@@ -391,6 +391,28 @@ export default function EventDetailPage() {
                         </span>
                       </p>
                     )}
+                    {event.contact_email && (
+                      <>
+                        <p className="text-[12px] text-secondary mt-0.5">
+                          For more information, contact:{' '}
+                          <Link
+                            to={`mailto:${event.contact_email}`}
+                            className="font-medium text-accent hover:border-accent/40 hover:text-accent transition-colors duration-150"
+                          >
+                            {event.contact_email}
+                          </Link>
+                        </p>
+                        <p className="text-[12px] text-secondary">
+                          or call us at{' '}
+                          <Link
+                            to={`tel:${event.contact_phone?.replace(/\s+/g, '')}`}
+                            className="font-medium text-accent hover:border-accent/40 hover:text-accent transition-colors duration-150"
+                          >
+                            {event.contact_phone}
+                          </Link>
+                        </p>
+                      </>
+                    )}
                   </div>
 
                   {/* Key detail cards */}
@@ -505,6 +527,12 @@ export default function EventDetailPage() {
                       Back
                     </button>
                   </div>
+
+                  <ContactOrganizerCard
+                    phone={event.contact_phone}
+                    email={event.contact_email}
+                    organizerName={event.organizer_name}
+                  />
                 </div>
 
                 {/* ── Right: ticket panel + revenue (if privileged) ── */}
@@ -572,12 +600,6 @@ export default function EventDetailPage() {
                       )}
                     </div>
                   </div>
-
-                  <ContactOrganizerCard
-                    phone={event.contact_phone}
-                    email={event.contact_email}
-                    organizerName={event.organizer_name}
-                  />
 
                   {/* Login nudge for guests */}
                   {!isLoggedIn && event.ticket_types?.length > 0 && !isPast && (
