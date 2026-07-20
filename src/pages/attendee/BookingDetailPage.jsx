@@ -41,7 +41,10 @@ export default function BookingDetailPage() {
 
       <main className="flex-1 max-w-2xl mx-auto w-full px-6 py-8">
         <div className="flex items-center gap-2 text-xs text-secondary mb-6">
-          <Link to="/my-bookings" className="hover:text-primary transition-colors flex items-center gap-1">
+          <Link
+            to="/my-bookings"
+            className="hover:text-primary transition-colors flex items-center gap-1"
+          >
             <ArrowLeft size={13} strokeWidth={2.5} /> My Bookings
           </Link>
           <span className="text-muted">/</span>
@@ -58,7 +61,9 @@ export default function BookingDetailPage() {
         ) : !booking ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
             <p className="font-bold text-primary text-lg">Booking not found</p>
-            <p className="text-sm text-secondary">It may have been removed or doesn't belong to your account.</p>
+            <p className="text-sm text-secondary">
+              It may have been removed or doesn't belong to your account.
+            </p>
           </div>
         ) : (
           <div className="flex flex-col gap-6">
@@ -76,17 +81,41 @@ export default function BookingDetailPage() {
                 <Badge status={booking.payment_status} />
               </div>
 
-              <Row icon={Calendar} label="Date" value={
-                (event.start_date ?? booking.event_start_date)
-                  ? `${formatShortDate(event.start_date ?? booking.event_start_date)} · ${formatTime(event.start_date ?? booking.event_start_date)}`
-                  : '—'
-              } />
-              <Row icon={MapPin} label="Location" value={event.location ?? booking.event_location} />
-              <Row icon={Ticket} label="Ticket type" value={booking.ticket_type} />
-              <Row icon={Ticket} label="Quantity" value={`${booking.quantity ?? 1} ticket${(booking.quantity ?? 1) !== 1 ? 's' : ''}`} />
-              <Row icon={CreditCard} label="Total paid" value={formatCurrency(booking.total_amount ?? 0)} />
+              <Row
+                icon={Calendar}
+                label="Date"
+                value={
+                  (event.start_date ?? booking.event_start_date)
+                    ? `${formatShortDate(event.start_date ?? booking.event_start_date)} · ${formatTime(event.start_date ?? booking.event_start_date)}`
+                    : '—'
+                }
+              />
+              <Row
+                icon={MapPin}
+                label="Location"
+                value={event.location ?? booking.event_location}
+              />
+              <Row
+                icon={Ticket}
+                label="Ticket type"
+                value={booking.ticket_type}
+              />
+              <Row
+                icon={Ticket}
+                label="Quantity"
+                value={`${booking.quantity ?? 1} ticket${(booking.quantity ?? 1) !== 1 ? 's' : ''}`}
+              />
+              <Row
+                icon={CreditCard}
+                label="Total paid"
+                value={formatCurrency(booking.total_amount ?? 0)}
+              />
               {booking.paystack_reference && (
-                <Row icon={CheckCircle2} label="Reference" value={booking.paystack_reference} />
+                <Row
+                  icon={CheckCircle2}
+                  label="Reference"
+                  value={booking.paystack_reference}
+                />
               )}
             </div>
 
@@ -97,7 +126,12 @@ export default function BookingDetailPage() {
                   <h2 className="text-sm font-bold text-primary">
                     {tickets.length} Ticket{tickets.length !== 1 ? 's' : ''}
                   </h2>
-                  <DownloadTicketButton bookingId={booking.id} variant="link" size="sm" />
+                  <DownloadTicketButton
+                    ticketId={tickets.id}
+                    // bookingId={booking.id}
+                    variant="link"
+                    size="sm"
+                  />
                 </div>
 
                 <div className="flex flex-col divide-y divide-border">
@@ -114,7 +148,9 @@ export default function BookingDetailPage() {
                     </Link>
                   ))}
                   {tickets.length === 0 && (
-                    <p className="text-sm text-muted py-3">Tickets are still being issued.</p>
+                    <p className="text-sm text-muted py-3">
+                      Tickets are still being issued.
+                    </p>
                   )}
                 </div>
               </div>
