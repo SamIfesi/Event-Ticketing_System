@@ -179,7 +179,7 @@ export default function TicketDetailPage() {
 
   useEffect(() => {
     if (id) fetchTicket(id);
-  }, [id]);
+  }, [id, fetchTicket]);
 
   function handleShare() {
     const url = window.location.href;
@@ -383,7 +383,8 @@ export default function TicketDetailPage() {
               {/* Download ticket PDF — valid and used tickets both get a PDF */}
               {(isValid || isUsed) && ticket?.booking_id && (
                 <DownloadTicketButton
-                  bookingId={ticket.booking_id}
+                  ticketId={ticket.id}
+                  // bookingId={ticket.booking_id}
                   size="md"
                   checkOnMount
                 />
