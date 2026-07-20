@@ -1,17 +1,21 @@
-// DownloadTicketButton — downloads the server-generated PDF or PNG ticket.
+// DownloadTicketButton — downloads the server-generated PDF or PNG
+// for a SINGLE ticket. Every download is one ticket, one file.
 //
-// When only one format is needed (variant="link"), it renders as a compact
-// inline link that downloads the PDF by default.
+// When only one format is needed (variant="link"), it renders as a
+// compact inline link that downloads the PDF by default.
 //
 // When variant="button" (default), it renders a split button:
 //   LEFT  — "Download ticket" triggers a dropdown to pick format
 //   RIGHT — chevron toggles the dropdown
 //
-// Both PDF and PNG are generated together on the first backend request,
-// so the format picker appears immediately without a second generation step.
+// Both PDF and PNG are generated together on the first backend request
+// for the ticket's booking, so the format picker appears immediately
+// without a second generation step.
 //
 // Props:
-//   bookingId    — booking ID
+//   ticketId     — ticket ID (required)
+//   bookingId    — optional, only used to poll/retry if the file isn't
+//                  ready yet right after payment
 //   size         — 'sm' | 'md' (default 'md')
 //   variant      — 'button' | 'link' (default 'button')
 //   checkOnMount — if true, checks status on mount to show ready indicators
@@ -29,6 +33,7 @@ import {
 import { useTicketDownload } from '../../hooks/useTicketDownload';
 
 export default function DownloadTicketButton({
+  ticketId,
   bookingId,
   size = 'md',
   variant = 'button',
@@ -42,15 +47,15 @@ export default function DownloadTicketButton({
     checking,
     isReady,
     checkStatus,
-    download,
-    downloadPng,
+    downloadTicket,
+    downloadTicketPng,
   } = useTicketDownload();
 
   useEffect(() => {
     if (checkOnMount && bookingId) {
       checkStatus(bookingId);
     }
-  }, [bookingId, checkOnMount]);
+  }, [bookingId, checkStatus, checkOnMount]);
 
   const isLoadingPdf = downloading || checking;
   const isLoadingPng = downloadingPng;
@@ -59,13 +64,13 @@ export default function DownloadTicketButton({
   function handlePdf() {
     if (isAnyLoading) return;
     setMenuOpen(false);
-    download(bookingId);
+    downloadTicket(ticketId, bookingId);
   }
 
   function handlePng() {
     if (isAnyLoading) return;
     setMenuOpen(false);
-    downloadPng(bookingId);
+    downloadTicketPng(ticketId, bookingId);
   }
 
   // ── Link variant (inline, no background) ──────────────────
