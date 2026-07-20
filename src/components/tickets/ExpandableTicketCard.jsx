@@ -234,7 +234,7 @@ function ExpandedCard({ ticket, gradientIndex, onCollapse }) {
   const ticketAmount = ticket?.unit_price;
 
   return (
-    <div className="bg-card border border-accent/20 rounded-card overflow-hidden shadow-lg transition-all duration-300">
+    <div className="bg-card rounded-card overflow-hidden shadow-lg transition-all duration-300">
       {/* ── Banner ── */}
       <div
         className="relative h-44 overflow-hidden"
@@ -374,6 +374,7 @@ function ExpandedCard({ ticket, gradientIndex, onCollapse }) {
           {/* Download PDF link — valid and used tickets both get a PDF */}
           {/* {(isValid || isUsed) && ticket?.booking_id && (
             <DownloadTicketButton
+              ticketId={ticket.id}
               bookingId={ticket.booking_id}
               variant="link"
               size="sm"
