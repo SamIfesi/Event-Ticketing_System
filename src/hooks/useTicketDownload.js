@@ -1,19 +1,24 @@
 // useTicketDownload — all ticket download + management actions.
 //
-// Attendee:   download()        — PDF
-//             downloadPng()     — PNG
-//             checkStatus()     — poll PDF + PNG readiness
-//             waitAndDownload() — poll then download (right after payment)
+// Attendee:   downloadTicket(ticketId)      — PDF, one ticket
+//             downloadTicketPng(ticketId)   — PNG, one ticket
+//             downloadAllTickets(ticketIds) — sequential per-ticket loop
+//             checkStatus(bookingId)        — poll readiness of every ticket under a booking
+//             waitAndDownload(ticketId, bookingId) — poll then download a single ticket
 //
-// Organizer:  fetchCheckinList() — full attendee check-in list + summary
-//             checkin()          — submit scanned QR token at the gate
+// Organizer:  fetchCheckinList(eventId) — full attendee check-in list + summary
+//             checkin(qrToken)          — submit scanned QR token at the gate
 //
-// Admin:      adminDownload()    — download any booking's PDF
-//             adminDownloadPng() — download any booking's PNG
-//             regenerate()       — force-clear cache and regenerate both files
+// Admin:      adminDownloadTicket(ticketId)    — download any single ticket's PDF
+//             adminDownloadTicketPng(ticketId) — download any single ticket's PNG
+//             regenerate(bookingId)            — force-clear cache and regenerate every ticket under a booking
 //
 // Dev:        devFetchFailed()   — list all failed/pending bookings
 //             devForcePay()      — manually mark a booking as paid + issue tickets
+//
+// NOTE: there is no booking-level bulk download anymore. Every
+// download call operates on a single ticket id. For a multi-ticket
+// booking, use downloadAllTickets() to loop through them one at a time.
 
 import { useState, useCallback } from 'react';
 import TicketsService from '../services/tickets.service';
@@ -27,6 +32,7 @@ export function useTicketDownload() {
   // ── Attendee download states ───────────────────────────────
   const [downloading, setDownloading] = useState(false);
   const [downloadingPng, setDownloadingPng] = useState(false);
+  const [downloadingAll, setDownloadingAll] = useState(false);
   const [checking, setChecking] = useState(false);
   const [isReady, setIsReady] = useState(null); // null=unknown true/false
   const [isPngReady, setIsPngReady] = useState(null);
@@ -54,37 +60,28 @@ export function useTicketDownload() {
   // ATTENDEE
   // ============================================================
 
-  // Check if PDF + PNG have been generated yet.
-  // Returns the full status object from the backend.
+  // Check readiness for every ticket under a booking.
+  // Returns { ticket_generated, tickets: [{ ticket_id, pdf_ready, png_ready }] }
   const checkStatus = useCallback(async (bookingId) => {
     setChecking(true);
     try {
       const data = await TicketsService.getTicketStatus(bookingId);
       setIsReady(data.ticket_generated);
-      setIsPngReady(data.png_generated);
+      setIsPngReady(data.ticket_generated);
       return data;
     } catch {
-      return { ticket_generated: false, png_generated: false };
+      return { ticket_generated: false, tickets: [] };
     } finally {
       setChecking(false);
     }
   }, []);
 
-  const downloadAllTickets = useCallback(async (bookingId) => {
-    // Implementation for downloading all tickets
-    const { tickets } = await TicketsService.getTickets(bookingId);
-    for (const ticket of tickets) {
-      await TicketsService.downloadTicket(ticket.id);
-      await new Promise((r) => setTimeout(r, 600)); // 600ms delay between downloads
-    }
-  }, []);
-
-  // Poll until the file is ready then trigger the download.
+  // Poll until a single ticket is ready then trigger its download.
   // Used right after payment when the worker may not have finished yet.
   // format: 'pdf' | 'png'
   const waitAndDownload = useCallback(
-    async (bookingId, format = 'pdf', maxWaitSeconds = 60) => {
-      if (!bookingId) return toastError('Invalid booking ID.');
+    async (ticketId, bookingId, format = 'pdf', maxWaitSeconds = 60) => {
+      if (!ticketId || !bookingId) return toastError('Invalid ticket.');
 
       const isPng = format === 'png';
       isPng ? setDownloadingPng(true) : setDownloading(true);
@@ -96,14 +93,17 @@ export function useTicketDownload() {
 
       const poll = async () => {
         const status = await checkStatus(bookingId);
-        const ready = isPng ? status.png_generated : status.ticket_generated;
+        const ticketStatus = status.tickets?.find(
+          (t) => t.ticket_id === ticketId
+        );
+        const ready = isPng ? ticketStatus?.png_ready : ticketStatus?.pdf_ready;
 
         if (ready) {
           try {
             if (isPng) {
-              await TicketsService.downloadTicketPng(bookingId);
+              await TicketsService.downloadTicketPng(ticketId);
             } else {
-              await TicketsService.downloadTicket(bookingId);
+              await TicketsService.downloadTicket(ticketId);
             }
             toastSuccess('Ticket downloaded!');
             isPng ? setIsPngReady(true) : setIsReady(true);
@@ -130,16 +130,19 @@ export function useTicketDownload() {
     [checkStatus, toastInfo, toastError, toastSuccess]
   );
 
-  // Direct PDF download. Falls back to polling if file not ready yet.
-  const download = useCallback(
-    async (bookingId) => {
+  // Direct single-ticket PDF download. Falls back to polling if not ready yet.
+  const downloadTicket = useCallback(
+    async (ticketId, bookingId) => {
       setDownloading(true);
       try {
-        await TicketsService.downloadTicket(bookingId);
+        await TicketsService.downloadTicket(ticketId);
         toastSuccess('Ticket downloaded!');
       } catch (err) {
-        if (err?.response?.status === 404 || err?.response?.status === 400) {
-          await waitAndDownload(bookingId, 'pdf');
+        if (
+          bookingId &&
+          (err?.response?.status === 404 || err?.response?.status === 400)
+        ) {
+          await waitAndDownload(ticketId, bookingId, 'pdf');
         } else {
           toastError(
             err?.response?.data?.message ?? 'Download failed. Please try again.'
@@ -152,16 +155,19 @@ export function useTicketDownload() {
     [waitAndDownload, toastError, toastSuccess]
   );
 
-  // Direct PNG download. Falls back to polling if file not ready yet.
-  const downloadPng = useCallback(
-    async (bookingId) => {
+  // Direct single-ticket PNG download. Falls back to polling if not ready yet.
+  const downloadTicketPng = useCallback(
+    async (ticketId, bookingId) => {
       setDownloadingPng(true);
       try {
-        await TicketsService.downloadTicketPng(bookingId);
+        await TicketsService.downloadTicketPng(ticketId);
         toastSuccess('Ticket image downloaded!');
       } catch (err) {
-        if (err?.response?.status === 404 || err?.response?.status === 400) {
-          await waitAndDownload(bookingId, 'png');
+        if (
+          bookingId &&
+          (err?.response?.status === 404 || err?.response?.status === 400)
+        ) {
+          await waitAndDownload(ticketId, bookingId, 'png');
         } else {
           toastError(
             err?.response?.data?.message ?? 'Download failed. Please try again.'
@@ -172,6 +178,29 @@ export function useTicketDownload() {
       }
     },
     [waitAndDownload, toastError, toastSuccess]
+  );
+
+  // Download every ticket in a booking, one at a time, with a short
+  // pause between each so the browser doesn't throttle the burst.
+  // ticketIds: array of ticket id numbers.
+  const downloadAllTickets = useCallback(
+    async (ticketIds, format = 'pdf') => {
+      if (!ticketIds?.length) return;
+      setDownloadingAll(true);
+      try {
+        await TicketsService.downloadAllTickets(ticketIds, format);
+        toastSuccess(
+          `${ticketIds.length} ticket${ticketIds.length !== 1 ? 's' : ''} downloaded!`
+        );
+      } catch (err) {
+        toastError(
+          err?.response?.data?.message ?? 'Some tickets failed to download.'
+        );
+      } finally {
+        setDownloadingAll(false);
+      }
+    },
+    [toastError, toastSuccess]
   );
 
   // ============================================================
@@ -232,12 +261,12 @@ export function useTicketDownload() {
   // ADMIN
   // ============================================================
 
-  // Download any booking's PDF ticket (no ownership check).
-  const adminDownload = useCallback(
-    async (bookingId) => {
+  // Download any single ticket's PDF (no ownership check).
+  const adminDownloadTicket = useCallback(
+    async (ticketId) => {
       setAdminDownloading(true);
       try {
-        await TicketsService.adminDownloadTicket(bookingId);
+        await TicketsService.adminDownloadTicket(ticketId);
         toastSuccess('Ticket downloaded.');
       } catch (err) {
         toastError(
@@ -250,12 +279,12 @@ export function useTicketDownload() {
     [toastError, toastSuccess]
   );
 
-  // Download any booking's PNG ticket (no ownership check).
-  const adminDownloadPng = useCallback(
-    async (bookingId) => {
+  // Download any single ticket's PNG (no ownership check).
+  const adminDownloadTicketPng = useCallback(
+    async (ticketId) => {
       setAdminDownloadingPng(true);
       try {
-        await TicketsService.adminDownloadTicketPng(bookingId);
+        await TicketsService.adminDownloadTicketPng(ticketId);
         toastSuccess('Ticket image downloaded.');
       } catch (err) {
         toastError(
@@ -268,8 +297,9 @@ export function useTicketDownload() {
     [toastError, toastSuccess]
   );
 
-  // Force-clear the cached PDF + PNG and regenerate both.
-  // Returns { booking_id, ticket_url, ticket_png_url, file_size }
+  // Force-clear the cache and regenerate every ticket (PDF + PNG)
+  // under a booking.
+  // Returns { booking_id, ticket_ids[], file_count }
   const regenerate = useCallback(
     async (bookingId) => {
       setRegenerating(true);
@@ -277,8 +307,7 @@ export function useTicketDownload() {
       try {
         const data = await TicketsService.regenerateTicket(bookingId);
         setRegenerateResult(data);
-        toastSuccess('Ticket regenerated successfully.');
-        // Reset readiness so UI reflects the fresh files
+        toastSuccess('Tickets regenerated successfully.');
         setIsReady(true);
         setIsPngReady(true);
         return data;
@@ -348,14 +377,15 @@ export function useTicketDownload() {
     // ── Attendee ─────────────────────────────────────────────
     downloading,
     downloadingPng,
+    downloadingAll,
     checking,
     isReady,
     isPngReady,
     checkStatus,
-    download,
-    downloadPng,
-    waitAndDownload,
+    downloadTicket,
+    downloadTicketPng,
     downloadAllTickets,
+    waitAndDownload,
 
     // ── Organizer ─────────────────────────────────────────────
     checkinList,
@@ -370,8 +400,8 @@ export function useTicketDownload() {
     // ── Admin ─────────────────────────────────────────────────
     adminDownloading,
     adminDownloadingPng,
-    adminDownload,
-    adminDownloadPng,
+    adminDownloadTicket,
+    adminDownloadTicketPng,
     regenerating,
     regenerateResult,
     regenerate,
