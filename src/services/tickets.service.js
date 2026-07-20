@@ -23,15 +23,21 @@ const TicketsService = {
   },
 
   // ============================================================
-  // ATTENDEE — ticket file downloads (PDF + PNG)
+  // ATTENDEE — single-ticket file downloads (PDF + PNG)
+  //
+  // Every download is one ticket, one file. There is no
+  // booking-level bulk/ZIP download — for a multi-ticket booking,
+  // call downloadAllTickets() below, which downloads each ticket
+  // one at a time.
   // ============================================================
 
   // GET /api/tickets/:id/download
-  // Streams the server-generated PNG binary (2x devicePixelRatio).
+  // Streams the server-generated PDF binary for a single ticket.
   // Must use responseType: 'blob' — Axios defaults to JSON.
   // Both PDF and PNG are generated together on the first request
-  // so downloading either format warms the cache for the other.
-  async downloadSingleTicket(ticketId) {
+  // for a booking, so downloading either format warms the cache
+  // for every ticket under that booking.
+  async downloadTicket(ticketId) {
     const response = await api.get(`/tickets/${ticketId}/download`, {
       responseType: 'blob',
       skipLoader: true,
@@ -47,38 +53,14 @@ const TicketsService = {
     link.click();
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
-  },
-
-  // GET /api/tickets/:id/download/pdf
-  // Streams the server-generated PDF binary.
-  // Must use responseType: 'blob' — Axios defaults to JSON.
-  // Both PDF and PNG are generated together on the first request
-  // so downloading either format warms the cache for the other.
-  async downloadTicket(bookingId) {
-    const response = await api.get(`/bookings/${bookingId}/ticket`, {
-      responseType: 'blob',
-      skipLoader: true,
-    });
-
-    const blob = new Blob([response.data], { type: 'application/pdf' });
-    const url = window.URL.createObjectURL(blob);
-
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `Ticketer_Ticket_#${String(bookingId).padStart(6, '0')}.pdf`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
 
     return true;
   },
 
-  // GET /api/bookings/:id/ticket/png
-  // Streams the server-generated PNG binary (2x devicePixelRatio).
-  // Multi-ticket bookings get a ZIP of all PNGs.
-  async downloadTicketPng(bookingId) {
-    const response = await api.get(`/bookings/${bookingId}/ticket/png`, {
+  // GET /api/tickets/:id/download/png
+  // Streams the server-generated PNG binary for a single ticket.
+  async downloadTicketPng(ticketId) {
+    const response = await api.get(`/tickets/${ticketId}/download/png`, {
       responseType: 'blob',
       skipLoader: true,
     });
@@ -88,7 +70,7 @@ const TicketsService = {
 
     const link = document.createElement('a');
     link.href = url;
-    link.download = `Ticketer_Ticket_#${String(bookingId).padStart(6, '0')}.png`;
+    link.download = `Ticketer_Ticket_#${String(ticketId).padStart(6, '0')}.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -97,14 +79,30 @@ const TicketsService = {
     return true;
   },
 
+  // Download every ticket under a booking, one at a time.
+  // ticketIds: array of ticket id numbers.
+  // format: 'pdf' | 'png'
+  // A short delay between downloads avoids the browser silently
+  // throttling/blocking a burst of same-tab downloads.
+  async downloadAllTickets(ticketIds, format = 'pdf') {
+    for (let i = 0; i < ticketIds.length; i++) {
+      if (format === 'png') {
+        await this.downloadTicketPng(ticketIds[i]);
+      } else {
+        await this.downloadTicket(ticketIds[i]);
+      }
+      if (i < ticketIds.length - 1) {
+        await new Promise((resolve) => setTimeout(resolve, 600));
+      }
+    }
+    return true;
+  },
+
   // GET /api/bookings/:id/ticket/status
-  // Check if ticket files have been generated yet.
+  // Check readiness for every ticket under a booking.
   // Returns:
-  //   ticket_generated: bool  — PDF is ready
-  //   png_generated:    bool  — PNG is ready
-  //   download_url:     string | null
-  //   png_url:          string | null
-  //   file_size:        string | null
+  //   ticket_generated: bool         — true only if ALL tickets are ready
+  //   tickets: [{ ticket_id, pdf_ready, png_ready }]
   // Use this before attempting a download to show a
   // "still generating…" state when the worker hasn't finished yet.
   async getTicketStatus(bookingId) {
@@ -142,11 +140,11 @@ const TicketsService = {
   // ADMIN — ticket management
   // ============================================================
 
-  // GET /api/admin/tickets/:bookingId/download
-  // Admin downloads any booking's PDF ticket directly.
+  // GET /api/admin/tickets/:id/download
+  // Admin downloads any single ticket's PDF directly.
   // No ownership check — admin can access any ticket.
-  async adminDownloadTicket(bookingId) {
-    const response = await api.get(`/admin/tickets/${bookingId}/download`, {
+  async adminDownloadTicket(ticketId) {
+    const response = await api.get(`/admin/tickets/${ticketId}/download`, {
       responseType: 'blob',
       skipLoader: true,
     });
@@ -156,7 +154,7 @@ const TicketsService = {
 
     const link = document.createElement('a');
     link.href = url;
-    link.download = `Ticketer_Ticket_#${String(bookingId).padStart(6, '0')}.pdf`;
+    link.download = `Ticketer_Ticket_#${String(ticketId).padStart(6, '0')}.pdf`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -165,10 +163,10 @@ const TicketsService = {
     return true;
   },
 
-  // GET /api/admin/tickets/:bookingId/download/png
-  // Admin downloads any booking's PNG ticket directly.
-  async adminDownloadTicketPng(bookingId) {
-    const response = await api.get(`/admin/tickets/${bookingId}/download/png`, {
+  // GET /api/admin/tickets/:id/download/png
+  // Admin downloads any single ticket's PNG directly.
+  async adminDownloadTicketPng(ticketId) {
+    const response = await api.get(`/admin/tickets/${ticketId}/download/png`, {
       responseType: 'blob',
       skipLoader: true,
     });
@@ -178,7 +176,7 @@ const TicketsService = {
 
     const link = document.createElement('a');
     link.href = url;
-    link.download = `Ticketer_Ticket_#${String(bookingId).padStart(6, '0')}.png`;
+    link.download = `Ticketer_Ticket_#${String(ticketId).padStart(6, '0')}.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -188,9 +186,9 @@ const TicketsService = {
   },
 
   // POST /api/bookings/:bookingId/ticket/regenerate
-  // Force-regenerate both PDF and PNG (clears cached files).
+  // Force-regenerate every ticket (PDF + PNG) under a booking.
   // Useful after admin edits or when the cached version is stale.
-  // Returns: { booking_id, ticket_url, ticket_png_url, file_size }
+  // Returns: { booking_id, ticket_ids[], file_count }
   async regenerateTicket(bookingId) {
     const response = await api.post(`/bookings/${bookingId}/ticket/regenerate`);
     return response.data.data;
