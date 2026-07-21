@@ -133,7 +133,7 @@ export default function AboutPage() {
                 check-ins in real time, no spreadsheets required.
               </p>
               <p>
-                We're still early, and still Lagos-headquartered, but we're
+                We're still early, and still but we're
                 building for every city where people gather.
               </p>
             </div>
