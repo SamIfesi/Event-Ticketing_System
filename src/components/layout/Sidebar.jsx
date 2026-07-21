@@ -24,7 +24,7 @@ import {
   CreditCard,
   BarChart3,
   Handshake,
-  Lock,
+  Lock, Sparkles, Gavel,
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useAuth } from '../../hooks/useAuth';
@@ -106,7 +106,11 @@ function ThemeToggle({ onClose }) {
 
 export default function Sidebar({ isOpen, onClose }) {
   const location = useLocation();
+  const isOnLegalPage = ['/legal', '/terms', '/privacy', '/refund-policy'].some(
+    isActive
+  );
   const { profile, fetchProfile } = useProfile();
+  const { logout } = useAuth();
   const user = useAuthStore((state) => state.user);
   const token = useAuthStore((state) => state.token);
   const isLoggedIn = Boolean(token);
@@ -118,8 +122,6 @@ export default function Sidebar({ isOpen, onClose }) {
   const { unreadCount } = useNotifications(
     token ? { pollInterval: 15000 } : {}
   );
-
-  const { logout } = useAuth();
 
   useEffect(() => {
     if (!user) return;
@@ -143,7 +145,7 @@ export default function Sidebar({ isOpen, onClose }) {
 
   function isActive(path) {
     return (
-      location.pathname === path || location.pathname.startsWith(path + '/')
+      location?.pathname === path || location?.pathname.startsWith(path + '/')
     );
   }
 
@@ -249,13 +251,57 @@ export default function Sidebar({ isOpen, onClose }) {
             active={isActive('/events')}
           />
           {!isLoggedIn && (
-            <NavItem
-              to="/about"
-              icon={ShieldUser}
-              label="About Us"
-              onClick={onClose}
-              active={isActive('/about')}
-            />
+            <>
+              <NavItem
+                to="/about"
+                icon={ShieldUser}
+                label="About Us"
+                onClick={onClose}
+                active={isActive('/about')}
+              />
+              <NavItem
+                to="/how-it-works"
+                icon={Sparkles}
+                label="How it works"
+                onClick={onClose}
+                active={isActive('/how-it-works')}
+              />
+              <NavItem
+                to="/legal"
+                icon={Gavel}
+                label="Legal"
+                onClick={onClose}
+                active={isActive('/legal')}
+              />
+            </>
+          )}
+
+          {isOnLegalPage && (
+            <>
+              <Divider />
+              <SectionLabel label="Legal" />
+              <NavItem
+                to="/terms"
+                icon={Handshake}
+                label="Terms of Use"
+                onClick={onClose}
+                active={isActive('/terms')}
+              />
+              <NavItem
+                to="/privacy"
+                icon={Lock}
+                label="Privacy Policy"
+                onClick={onClose}
+                active={isActive('/privacy')}
+              />
+              <NavItem
+                to="/refund-policy"
+                icon={CreditCard}
+                label="Refund Policy"
+                onClick={onClose}
+                active={isActive('/refund-policy')}
+              />
+            </>
           )}
 
           {isLoggedIn && (
