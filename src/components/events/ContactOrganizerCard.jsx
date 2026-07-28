@@ -35,11 +35,11 @@ export default function ContactOrganizerCard({ phone, email, organizerName }) {
         for enquiries about tickets, accessibility, or anything else.
       </p>
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 md:flex-row">
         {phone && (
           <a
             href={`tel:${phone.replace(/\s+/g, '')}`}
-            className="flex items-center gap-2.5 h-10 px-3 border border-border rounded-btn text-sm font-medium text-primary hover:border-accent/40 hover:text-accent transition-colors duration-150"
+            className="flex flex-1 items-center gap-2.5 h-10 px-3 border border-border rounded-btn text-sm font-medium text-primary hover:border-accent/40 hover:text-accent transition-colors duration-150"
           >
             <Phone
               size={14}
@@ -52,7 +52,7 @@ export default function ContactOrganizerCard({ phone, email, organizerName }) {
         {email && (
           <a
             href={`mailto:${email}`}
-            className="flex items-center gap-2.5 h-10 px-3 border border-border rounded-btn text-sm font-medium text-primary hover:border-accent/40 hover:text-accent transition-colors duration-150"
+            className="flex flex-1 items-center gap-2.5 h-10 px-3 border border-border rounded-btn text-sm font-medium text-primary hover:border-accent/40 hover:text-accent transition-colors duration-150"
           >
             <Mail
               size={14}
