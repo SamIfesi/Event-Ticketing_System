@@ -53,6 +53,8 @@ export default function EditEventPage() {
       location: event.location ?? '',
       banner_image: event.banner_image ?? '',
       banner_public_id: event.banner_public_id ?? '',
+      contact_email: event.contact_email ?? '',
+      contact_phone: event.contact_phone ?? '',
       start_date: toInputDate(event.start_date),
       end_date: toInputDate(event.end_date),
       total_tickets: event.total_tickets ?? '',
