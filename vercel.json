@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/sitemap.xml",
-      "destination": "https://api-ticketer-e.up.railway.app/api/sitemap.xml"
+      "destination": "https://api.ticketer.website/api/sitemap.xml"
     },
     {
       "source": "/events/:path*/meta",
-      "destination": "https://api-ticketer-e.up.railway.app/api/events/:path*/meta"
+      "destination": "https://api.ticketer.website/api/events/:path*/meta"
     },
     {
       "source": "/((?!assets|.*\\..*).*)",
