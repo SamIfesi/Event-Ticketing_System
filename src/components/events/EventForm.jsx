@@ -161,6 +161,8 @@ const DEFAULT_VALUES = {
   total_tickets: '',
   status: 'draft',
   ticket_types: [{ ...EMPTY_TICKET }],
+  checkin_mode: 'single',
+  checkin_days: 1,
 };
 
 // ── Main component ────────────────────────────────────────────
@@ -308,21 +310,21 @@ export default function EventForm({
         />
 
         {/* Banner image URL */}
-      <div className="flex flex-col gap-1.5 mt-4">
-        <label className="text-sm font-medium text-primary select-none">
-          Banner image{' '}
-          <span className="text-muted font-normal">(optional)</span>
-        </label>
-        <ImageUpload
-          type="banner"
-          currentUrl={form.banner_image}
-          disabled={loading}
-          onUploaded={({ publicId, secureUrl }) => {
-            set('banner_image', secureUrl);
-            set('banner_public_id', publicId);
-          }}
-        />
-      </div>
+        <div className="flex flex-col gap-1.5 mt-4">
+          <label className="text-sm font-medium text-primary select-none">
+            Banner image{' '}
+            <span className="text-muted font-normal">(optional)</span>
+          </label>
+          <ImageUpload
+            type="banner"
+            currentUrl={form.banner_image}
+            disabled={loading}
+            onUploaded={({ publicId, secureUrl }) => {
+              set('banner_image', secureUrl);
+              set('banner_public_id', publicId);
+            }}
+          />
+        </div>
       </section>
 
       {/* ── Section: Contact information ─────────────────────
@@ -404,6 +406,56 @@ export default function EventForm({
               <p className="text-xs text-error">{fieldErrors.end_date}</p>
             )}
           </div>
+        </div>
+
+        {/* ── NEW: Check-in settings ── */}
+        <div className="flex flex-col gap-3 mt-2">
+          <label className="text-sm font-medium text-primary select-none">
+            Ticket scanning
+          </label>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => set('checkin_mode', 'single')}
+              disabled={loading}
+              className={`flex-1 h-11 rounded-card border text-sm font-semibold transition-colors disabled:opacity-50 ${
+                form.checkin_mode !== 'multi_day'
+                  ? 'border-accent bg-accent-text text-accent'
+                  : 'border-border text-secondary hover:border-accent/40'
+              }`}
+            >
+              Scan once
+            </button>
+            <button
+              type="button"
+              onClick={() => set('checkin_mode', 'multi_day')}
+              disabled={loading}
+              className={`flex-1 h-11 rounded-card border text-sm font-semibold transition-colors disabled:opacity-50 ${
+                form.checkin_mode === 'multi_day'
+                  ? 'border-accent bg-accent-text text-accent'
+                  : 'border-border text-secondary hover:border-accent/40'
+              }`}
+            >
+              Scan on multiple days
+            </button>
+          </div>
+          <p className="text-xs text-muted">
+            "Scan once" invalidates the ticket after the first gate scan.
+            "Multiple days" lets attendees be scanned once per day for a
+            multi-day event.
+          </p>
+
+          {form.checkin_mode === 'multi_day' && (
+            <Input
+              label="Number of check-in days"
+              type="number"
+              min="1"
+              value={form.checkin_days}
+              onChange={(e) => set('checkin_days', e.target.value)}
+              disabled={loading}
+              helper="e.g. a 3-day festival — attendees can be scanned once per day, up to this many days."
+            />
+          )}
         </div>
       </section>
 
