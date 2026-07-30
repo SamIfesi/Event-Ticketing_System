@@ -420,7 +420,16 @@ export const DEFAULT_FORM = {
   end_date: '',
   ticket_types: [{ ...EMPTY_TICKET }],
   status: 'draft',
+  checkin_mode: 'single', // 'single' | 'multi_day'
+  checkin_days: 1,
 };
+
+// === CHECK-IN MODE CONSTANTS ===
+export const CHECKIN_MODE = {
+  SINGLE: 'single',
+  MULTI_DAY: 'multi_day',
+};
+// === END CHECK-IN MODE CONSTANTS ===
 
 export const OPTIONS = [
   {
