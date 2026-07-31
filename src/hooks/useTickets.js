@@ -12,71 +12,86 @@ import { useUiStore } from '../store/uiStore';
 
 export function useTickets() {
   const toastSuccess = useUiStore((state) => state.toastSuccess);
-  const toastError   = useUiStore((state) => state.toastError);
+  const toastError = useUiStore((state) => state.toastError);
 
   // ── Single ticket ─────────────────────────────────────────────
-  const [ticket,        setTicket]        = useState(null);
+  const [ticket, setTicket] = useState(null);
   const [ticketLoading, setTicketLoading] = useState(false);
-  const [ticketError,   setTicketError]   = useState(null);
+  const [ticketError, setTicketError] = useState(null);
 
   // ── Tickets by booking ────────────────────────────────────────
-  const [tickets,        setTickets]        = useState([]);
+  const [tickets, setTickets] = useState([]);
   const [ticketsLoading, setTicketsLoading] = useState(false);
 
   // ── Check-in (organizer gate scanner) ────────────────────────
   // checkinResult holds the last scan result so the UI can display it.
   // It is not cleared automatically — the component decides when to reset it.
-  const [checkinResult,  setCheckinResult]  = useState(null);
-  const [checkinError,   setCheckinError]   = useState(null);
+  const [checkinResult, setCheckinResult] = useState(null);
+  const [checkinError, setCheckinError] = useState(null);
   const [checkinLoading, setCheckinLoading] = useState(false);
 
   // ── Fetch a single ticket ─────────────────────────────────────
-  const fetchTicket = useCallback(async (id) => {
-    setTicketLoading(true);
-    setTicketError(null);
-    try {
-      const data = await TicketsService.getTicket(id);
-      setTicket(data.ticket);
-    } catch (err) {
-      const msg = err?.response?.data?.message ?? 'Ticket not found.';
-      setTicketError(msg);
-      toastError(msg);
-    } finally {
-      setTicketLoading(false);
-    }
-  }, [toastError]);
+  const fetchTicket = useCallback(
+    async (id) => {
+      setTicketLoading(true);
+      setTicketError(null);
+      try {
+        const data = await TicketsService.getTicket(id);
+        setTicket(data.ticket);
+      } catch (err) {
+        const msg = err?.response?.data?.message ?? 'Ticket not found.';
+        setTicketError(msg);
+        toastError(msg);
+      } finally {
+        setTicketLoading(false);
+      }
+    },
+    [toastError]
+  );
 
   // ── Fetch all tickets under a booking ─────────────────────────
-  const fetchTicketsByBooking = useCallback(async (bookingId) => {
-    setTicketsLoading(true);
-    try {
-      const data = await TicketsService.getTicketsByBooking(bookingId);
-      setTickets(data.tickets);
-    } catch (err) {
-      toastError(err?.response?.data?.message ?? 'Could not load tickets.');
-    } finally {
-      setTicketsLoading(false);
-    }
-  }, [toastError]);
+  const fetchTicketsByBooking = useCallback(
+    async (bookingId) => {
+      setTicketsLoading(true);
+      try {
+        const data = await TicketsService.getTicketsByBooking(bookingId);
+        setTickets(data.tickets);
+      } catch (err) {
+        toastError(err?.response?.data?.message ?? 'Could not load tickets.');
+      } finally {
+        setTicketsLoading(false);
+      }
+    },
+    [toastError]
+  );
 
   // ── Check in a ticket (organizer gate scan) ───────────────────
-  const checkin = useCallback(async (qrToken) => {
-    setCheckinLoading(true);
-    setCheckinResult(null);
-    setCheckinError(null);
-    try {
-      const data = await TicketsService.checkin(qrToken);
-      setCheckinResult(data);
-      toastSuccess(`✓ ${data.attendee_name} checked in.`);
-    } catch (err) {
-      // Gate errors need to be very clear — show full backend message
-      const msg = err?.response?.data?.message ?? 'Invalid ticket.';
-      setCheckinError(msg);
-      toastError(msg);
-    } finally {
-      setCheckinLoading(false);
-    }
-  }, [toastError, toastSuccess]);
+  // ── Check in a ticket (organizer gate scan) ───────────────────
+  // dayNumber is only relevant for multi_day events; pass null/omit for single-scan.
+  const checkin = useCallback(
+    async (qrToken, dayNumber = null) => {
+      setCheckinLoading(true);
+      setCheckinResult(null);
+      setCheckinError(null);
+      try {
+        const data = await TicketsService.checkin(qrToken, dayNumber);
+        setCheckinResult(data);
+        const dayLabel =
+          data.checkin_mode === 'multi_day'
+            ? ` (Day ${data.day_number}/${data.total_days})`
+            : '';
+        toastSuccess(`✓ ${data.attendee_name} checked in.${dayLabel}`);
+      } catch (err) {
+        // Gate errors need to be very clear — show full backend message
+        const msg = err?.response?.data?.message ?? 'Invalid ticket.';
+        setCheckinError(msg);
+        toastError(msg);
+      } finally {
+        setCheckinLoading(false);
+      }
+    },
+    [toastError, toastSuccess]
+  );
 
   function resetCheckin() {
     setCheckinResult(null);
