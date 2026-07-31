@@ -21,7 +21,7 @@ const OrganizerService = {
     return response.data.data; // returns {event}
   },
 
-  async updateEvent(id, eventData){
+  async updateEvent(id, eventData) {
     const response = await api.put(`/events/${id}`, eventData);
     return response.data.data; // returns {event}
   },
@@ -36,9 +36,12 @@ const OrganizerService = {
     return response.data.data; // returns {bookings: []}
   },
 
-  async getCheckinList(eventId) {
-    const response = await api.get(`/organizer/events/${eventId}/checkins`);
-    return response.data.data; // returns {summary: {total, checked_in, remaining}, tickets: []}
-  }
-}
+  async getCheckinList(eventId, day = null) {
+    const params = day ? { day } : {};
+    const response = await api.get(`/organizer/events/${eventId}/checkins`, {
+      params,
+    });
+    return response.data.data; // returns { summary, checkin_mode, checkin_days, tickets: [] }
+  },
+};
 export default OrganizerService;
