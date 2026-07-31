@@ -118,22 +118,34 @@ const TicketsService = {
 
   // POST /api/tickets/checkin
   // Called when organizer scans a QR code at the gate.
-  // Body: { qr_token }
-  // Returns: { attendee_name, ticket_type, event_title, checked_in_at }
+  // Body: { qr_token, day_number? }
+  //   day_number is only meaningful for multi_day events — omit it for
+  //   single-scan events, the backend ignores it in that mode anyway.
+  // Returns: { attendee_name, ticket_type, event_title, checked_in_at,
+  //            checkin_mode, day_number?, days_used?, total_days? }
   // Backend errors are very descriptive (already used, not your event, etc.)
-  async checkin(qrToken) {
-    const response = await api.post('/tickets/checkin', { qr_token: qrToken });
+  async checkin(qrToken, dayNumber = null) {
+    const body = { qr_token: qrToken };
+    if (dayNumber !== null) body.day_number = dayNumber;
+
+    const response = await api.post('/tickets/checkin', body);
     return response.data.data;
   },
 
   // GET /api/organizer/events/:eventId/checkins
   // Full check-in list + summary for an event.
+  // ?day= only matters for multi_day events — defaults to day 1 on the backend.
   // Returns:
   //   summary: { total, checked_in, remaining }
-  //   tickets: [{ id, is_used, used_at, attendee_name, attendee_email, ticket_type }]
-  async getCheckinList(eventId) {
-    const response = await api.get(`/organizer/events/${eventId}/checkins`);
-    return response.data.data; // { summary, tickets[] }
+  //   checkin_mode, checkin_days (event-level, so UI knows how to render the list)
+  //   tickets: [{ id, is_used, used_at, attendee_name, attendee_email, ticket_type,
+  //              days_used?, total_days? }]  (days_used/total_days only in multi_day mode)
+  async getCheckinList(eventId, day = null) {
+    const params = day ? { day } : {};
+    const response = await api.get(`/organizer/events/${eventId}/checkins`, {
+      params,
+    });
+    return response.data.data; // { summary, checkin_mode, checkin_days, tickets[] }
   },
 
   // ============================================================
