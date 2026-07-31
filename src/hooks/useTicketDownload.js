@@ -208,12 +208,13 @@ export function useTicketDownload() {
   // ============================================================
 
   // Fetch the full check-in list + summary for an event.
-  // Returns { summary: { total, checked_in, remaining }, tickets[] }
+  // day is only meaningful for multi_day events — omit for single-scan events.
+  // Returns { summary, checkin_mode, checkin_days, tickets[] }
   const fetchCheckinList = useCallback(
-    async (eventId) => {
+    async (eventId, day = null) => {
       setCheckinListLoading(true);
       try {
-        const data = await TicketsService.getCheckinList(eventId);
+        const data = await TicketsService.getCheckinList(eventId, day);
         setCheckinList(data);
         return data;
       } catch (err) {
@@ -229,16 +230,21 @@ export function useTicketDownload() {
   );
 
   // Submit a scanned QR token at the gate.
+  // dayNumber only matters for multi_day events.
   // Stores result or error so the scanner UI can display it.
   const checkin = useCallback(
-    async (qrToken) => {
+    async (qrToken, dayNumber = null) => {
       setCheckinLoading(true);
       setCheckinResult(null);
       setCheckinError(null);
       try {
-        const data = await TicketsService.checkin(qrToken);
+        const data = await TicketsService.checkin(qrToken, dayNumber);
         setCheckinResult(data);
-        toastSuccess(`✓ ${data.attendee_name} checked in.`);
+        const dayLabel =
+          data.checkin_mode === 'multi_day'
+            ? ` (Day ${data.day_number}/${data.total_days})`
+            : '';
+        toastSuccess(`✓ ${data.attendee_name} checked in.${dayLabel}`);
         return data;
       } catch (err) {
         const msg = err?.response?.data?.message ?? 'Invalid ticket.';
