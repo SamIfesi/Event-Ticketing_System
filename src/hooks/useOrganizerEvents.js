@@ -206,12 +206,13 @@ export function useOrganizerEvents() {
 
   // ── Fetch check-in list ──────────────────────────────────────
   // eventId MUST be numeric — this backend route is not slug-aware.
+  // day is only meaningful for multi_day events.
   const fetchCheckinList = useCallback(
-    async (eventId) => {
+    async (eventId, day = null) => {
       setCheckinLoading(true);
 
       try {
-        const data = await OrganizerService.getCheckinList(eventId);
+        const data = await OrganizerService.getCheckinList(eventId, day);
 
         setCheckinData(data);
       } catch (err) {
