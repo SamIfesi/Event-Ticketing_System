@@ -1,7 +1,3 @@
-// QR-code gate scanner for organizers.
-// Uses html5-qrcode to access the device camera and scan ticket QR codes.
-// Calls useTickets().checkin(qrToken) on each successful scan.
-
 import { useEffect, useRef, useState } from 'react';
 import { CheckCircle2, XCircle, Camera, RefreshCw } from 'lucide-react';
 import { useTickets } from '../../hooks/useTickets';
@@ -13,7 +9,7 @@ export default function CheckinScanner({ eventId, event, onCheckin }) {
   const [day, setDay] = useState(1);
   const scannerRef = useRef(null);
   const containerRef = useRef(null);
-  const scannerStateRef = useRef('IDLE'); // Tracks: 'IDLE', 'STARTING', 'SCANNING', 'UNMOUNTED'
+  const scannerStateRef = useRef('IDLE');
   const [scanning, setScanning] = useState(false);
   const [cameraLoading, setCameraLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -33,23 +29,40 @@ export default function CheckinScanner({ eventId, event, onCheckin }) {
       scannerStateRef.current = 'STARTING';
       setCameraLoading(true);
 
+      // 1. Fetch available cameras on the device
+      const devices = await Html5Qrcode.getCameras();
+
+      if (!devices || devices.length === 0) {
+        throw new Error('No camera found on this device.');
+      }
+
+      // 2. Filter for back/environment cameras
+      const backCameras = devices.filter((d) =>
+        /back|rear|environment|main/i.test(d.label)
+      );
+
+      // Prefer non-ultrawide back camera if labels give hints, otherwise take the last back camera (often main)
+      let selectedCameraId = devices[0].id;
+      if (backCameras.length > 0) {
+        // Exclude ultra-wide/macro if labels indicate so, otherwise fallback to last back camera
+        const mainBack = backCameras.find(
+          (c) => !/wide|macro|depth|0\.5/i.test(c.label)
+        );
+        selectedCameraId = mainBack ? mainBack.id : backCameras[backCameras.length - 1].id;
+      }
+
       const scanner = new Html5Qrcode('qr-scanner-container');
       scannerRef.current = scanner;
 
-      // Robust config: soft constraints for broad browser compatibility
       const qrConfig = {
         fps: 10,
         qrbox: { width: 250, height: 250 },
         aspectRatio: 1.0,
-        videoConstraints: {
-          facingMode: { ideal: 'environment' },
-          width: { ideal: 1920 }, // Ideal targets without strict min bounds prevent OverconstrainedError
-          height: { ideal: 1080 },
-        },
       };
 
+      // 3. Start scanner using explicit deviceId instead of facingMode string
       await scanner.start(
-        { facingMode: 'environment' },
+        selectedCameraId,
         qrConfig,
         async (decodedText) => {
           await stopScanner();
@@ -77,13 +90,10 @@ export default function CheckinScanner({ eventId, event, onCheckin }) {
       setError(
         !window.isSecureContext
           ? 'Camera access requires a secure context (HTTPS). Please use HTTPS or localhost.'
-        : err?.name === 'OverconstrainedError' ||
-            err?.toString().includes('OverconstrainedError')
-          ? 'Camera failed to start with high-res settings. Retrying standard resolution...'
           : err?.message?.includes('Permission') ||
               err?.toString().includes('NotAllowedError')
             ? 'Camera permission denied. Please allow camera access and try again.'
-            : 'Could not start scanner. Make sure your device has a camera.'
+            : err?.message || 'Could not start scanner. Make sure your device has a camera.'
       );
     }
   }
