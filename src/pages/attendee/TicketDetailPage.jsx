@@ -374,6 +374,11 @@ export default function TicketDetailPage() {
                   <div className="mt-2">
                     <StatusPill status={ticket.status} />
                   </div>
+                  {ticket?.checkin_mode === 'multi_day' && (
+                    <p className="text-xs text-muted mt-1">
+                      {ticket.days_used ?? 0}/{ticket.total_days} days used
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
