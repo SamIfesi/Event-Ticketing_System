@@ -244,6 +244,38 @@ export function DateInfo({ form, setForm, fieldErrors }) {
         </div>
       </div>
 
+      <div className="flex flex-col gap-3 mt-2">
+        <label className="text-sm font-medium text-primary select-none">
+          Ticket scanning
+        </label>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => set('checkin_mode', 'single')}
+            className={`flex-1 h-11 rounded-btn border text-sm font-semibold ${form.checkin_mode !== 'multi_day' ? 'border-accent bg-accent-text text-accent' : 'border-border text-secondary'}`}
+          >
+            Scan once
+          </button>
+          <button
+            type="button"
+            onClick={() => set('checkin_mode', 'multi_day')}
+            className={`flex-1 h-11 rounded-btn border text-sm font-semibold ${form.checkin_mode === 'multi_day' ? 'border-accent bg-accent-text text-accent' : 'border-border text-secondary'}`}
+          >
+            Scan on multiple days
+          </button>
+        </div>
+        {form.checkin_mode === 'multi_day' && (
+          <Input
+            label="Number of check-in days"
+            type="number"
+            min="1"
+            value={form.checkin_days}
+            onChange={(e) => set('checkin_days', e.target.value)}
+            helper="e.g. a 3-day festival — attendees can scan once per day, up to this many days."
+          />
+        )}
+      </div>
+
       {/* Banner */}
       <div className="flex flex-col gap-1.5 mt-4">
         <label className="text-sm font-medium text-primary select-none">
