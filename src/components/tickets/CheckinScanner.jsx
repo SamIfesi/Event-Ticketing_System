@@ -29,40 +29,24 @@ export default function CheckinScanner({ eventId, event, onCheckin }) {
       scannerStateRef.current = 'STARTING';
       setCameraLoading(true);
 
-      // 1. Fetch available cameras on the device
-      const devices = await Html5Qrcode.getCameras();
-
-      if (!devices || devices.length === 0) {
-        throw new Error('No camera found on this device.');
-      }
-
-      // 2. Filter for back/environment cameras
-      const backCameras = devices.filter((d) =>
-        /back|rear|environment|main/i.test(d.label)
-      );
-
-      // Prefer non-ultrawide back camera if labels give hints, otherwise take the last back camera (often main)
-      let selectedCameraId = devices[0].id;
-      if (backCameras.length > 0) {
-        // Exclude ultra-wide/macro if labels indicate so, otherwise fallback to last back camera
-        const mainBack = backCameras.find(
-          (c) => !/wide|macro|depth|0\.5/i.test(c.label)
-        );
-        selectedCameraId = mainBack ? mainBack.id : backCameras[backCameras.length - 1].id;
-      }
-
       const scanner = new Html5Qrcode('qr-scanner-container');
       scannerRef.current = scanner;
 
+      // High-resolution configuration for crisp scanning
       const qrConfig = {
-        fps: 10,
+        fps: 15, // 15 FPS optimizes frame clarity and processing speed
         qrbox: { width: 250, height: 250 },
-        aspectRatio: 1.0,
+        aspectRatio: 1.0, // Matches the aspect-square container ratio
+        videoConstraints: {
+          facingMode: 'environment', // Request main rear camera
+          width: { min: 1280, ideal: 1920, max: 3840 }, // Target 1080p Full HD (min 720p HD)
+          height: { min: 720, ideal: 1080, max: 2160 },
+          focusMode: 'continuous', // Continuous focus on mobile hardware
+        },
       };
 
-      // 3. Start scanner using explicit deviceId instead of facingMode string
       await scanner.start(
-        selectedCameraId,
+        { facingMode: 'environment' },
         qrConfig,
         async (decodedText) => {
           await stopScanner();
