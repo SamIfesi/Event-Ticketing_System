@@ -420,7 +420,7 @@ export const DEFAULT_FORM = {
   end_date: '',
   ticket_types: [{ ...EMPTY_TICKET }],
   status: 'draft',
-  checkin_mode: 'single', // 'single' | 'multi_day'
+  checkin_mode: 'single',
   checkin_days: 1,
 };
 
