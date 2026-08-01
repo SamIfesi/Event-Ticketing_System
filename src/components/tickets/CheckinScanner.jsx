@@ -1,22 +1,21 @@
 // QR-code gate scanner for organizers.
 // Uses html5-qrcode to access the device camera and scan ticket QR codes.
 // Calls useTickets().checkin(qrToken) on each successful scan.
-//
-// Props:
-//   eventId  — used for display purposes only
-//   onCheckin — optional callback(result) after successful checkin
 
 import { useEffect, useRef, useState } from 'react';
 import { CheckCircle2, XCircle, Camera, RefreshCw } from 'lucide-react';
 import { useTickets } from '../../hooks/useTickets';
 import Button from '../ui/Button';
 
-export default function CheckinScanner({ eventId, onCheckin }) {
+export default function CheckinScanner({ eventId, event, onCheckin }) {
+  const isMultiDay = event?.checkin_mode === 'multi_day';
+  const totalDays = event?.checkin_days ?? 1;
+  const [day, setDay] = useState(1);
   const scannerRef = useRef(null);
   const containerRef = useRef(null);
   const scannerStateRef = useRef('IDLE'); // Tracks: 'IDLE', 'STARTING', 'SCANNING', 'UNMOUNTED'
   const [scanning, setScanning] = useState(false);
-  const [cameraLoading, setCameraLoading] = useState(false); // Safe loader for camera initialization phase
+  const [cameraLoading, setCameraLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const { checkin, checkinResult, checkinError, checkinLoading, resetCheckin } =
@@ -31,27 +30,35 @@ export default function CheckinScanner({ eventId, onCheckin }) {
       setError(null);
       resetCheckin();
 
-      // Activate loading indicators before entering the promise stream
       scannerStateRef.current = 'STARTING';
       setCameraLoading(true);
 
       const scanner = new Html5Qrcode('qr-scanner-container');
       scannerRef.current = scanner;
 
+      // Robust config: soft constraints for broad browser compatibility
+      const qrConfig = {
+        fps: 10,
+        qrbox: { width: 250, height: 250 },
+        aspectRatio: 1.0,
+        videoConstraints: {
+          facingMode: { ideal: 'environment' },
+          width: { ideal: 1920 }, // Ideal targets without strict min bounds prevent OverconstrainedError
+          height: { ideal: 1080 },
+        },
+      };
+
       await scanner.start(
         { facingMode: 'environment' },
-        { fps: 10, qrbox: { width: 220, height: 220 } },
+        qrConfig,
         async (decodedText) => {
-          // Stop immediately upon scan detection to avoid double calls
           await stopScanner();
-          const data = await checkin(decodedText);
-          onCheckin?.(data);
+          const data = await checkin(decodedText, isMultiDay ? day : null);
+          onCheckin?.(data, isMultiDay ? day : null);
         },
         () => {}
       );
 
-
-      // Handle edge case where component unmounts while camera was opening
       if (scannerStateRef.current === 'UNMOUNTED') {
         await scanner.stop().catch(() => {});
         setCameraLoading(false);
@@ -67,10 +74,12 @@ export default function CheckinScanner({ eventId, onCheckin }) {
       setScanning(false);
       setCameraLoading(false);
 
-      // Clean, nested ternary format for setting the error message
       setError(
         !window.isSecureContext
           ? 'Camera access requires a secure context (HTTPS). Please use HTTPS or localhost.'
+        : err?.name === 'OverconstrainedError' ||
+            err?.toString().includes('OverconstrainedError')
+          ? 'Camera failed to start with high-res settings. Retrying standard resolution...'
           : err?.message?.includes('Permission') ||
               err?.toString().includes('NotAllowedError')
             ? 'Camera permission denied. Please allow camera access and try again.'
@@ -103,7 +112,7 @@ export default function CheckinScanner({ eventId, onCheckin }) {
   }
 
   useEffect(() => {
-    scannerStateRef.current = 'IDLE'; // reset on (re)mount, undoes Strict Mode's phantom unmount
+    scannerStateRef.current = 'IDLE';
     return () => {
       const instance = scannerRef.current;
       const stage = scannerStateRef.current;
@@ -116,12 +125,32 @@ export default function CheckinScanner({ eventId, onCheckin }) {
 
   return (
     <div className="flex flex-col items-center gap-5 w-full max-w-sm mx-auto">
+      {/* Day selector for multi-day events */}
+      {isMultiDay && (
+        <div className="flex gap-2 w-full">
+          {Array.from({ length: totalDays }, (_, i) => i + 1).map((d) => (
+            <button
+              key={d}
+              type="button"
+              onClick={() => setDay(d)}
+              className={`flex-1 h-10 rounded-btn text-xs font-semibold border transition-colors ${
+                day === d
+                  ? 'bg-accent text-white border-accent'
+                  : 'bg-card text-secondary border-border hover:border-accent/40'
+              }`}
+            >
+              Day {d}/{totalDays}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Scanner viewport */}
       <div className="relative w-full aspect-square bg-black rounded-card overflow-hidden border border-border">
         <div
           id="qr-scanner-container"
           ref={containerRef}
-          className="w-full h-full"
+          className="w-full h-full [&>video]:w-full [&>video]:h-full [&>video]:object-cover"
         />
 
         {/* Idle overlay */}
@@ -179,7 +208,7 @@ export default function CheckinScanner({ eventId, onCheckin }) {
             size="md"
             icon={<Camera size={16} />}
             className="flex-1"
-            loading={checkinLoading || cameraLoading} // Displays loader if either API checkout or hardware is loading
+            loading={checkinLoading || cameraLoading}
             onClick={startScanner}
           >
             {checkinResult || checkinError ? 'Scan next' : 'Start scanning'}
