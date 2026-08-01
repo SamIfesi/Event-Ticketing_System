@@ -59,6 +59,8 @@ export default function EditEventPage() {
       end_date: toInputDate(event.end_date),
       total_tickets: event.total_tickets ?? '',
       status: event.status ?? 'draft',
+      checkin_mode: event.checkin_mode ?? 'single',
+      checkin_days: event.checkin_days ?? 1,
       ticket_types: (event.ticket_types ?? []).map((tt) => ({
         id: tt.id,
         name: tt.name ?? '',
