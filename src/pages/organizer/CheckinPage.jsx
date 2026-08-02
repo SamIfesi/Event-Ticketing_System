@@ -10,6 +10,7 @@ import {
   X,
   ListChecks,
   Camera,
+  CalendarDays,
 } from 'lucide-react';
 import { useOrganizerEvents } from '../../hooks/useOrganizerEvents';
 import { formatShortDate, formatTime } from '../../utils/formatDate';
@@ -19,13 +20,6 @@ import Footer from '../../components/layout/Footer';
 import CheckinScanner from '../../components/tickets/CheckinScanner';
 
 const TABS = { SCANNER: 'scanner', LIST: 'list' };
-const TABLE_HEADERS = [
-  'Attendee',
-  'Ticket Type',
-  'Ticket ID',
-  'Status',
-  'Checked In At',
-];
 
 function StatPill({ label, value, color }) {
   return (
@@ -41,7 +35,32 @@ function StatPill({ label, value, color }) {
   );
 }
 
-function AttendeeRow({ ticket }) {
+//  Day tabs — only rendered for multi-day events ─
+function DayTabs({ totalDays, day, onSelect }) {
+  return (
+    <div className="flex items-center gap-2 mb-6">
+      <div className="flex items-center gap-1.5 text-xs text-muted mr-1">
+        <CalendarDays size={13} />
+        Day:
+      </div>
+      {Array.from({ length: totalDays }, (_, i) => i + 1).map((d) => (
+        <button
+          key={d}
+          onClick={() => onSelect(d)}
+          className={`h-9 px-3 rounded-btn text-xs font-semibold transition-colors border ${
+            day === d
+              ? 'bg-accent text-white border-accent'
+              : 'bg-card text-secondary border-border hover:text-primary hover:border-accent/40'
+          }`}
+        >
+          Day {d}/{totalDays}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function AttendeeRow({ ticket, isMultiDay }) {
   const isCheckedIn = ticket.is_used === 1 || ticket.is_used === true;
   const ticketId = `#${String(ticket.id).padStart(6, '0')}`;
 
@@ -78,10 +97,21 @@ function AttendeeRow({ ticket }) {
       <td className="px-4 py-3.5">
         <span className="text-xs font-semibold text-primary">{ticketId}</span>
       </td>
+
+      {/*  NEW: day-count column, multi-day events only  */}
+      {isMultiDay && (
+        <td className="px-4 py-3.5">
+          <span className="text-xs font-semibold text-primary">
+            {ticket.days_used ?? 0}/{ticket.total_days ?? 1}
+          </span>
+        </td>
+      )}
+
       <td className="px-4 py-3.5">
         {isCheckedIn ? (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-success/10 text-success">
-            <CheckCircle2 size={11} strokeWidth={2.5} /> Checked in
+            <CheckCircle2 size={11} strokeWidth={2.5} />
+            {isMultiDay ? 'Checked in today' : 'Checked in'}
           </span>
         ) : (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-border text-muted">
@@ -91,8 +121,8 @@ function AttendeeRow({ ticket }) {
       </td>
       <td className="px-4 py-3.5">
         <span className="text-xs text-muted">
-          {isCheckedIn && ticket.used_at
-            ? `${formatShortDate(ticket.used_at)} ${formatTime(ticket.used_at)}`
+          {isCheckedIn && (ticket.used_at || ticket.last_checked_in_at)
+            ? `${formatShortDate(ticket.used_at ?? ticket.last_checked_in_at)} ${formatTime(ticket.used_at ?? ticket.last_checked_in_at)}`
             : '—'}
         </span>
       </td>
@@ -100,7 +130,7 @@ function AttendeeRow({ ticket }) {
   );
 }
 
-function SkeletonRow() {
+function SkeletonRow({ isMultiDay }) {
   return (
     <tr className="animate-pulse border-t border-border">
       <td className="px-4 py-3.5">
@@ -112,11 +142,13 @@ function SkeletonRow() {
           </div>
         </div>
       </td>
-      {[72, 80, 80, 80].map((w, i) => (
-        <td key={i} className="px-4 py-3.5">
-          <div className="h-4 bg-border rounded" style={{ width: w }} />
-        </td>
-      ))}
+      {[72, 80, isMultiDay ? 60 : null, 80, 80]
+        .filter((w) => w !== null)
+        .map((w, i) => (
+          <td key={i} className="px-4 py-3.5">
+            <div className="h-4 bg-border rounded" style={{ width: w }} />
+          </td>
+        ))}
     </tr>
   );
 }
@@ -127,6 +159,12 @@ export default function CheckinPage() {
   const [activeTab, setActiveTab] = useState(TABS.SCANNER);
   const [search, setSearch] = useState('');
 
+  // NEW: which check-in day is currently active/being viewed.
+  // Declared here at the page level since both the scanner (to know
+  // which day to submit) and the attendee list (to know which day's
+  // status to display) need to read and update it. 
+  const [day, setDay] = useState(1);
+
   const {
     event,
     eventLoading,
@@ -136,17 +174,40 @@ export default function CheckinPage() {
     fetchCheckinList,
   } = useOrganizerEvents();
 
+  const isMultiDay = event?.checkin_mode === 'multi_day';
+  const totalDays = event?.checkin_days ?? 1;
+
   useEffect(() => {
     if (!slug) return;
 
     fetchMyEvent(slug).then((resolved) => {
       if (resolved?.id) fetchCheckinList(resolved.id);
     });
-  }, [slug, fetchMyEvent, fetchCheckinList]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slug]);
 
-  // Refresh checkin list after a successful scan
-  function handleCheckin() {
-    if (event?.id) fetchCheckinList(event.id);
+  // Re-fetch the list whenever the viewed day changes (multi-day only —
+  // single-scan events never pass a day param, so this is a no-op for them).
+  useEffect(() => {
+    if (!event?.id || !isMultiDay) return;
+    fetchCheckinList(event.id, day);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [day, event?.id, isMultiDay]);
+
+  // Called by CheckinScanner after a scan. scannedDay is whatever day
+  // was selected in the scanner's own day picker at the moment of the
+  // scan — pass it straight through so the refetch matches what was
+  // just scanned, then sync the page's day state to match too so the
+  // attendee-list tab lands on the same day if the organizer switches over.
+  function handleCheckin(result, scannedDay) {
+    if (!event?.id) return;
+
+    if (isMultiDay && scannedDay) {
+      setDay(scannedDay);
+      fetchCheckinList(event.id, scannedDay);
+    } else {
+      fetchCheckinList(event.id);
+    }
   }
 
   const tickets = checkinData?.tickets ?? [];
@@ -154,6 +215,15 @@ export default function CheckinPage() {
   const total = summary.total ?? 0;
   const checkedIn = summary.checked_in ?? 0;
   const remaining = summary.remaining ?? 0;
+
+  const tableHeaders = [
+    'Attendee',
+    'Ticket Type',
+    'Ticket ID',
+    ...(isMultiDay ? ['Days'] : []),
+    'Status',
+    'Checked In At',
+  ];
 
   const filtered = tickets.filter((t) => {
     if (!search) return true;
@@ -192,6 +262,11 @@ export default function CheckinPage() {
             <span className="text-xs font-bold text-accent uppercase tracking-widest">
               Gate Check-in
             </span>
+            {isMultiDay && !eventLoading && (
+              <span className="text-xs font-bold text-muted bg-border px-2 py-0.5 rounded-full">
+                {totalDays}-day event
+              </span>
+            )}
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-primary tracking-tight">
             {eventLoading ? (
@@ -202,16 +277,24 @@ export default function CheckinPage() {
           </h1>
         </div>
 
-        <div className="grid grid-cols-3 gap-3 mb-8">
+        <div className="grid grid-cols-3 gap-3 mb-6">
           <StatPill label="Total" value={total} color="#2563eb" />
-          <StatPill label="Checked in" value={checkedIn} color="#22c55e" />
+          <StatPill
+            label={isMultiDay ? `Checked in (Day ${day})` : 'Checked in'}
+            value={checkedIn}
+            color="#22c55e"
+          />
           <StatPill label="Remaining" value={remaining} color="#f59e0b" />
         </div>
 
         {total > 0 && (
-          <div className="mb-8">
+          <div className="mb-6">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-muted">Check-in progress</span>
+              <span className="text-xs text-muted">
+                {isMultiDay
+                  ? `Day ${day}/${totalDays} progress`
+                  : 'Check-in progress'}
+              </span>
               <span className="text-xs font-bold text-primary">
                 {Math.round((checkedIn / total) * 100)}%
               </span>
@@ -260,12 +343,23 @@ export default function CheckinPage() {
             <p className="text-sm text-secondary mb-6 text-center">
               Point the camera at an attendee's ticket QR code to check them in.
             </p>
-            <CheckinScanner eventId={event?.id} onCheckin={handleCheckin} />
+            <CheckinScanner
+              eventId={event?.id}
+              event={event}
+              onCheckin={handleCheckin}
+            />
           </div>
         )}
 
         {activeTab === TABS.LIST && (
           <div>
+            {/* Day tabs — multi-day events only. Reuses the same `day`
+                state as the scanner so switching tabs never desyncs
+                which day's data is being shown. */}
+            {isMultiDay && (
+              <DayTabs totalDays={totalDays} day={day} onSelect={setDay} />
+            )}
+
             <div className="relative mb-4 max-w-sm">
               <Search
                 size={15}
@@ -293,7 +387,7 @@ export default function CheckinPage() {
                 <table className="w-full min-w-max">
                   <thead>
                     <tr className="bg-main-bg">
-                      {TABLE_HEADERS.map((h) => (
+                      {tableHeaders.map((h) => (
                         <th
                           key={h}
                           className="px-4 py-3 text-left text-xs font-bold text-muted uppercase tracking-wider"
@@ -306,15 +400,22 @@ export default function CheckinPage() {
                   <tbody>
                     {checkinLoading ? (
                       Array.from({ length: 8 }).map((_, i) => (
-                        <SkeletonRow key={i} />
+                        <SkeletonRow key={i} isMultiDay={isMultiDay} />
                       ))
                     ) : filtered.length > 0 ? (
                       filtered.map((ticket) => (
-                        <AttendeeRow key={ticket.id} ticket={ticket} />
+                        <AttendeeRow
+                          key={ticket.id}
+                          ticket={ticket}
+                          isMultiDay={isMultiDay}
+                        />
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={5} className="px-4 py-16 text-center">
+                        <td
+                          colSpan={tableHeaders.length}
+                          className="px-4 py-16 text-center"
+                        >
                           <div className="flex flex-col items-center gap-3">
                             <div className="w-12 h-12 rounded-card bg-accent-text border border-accent-border flex items-center justify-center">
                               <Users
