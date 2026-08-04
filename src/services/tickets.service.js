@@ -118,14 +118,15 @@ const TicketsService = {
 
   // POST /api/tickets/checkin
   // Called when organizer scans a QR code at the gate.
-  // Body: { qr_token, day_number? }
-  //   day_number is only meaningful for multi_day events — omit it for
-  //   single-scan events, the backend ignores it in that mode anyway.
+  // Parameters:
+  //   qrToken: The QR code token
+  //   dayNumber: The day number (optional, only for multi-day events)
+  //   eventId: The event ID
   // Returns: { attendee_name, ticket_type, event_title, checked_in_at,
   //            checkin_mode, day_number?, days_used?, total_days? }
   // Backend errors are very descriptive (already used, not your event, etc.)
-  async checkin(qrToken, dayNumber = null) {
-    const body = { qr_token: qrToken };
+  async checkin(qrToken, dayNumber = null, eventId) {
+    const body = { qr_token: qrToken, event_id: eventId };
     if (dayNumber !== null) body.day_number = dayNumber;
 
     const response = await api.post('/tickets/checkin', body);
