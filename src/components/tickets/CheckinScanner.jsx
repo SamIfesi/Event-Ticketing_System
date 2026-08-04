@@ -50,7 +50,7 @@ export default function CheckinScanner({ eventId, event, onCheckin }) {
         qrConfig,
         async (decodedText) => {
           await stopScanner();
-          const data = await checkin(decodedText, isMultiDay ? day : null);
+          const data = await checkin(decodedText, isMultiDay ? day : null, eventId);
           onCheckin?.(data, isMultiDay ? day : null);
         },
         () => {}
