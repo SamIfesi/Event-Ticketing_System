@@ -168,9 +168,8 @@ export default function EventDetailPage() {
   const user = useAuthStore((s) => s.user);
   const role = user?.role;
   const isLoggedIn = Boolean(token);
-  const isOrganizerOrAbove = [ROLES.ORGANIZER, ROLES.ADMIN, ROLES.DEV].includes(
-    role
-  );
+  const isEventOwner = user?.id === event?.organizer_id;
+  const canSeeRevenue = isEventOwner || role === ROLES.ADMIN || role === ROLES.DEV;
 
   const toastInfo = useUiStore((s) => s.toastInfo);
   const cancelPayment = () => {};
@@ -538,7 +537,7 @@ export default function EventDetailPage() {
                 {/* ── Right: ticket panel + revenue (if privileged) ── */}
                 <div className="flex flex-col gap-4 lg:sticky lg:top-24 lg:self-start">
                   {/* Revenue panel — organizer / admin / dev only */}
-                  {isOrganizerOrAbove && (
+                  {canSeeRevenue && (
                     <RevenuePannel
                       event={event}
                       ticketTypes={event.ticket_types ?? []}
