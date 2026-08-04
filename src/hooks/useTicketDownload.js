@@ -233,24 +233,22 @@ export function useTicketDownload() {
   // dayNumber only matters for multi_day events.
   // Stores result or error so the scanner UI can display it.
   const checkin = useCallback(
-    async (qrToken, dayNumber = null) => {
+    async (qrToken, dayNumber = null, eventId) => {
       setCheckinLoading(true);
       setCheckinResult(null);
       setCheckinError(null);
       try {
-        const data = await TicketsService.checkin(qrToken, dayNumber);
+        const data = await TicketsService.checkin(qrToken, dayNumber, eventId);
         setCheckinResult(data);
         const dayLabel =
           data.checkin_mode === 'multi_day'
             ? ` (Day ${data.day_number}/${data.total_days})`
             : '';
         toastSuccess(`✓ ${data.attendee_name} checked in.${dayLabel}`);
-        return data;
       } catch (err) {
         const msg = err?.response?.data?.message ?? 'Invalid ticket.';
         setCheckinError(msg);
         toastError(msg);
-        return null;
       } finally {
         setCheckinLoading(false);
       }
