@@ -69,12 +69,12 @@ export function useTickets() {
   // ── Check in a ticket (organizer gate scan) ───────────────────
   // dayNumber is only relevant for multi_day events; pass null/omit for single-scan.
   const checkin = useCallback(
-    async (qrToken, dayNumber = null) => {
+      async (qrToken, dayNumber = null, eventId) => {
       setCheckinLoading(true);
       setCheckinResult(null);
       setCheckinError(null);
       try {
-        const data = await TicketsService.checkin(qrToken, dayNumber);
+        const data = await TicketsService.checkin(qrToken, dayNumber, eventId);
         setCheckinResult(data);
         const dayLabel =
           data.checkin_mode === 'multi_day'
@@ -82,7 +82,6 @@ export function useTickets() {
             : '';
         toastSuccess(`✓ ${data.attendee_name} checked in.${dayLabel}`);
       } catch (err) {
-        // Gate errors need to be very clear — show full backend message
         const msg = err?.response?.data?.message ?? 'Invalid ticket.';
         setCheckinError(msg);
         toastError(msg);
