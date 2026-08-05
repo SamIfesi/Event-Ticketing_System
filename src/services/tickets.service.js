@@ -45,10 +45,19 @@ const TicketsService = {
 
     const blob = new Blob([response.data], { type: 'application/pdf' });
     const url = window.URL.createObjectURL(blob);
-
+    const disposition = response.headers['content-disposition'];
+    let filename = 'ticket.pdf';
+  
+    if (disposition) {
+      const match = disposition.match(/filename="?([^"]+)"?/);
+      if (match) {
+        filename = match[1];
+      }
+    }
+  
     const link = document.createElement('a');
     link.href = url;
-    link.download = `Ticketer_Ticket_#${String(ticketId).padStart(6, '0')}.pdf`;
+    link.download = filename;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -67,10 +76,20 @@ const TicketsService = {
 
     const blob = new Blob([response.data], { type: 'image/png' });
     const url = window.URL.createObjectURL(blob);
-
+  
+    const disposition = response.headers['content-disposition'];
+    let filename = 'ticket.png';
+  
+    if (disposition) {
+      const match = disposition.match(/filename="?([^"]+)"?/);
+      if (match) {
+        filename = match[1];
+      }
+    }
+  
     const link = document.createElement('a');
     link.href = url;
-    link.download = `Ticketer_Ticket_#${String(ticketId).padStart(6, '0')}.png`;
+    link.download = filename;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -164,10 +183,20 @@ const TicketsService = {
 
     const blob = new Blob([response.data], { type: 'application/pdf' });
     const url = window.URL.createObjectURL(blob);
-
+  
+    const disposition = response.headers['content-disposition'];
+    let filename = 'ticket.pdf';
+  
+    if (disposition) {
+      const match = disposition.match(/filename="?([^"]+)"?/);
+      if (match) {
+        filename = match[1];
+      }
+    }
+  
     const link = document.createElement('a');
     link.href = url;
-    link.download = `Ticketer_Ticket_#${String(ticketId).padStart(6, '0')}.pdf`;
+    link.download = filename;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -186,10 +215,20 @@ const TicketsService = {
 
     const blob = new Blob([response.data], { type: 'image/png' });
     const url = window.URL.createObjectURL(blob);
-
+  
+    const disposition = response.headers['content-disposition'];
+    let filename = 'ticket.png';
+  
+    if (disposition) {
+      const match = disposition.match(/filename="?([^"]+)"?/);
+      if (match) {
+        filename = match[1];
+      }
+    }
+  
     const link = document.createElement('a');
     link.href = url;
-    link.download = `Ticketer_Ticket_#${String(ticketId).padStart(6, '0')}.png`;
+    link.download = filename;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
