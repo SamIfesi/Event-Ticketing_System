@@ -369,7 +369,9 @@ export default function TicketDetailPage() {
                     Ticket ID
                   </p>
                   <p className="font-mono text-base font-semibold text-primary tracking-wide">
-                    {ticket.id ? `#${String(ticket.id).padStart(6, '0')}` : '—'}
+                    {ticket?.ticket_number
+                      ? ticket.ticket_number
+                      : `#${String(ticket.id).padStart(6, '0')}`}
                   </p>
                   <div className="mt-2">
                     <StatusPill status={ticket.status} />
@@ -414,7 +416,11 @@ export default function TicketDetailPage() {
 
             {/* Fine print */}
             <p className="text-center text-xs text-muted pb-2">
-              Ticket #{String(ticket.id).padStart(6, '0')} · Issued via Ticketer
+              Ticket ID: {' '}
+              {ticket?.ticket_number
+                ? ticket.ticket_number
+                : `#${String(ticket.id).padStart(6, '0')}`}{' '}
+              · Issued via Ticketer
             </p>
           </div>
         ) : null}

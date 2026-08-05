@@ -376,16 +376,6 @@ function ExpandedCard({ ticket, gradientIndex, onCollapse }) {
 
         {/* Download + Details actions */}
         <div className="flex flex-col items-center gap-2 shrink-0 w-20">
-          {/* Download PDF link — valid and used tickets both get a PDF */}
-          {/* {(isValid || isUsed) && ticket?.booking_id && (
-            <DownloadTicketButton
-              ticketId={ticket.id}
-              bookingId={ticket.booking_id}
-              variant="link"
-              size="sm"
-            />
-          )} */}
-
           {/* Details link */}
           <Link
             to={`/ticket/${ticket?.id}`}
