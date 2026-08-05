@@ -290,13 +290,12 @@ export default function Navbar({ onMenuClick }) {
 
         {/* ── Right-side controls ── */}
         <div className="flex items-center gap-1 shrink-0">
+          {/* Theme toggle (desktop) */}
+          <div className="hidden md:flex items-center">
+            <ThemeToggleButton />
+          </div>
           {isLoggedIn ? (
             <>
-              {/* Theme toggle (desktop) */}
-              <div className="hidden md:flex items-center">
-                <ThemeToggleButton />
-              </div>
-
               {/* Notification bell */}
               <div className="hidden md:flex items-center">
                 <NotificationBell />
