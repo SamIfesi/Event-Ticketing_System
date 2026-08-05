@@ -362,7 +362,7 @@ function ExpandedCard({ ticket, gradientIndex, onCollapse }) {
             Ticket ID
           </p>
           <p className="font-mono text-base font-semibold text-primary tracking-wide">
-            {ticket?.id ? `#${String(ticket.id).padStart(6, '0')}` : '—'}
+            {ticket?.ticket_number ? ticket.ticket_number : `#${String(ticket.id).padStart(6, '0')}`}
           </p>
           <div className="mt-2">
             <StatusPill status={ticket?.status} />
