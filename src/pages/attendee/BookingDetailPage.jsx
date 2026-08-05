@@ -128,7 +128,6 @@ export default function BookingDetailPage() {
                   </h2>
                   <DownloadTicketButton
                     ticketId={tickets.id}
-                    // bookingId={booking.id}
                     variant="link"
                     size="sm"
                   />
