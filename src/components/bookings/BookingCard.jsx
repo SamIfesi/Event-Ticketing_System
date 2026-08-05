@@ -67,7 +67,7 @@ export default function BookingCard({ booking }) {
   }, [eventId, eventData?.slug]);
 
   const eventLinkTarget = eventSlug ?? eventId;
-
+  
   return (
     <div className="relative bg-card border border-border rounded-card overflow-hidden hover:border-accent/30 hover:shadow-md transition-all duration-200 group">
       {eventLinkTarget && (
@@ -107,7 +107,7 @@ export default function BookingCard({ booking }) {
                   {booking?.event_title ?? eventData.title ?? 'Event booking'}
                 </h3>
                 <p className="text-xs text-muted mt-0.5">
-                  Booking #{String(booking.id).padStart(6, '0')}
+                  Booking ID: { booking?.booking_number ? booking.booking_number : `#${String(bookingId).padStart(6, '0')}` }
                 </p>
               </div>
               <div className="flex flex-col items-end gap-1 shrink-0">
