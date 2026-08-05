@@ -168,15 +168,16 @@ export default function EventDetailPage() {
   const user = useAuthStore((s) => s.user);
   const role = user?.role;
   const isLoggedIn = Boolean(token);
-  const isEventOwner = user?.id === event?.organizer_id;
-  const canSeeRevenue = isEventOwner || role === ROLES.ADMIN || role === ROLES.DEV;
 
   const toastInfo = useUiStore((s) => s.toastInfo);
   const cancelPayment = () => {};
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { event, eventLoading, eventError, fetchEvent } = useEvents();
   const { initiateBooking, payLoading } = useBookings();
-
+  
+  const isEventOwner = user?.id === event?.organizer_id;
+  const canSeeRevenue = isEventOwner || role === ROLES.ADMIN || role === ROLES.DEV;
+  
   useEffect(() => {
     if (id) fetchEvent(id);
   }, [id, fetchEvent]);
