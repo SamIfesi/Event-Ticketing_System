@@ -414,8 +414,8 @@ export default function PaymentCallbackPage() {
     if (countdown === 1) {
       // Navigate on last tick
       const t = setTimeout(() => navigate(
-        verifyData?.booking_id
-        ? `/my-tickets?booking=${verifyData.booking_id}&expand=true`
+        verifyData?.booking_number
+        ? `/my-tickets?booking=${verifyData.booking_number}&expand=true`
         : '/my-tickets'
       ), 1000);
       return () => clearTimeout(t);
@@ -435,8 +435,8 @@ export default function PaymentCallbackPage() {
 
   function handleViewTickets() {
     navigate(
-      verifyData?.booking_id
-        ? `/my-tickets?booking=${verifyData.booking_id}&expand=true`
+      verifyData?.booking_number
+        ? `/my-tickets?booking=${verifyData.booking_number}&expand=true`
         : '/my-tickets'
     );
   }
