@@ -45,7 +45,7 @@ export default function MyTicketsPage() {
   const { tickets, ticketsLoading, fetchTickets } = useProfile();
 
   const [searchParams] = useSearchParams();
-  const bookingIdFilter = searchParams.get('booking');
+  const bookingNumberFilter = searchParams.get('booking');
   const autoExpand = searchParams.get('expand') === 'true';
 
   useEffect(() => {
@@ -53,10 +53,10 @@ export default function MyTicketsPage() {
   }, [dateFilter, fetchTickets]);
 
   const filtered = tickets.filter((t) => {
-    // Booking-specific filter (from ?booking= URL param)
-    if (bookingIdFilter) {
-      const ticketBookingId = t.booking_id ?? t.bookingId;
-      if (String(ticketBookingId) !== String(bookingIdFilter)) return false;
+    if (bookingNumberFilter) {
+      const ticketBookingNumber = t.booking_number;
+      if (String(ticketBookingNumber) !== String(bookingNumberFilter))
+        return false;
     }
 
     const matchStatus = !statusFilter || t.status === statusFilter;
@@ -71,14 +71,14 @@ export default function MyTicketsPage() {
     return matchStatus && matchSearch;
   });
 
-  const hasFilters = Boolean(search || statusFilter || bookingIdFilter);
+  const hasFilters = Boolean(search || statusFilter || bookingNumberFilter);
 
   // page title changes when filtering by booking
-  const pageTitle = bookingIdFilter
-    ? `Tickets for Booking #${String(bookingIdFilter).padStart(6, '0')}`
+  const pageTitle = bookingNumberFilter
+    ? `Tickets for Booking ${bookingNumberFilter}`
     : 'My Tickets';
 
-  const pageSubtitle = bookingIdFilter
+  const pageSubtitle = bookingNumberFilter
     ? 'Showing tickets for this specific booking.'
     : 'Your QR-coded entry passes, ready to scan at the gate.';
 
@@ -96,7 +96,7 @@ export default function MyTicketsPage() {
           <p className="text-sm text-secondary mt-1">{pageSubtitle}</p>
 
           {/* Clear booking filter link */}
-          {bookingIdFilter && (
+          {bookingNumberFilter && (
             <Link
               to="/my-tickets"
               className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-accent hover:text-accent-hover transition-colors"
@@ -107,14 +107,14 @@ export default function MyTicketsPage() {
         </div>
 
         {/* Stats */}
-        {!ticketsLoading && tickets.length > 0 && !bookingIdFilter && (
+        {!ticketsLoading && tickets.length > 0 && !bookingNumberFilter && (
           <div className="mb-6">
             <TicketsSummary tickets={tickets} />
           </div>
         )}
 
         {/* Filters */}
-        {!bookingIdFilter && (
+        {!bookingNumberFilter && (
           <div className="mb-6">
             <TicketFilters
               search={search}
