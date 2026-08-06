@@ -166,13 +166,13 @@ function SuccessState({ data, reference, countdown, onViewTickets }) {
             </span>
           </div>
 
-          {data?.booking_id && (
+          {data?.booking_number && (
             <div className="flex items-center justify-between">
               <span className="text-xs text-muted uppercase font-bold tracking-wider">
                 Booking
               </span>
               <span className="text-xs font-semibold text-primary">
-                #{String(data.booking_id).padStart(6, '0')}
+                {data.booking_number}
               </span>
             </div>
           )}

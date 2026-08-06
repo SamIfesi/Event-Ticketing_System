@@ -38,7 +38,7 @@ export default function BookingCard({ booking }) {
   const totalAmount = booking?.total_amount;
 
   const eventId = eventData?.id ?? booking?.event_id;
-  const bookingId = booking?.id;
+  const bookingId = booking?.booking_number ? booking.booking_number : booking?.id;
 
   // The booking payload doesn't include a slug, so fetch the single
   // event to get it. Falls back to eventId if the fetch hasn't
