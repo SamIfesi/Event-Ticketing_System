@@ -1,0 +1,2 @@
+/sitemap.xml https://api.ticketer.website/api/sitemap.xml 200
+/events/:path*/meta https://api.ticketer.website/api/events/:path*/meta 200
