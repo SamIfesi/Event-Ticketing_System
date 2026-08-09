@@ -19,6 +19,7 @@ import Footer from '../../components/layout/Footer';
 import EventGrid from '../../components/events/EventGrid';
 import CategoryScroller from '../../components/events/CategoryScroller';
 import CategoryEventRow from '../../components/events/CategoryEventRow';
+import { Helmet } from 'react-helmet-async';
 
 const STATS = [
   { label: 'Events hosted', value: '1,200+' },
@@ -26,12 +27,6 @@ const STATS = [
   { label: 'Active organisers', value: '340+' },
   { label: 'Cities covered', value: '12' },
 ];
-// const STATS = [
-//   { label: 'Events hosted', value: '1,200+' },
-//   { label: 'Tickets sold', value: '48,000+' },
-//   { label: 'Active organisers', value: '340+' },
-//   { label: 'Cities covered', value: '12' },
-// ];
 const HOW_STEPS = [
   {
     step: '01',
@@ -168,6 +163,11 @@ export default function HomePage() {
     .slice(0, MAX_CATEGORY_ROWS);
 
   return (
+    <>
+    <Helmet>
+      <title>Ticketer - Discover and book events in Nigeria</title>
+      <meta name="description" content="Discover and book tickets for events in Nigeria" />
+    </Helmet>
     <div className="flex flex-col min-h-screen bg-main-bg">
       {/* Navbar */}
       <Navbar onMenuClick={() => setSidebarOpen(true)} />
@@ -434,5 +434,6 @@ export default function HomePage() {
       {/* Footer */}
       <Footer />
     </div>
+    </>
   );
 }
