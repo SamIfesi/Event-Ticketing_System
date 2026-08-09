@@ -1,4 +1,3 @@
-import { Analytics } from '@vercel/analytics/react';
 import { BrowserRouter, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useLoaderStore } from './store/loaderStore';
@@ -38,7 +37,6 @@ function ScrollToTop() {
 export default function App() {
   return (
     <BrowserRouter>
-      <Analytics />
       <ScrollToTop />
       <NavigationLoader />
       <TopBarLoader />
