@@ -1,3 +1,1 @@
-/sitemap.xml    https://api.ticketer.website/api/sitemap.xml    200
-/events/*/meta  https://api.ticketer.website/api/events/:splat/meta    200
 /*    /index.html   200
