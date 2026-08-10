@@ -8,6 +8,7 @@ const BOT_USER_AGENTS = [
   'discordbot',
   'pinterest',
   'skypeuripreview',
+  'googlebot',
 ];
 
 export async function onRequest(context) {
@@ -16,18 +17,9 @@ export async function onRequest(context) {
   const userAgent = request.headers.get('user-agent') || '';
   const backendUrl = env.BACKEND_URL || 'https://api.ticketer.website';
 
-  // 1. Proxy Sitemap directly to backend API
+  // 1. Proxy Sitemap directly to backend API for all requests
   if (url.pathname === '/sitemap.xml') {
-    const sitemapRes = await fetch(`${backendUrl}/api/sitemap.xml`);
-    const body = await sitemapRes.text();
-
-    return new Response(body, {
-      status: sitemapRes.status,
-      headers: {
-        'Content-Type': 'application/xml; charset=utf-8',
-        'Cache-Control': 'public, max-age=3600',
-      },
-    });
+    return fetch(`${backendUrl}/sitemap.xml`);
   }
 
   // 2. Intercept Event Links for Social Media Preview Bots
