@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
@@ -20,9 +20,21 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-start justify-center bg-main-bg px-6 py-12">
+    <div className="relative min-h-screen flex items-start justify-center bg-main-bg px-6 py-20">
       <div className="w-full max-w-105">
         <div className="flex flex-col items-start mb-8">
+          <div className="absolute top-8 left-6 flex justify-between">
+            <Link
+              to="/home"
+              className="flex items-center text-sm font-medium text-accent hover:text-accent-hover hover:underline transition-colors duration-180 group"
+            >
+              <ArrowLeft
+                size={12}
+                className="transition-transform duration-180 group-hover:translate-x-0.5 mr-0.5"
+              />
+              Back Home
+            </Link>
+          </div>
           <img src={logo} alt="Ticketer Logo" className="mb-8 self-center" />
           <h1 className="text-3xl font-bold text-primary tracking-tight">
             Welcome <span className="text-accent-hover">Back</span>
