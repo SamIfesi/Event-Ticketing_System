@@ -44,7 +44,7 @@ export default function RegisterPage() {
               className="flex items-center text-sm font-medium text-accent hover:text-accent-hover hover:underline transition-colors duration-180 group"
             >
               <ArrowLeft
-                size={12}
+                size={13}
                 className="transition-transform duration-180 group-hover:translate-x-0.5 mr-0.75"
               />
               Back Home
