@@ -161,17 +161,18 @@ export function useAuth() {
   }, [navigate, setLoggingOut, clearAuth]);
 
   const rehydrate = useCallback(async () => {
-    if (!token) return;
     if (user) return; // already have user, skip
     try {
       const data = await AuthService.me();
       setAuth({
         user: data.user,
-        token: token, // keep existing token
+        token: token ?? null, // keep existing token if we had one; cookie covers the rest
         isVerified: Boolean(data.user?.email_verified),
       });
     } catch {
-      clearAuth();
+      if (token || user) {
+        clearAuth();
+      }
     }
   }, [token, user, clearAuth, setAuth]);
 
