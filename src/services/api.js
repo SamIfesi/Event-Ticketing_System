@@ -10,18 +10,19 @@ const api = axios.create({
     'Content-Type': 'application/json',
   },
   timeout: 15000,
+  withCredentials: true,
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
 // REQUEST INTERCEPTOR
 // Runs before every single API call leaves the browser.
 //
 // What it does:
 // 1. Attach JWT from Zustand (not localStorage directly — single source of
-//    truth lives in the store).
+//    truth lives in the store). Kept as a fallback/legacy header during
+//    rollout — the cookie is now the primary auth mechanism, set
+//    automatically by the browser via withCredentials above.
 // 2. Start top bar immediately.
 // 3. After 800ms: kill top bar, start 3-bar center loader instead.
-// ─────────────────────────────────────────────────────────────────────────────
 api.interceptors.request.use(
   (config) => {
     const token = useAuthStore.getState().token;
@@ -55,7 +56,6 @@ api.interceptors.request.use(
   }
 );
 
-// ─────────────────────────────────────────────────────────────────────────────
 // RESPONSE INTERCEPTOR
 // Runs after every API response (success or error).
 //
@@ -64,7 +64,6 @@ api.interceptors.request.use(
 // 2. Stop whichever loader is active.
 // 3. On 401: call clearAuth() (wipes Zustand + its persisted localStorage key
 //    in one shot) then hard-redirect to /login.
-// ─────────────────────────────────────────────────────────────────────────────
 api.interceptors.response.use(
   (response) => {
     if (response.config._slowTimer) clearTimeout(response.config._slowTimer);
