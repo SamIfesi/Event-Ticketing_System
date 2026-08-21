@@ -25,13 +25,14 @@ const api = axios.create({
 // 3. After 800ms: kill top bar, start 3-bar center loader instead.
 api.interceptors.request.use(
   (config) => {
-    const token = useAuthStore.getState().token;
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    // REMOVED: no more Authorization header attach. The auth cookie
+    // (Domain=.ticketer.website, HttpOnly) is sent automatically by
+    // the browser on every request via withCredentials. Attaching a
+    // stale token from localStorage here was overriding the cookie
+    // and causing cross-subdomain session bugs.
 
     if (config.skipLoader) {
-      return config; // Skip Loader for silenr background requests
+      return config; // Skip Loader for silent background requests
     }
 
     const { startTopBar, stopTopBar, startCenter, stopCenter } =

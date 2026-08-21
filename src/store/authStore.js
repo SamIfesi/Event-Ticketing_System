@@ -6,15 +6,15 @@ export const useAuthStore = create(
   persist(
     (set) => ({
       user: null,
-      token: null,
+      // token: null,
       isVerified: false,
       isLoggingOut: false,
       _hasHydrated: false,
 
       setHasHydrated: (val) => set({ _hasHydrated: val }),
 
-      setAuth: ({ user, token, isVerified }) =>
-        set({ user, token, isVerified: Boolean(isVerified), isLoggingOut: false}),
+      setAuth: ({ user, isVerified }) =>
+        set({ user, isVerified: Boolean(isVerified), isLoggingOut: false }),
 
       setEmailVerified: () =>
         set((state) => ({
@@ -24,7 +24,7 @@ export const useAuthStore = create(
 
       clearAuth: () => {
         localStorage.removeItem(STORAGE_KEY.AUTH);
-        set({ user: null, token: null, isVerified: false });
+        set({ user: null, isVerified: false });
       },
 
       setLoggingOut: () => set({ isLoggingOut: true }),
@@ -33,7 +33,6 @@ export const useAuthStore = create(
       name: STORAGE_KEY.AUTH,
       partialize: (state) => ({
         user: state.user,
-        token: state.token,
         isVerified: state.isVerified,
       }),
       onRehydrateStorage: () => (state) => {
