@@ -56,7 +56,17 @@ export default function GoogleSignInButton({
         onError?.(
           'Popup was blocked. Please allow popups for this site and try again.'
         );
+        return;
       }
+    
+      if (err?.type === 'popup_closed') {
+        onError?.(
+          'Google sign-in popup was closed before authentication completed.'
+        );
+        return;
+      }
+    
+      onError?.('Google sign-in could not be completed. Please try again.');
     },
   });
 
