@@ -44,14 +44,18 @@ export default function GoogleSignInButton({
     },
     onError: (err) => {
       setPending(false);
-      if (err?.type !== 'popup_closed' && err?.error !== 'popup_closed_by_user') {
-        onError?.('Google sign-in failed. Please try again.');
-      }
+      console.error('[Google onError]', err); // TEMP — see what's really happening
+      // if (err?.type !== 'popup_closed' && err?.error !== 'popup_closed_by_user') {
+      onError?.('Google sign-in failed. Please try again.');
+      // }
     },
     onNonOAuthError: (err) => {
       setPending(false);
+      console.error('[Google onNonOAuthError]', err); // TEMP
       if (err?.type === 'popup_blocked') {
-        onError?.('Popup was blocked. Please allow popups for this site and try again.');
+        onError?.(
+          'Popup was blocked. Please allow popups for this site and try again.'
+        );
       }
     },
   });
