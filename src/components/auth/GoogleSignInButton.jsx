@@ -19,7 +19,7 @@
 //
 // Place this file at: src/components/auth/GoogleSignInButton.jsx
 
-import { GoogleLogin } from '@react-oauth/google';
+import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { useState } from 'react';
 
 export default function GoogleSignInButton({
@@ -60,15 +60,17 @@ export default function GoogleSignInButton({
           Signing in…
         </div>
       ) : (
-        <GoogleLogin
-          onSuccess={handleSuccess}
-          onError={handleError}
-          text={text}
-          shape="rectangular"
-          theme="outline"
-          size="large"
-          logo_alignment="left"
-        />
+        <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+          <GoogleLogin
+            onSuccess={handleSuccess}
+            onError={handleError}
+            text={text}
+            shape="rectangular"
+            theme="outline"
+            size="large"
+            logo_alignment="left"
+          />{' '}
+        </GoogleOAuthProvider>
       )}
     </div>
   );
