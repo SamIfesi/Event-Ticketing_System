@@ -291,7 +291,7 @@ export default function HomePage() {
         </section>
 
         {/* ── Browse by category — Ticketmaster-style horizontal rows ── */}
-        <section className="max-w-6xl mx-auto px-6 py-16 flex flex-col gap-12 overflow-x-hidden">
+        {/* <section className="max-w-6xl mx-auto px-6 py-16 flex flex-col gap-12 overflow-x-hidden">
           <div>
             <p className="text-xs font-semibold text-accent uppercase tracking-widest mb-1">
               Explore
@@ -326,7 +326,7 @@ export default function HomePage() {
               <CategoryEventRow key={category.id} category={category} />
             ))
           )}
-        </section>
+        </section> */}
 
         {/* How it works */}
         <section className="max-w-6xl mx-auto px-6 py-16">
