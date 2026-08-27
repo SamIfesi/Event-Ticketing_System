@@ -64,7 +64,7 @@ const AuthService = {
 
   async googleAuth(idToken) {
     const response = await api.post('/auth/callback/google', {
-      id_token: accessToken,
+      id_token: idToken,
     });
     return response.data.data; // returns {user, token, email_verified:true}
   },

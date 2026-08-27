@@ -208,7 +208,7 @@ export default function RegisterPage() {
           <GoogleSignInButton
             label="Sign in with Google"
             loading={loading}
-            onSuccess={(accessToken) => googleLogin(accessToken)}
+            onSuccess={(idToken) => googleLogin(idToken)}
             onError={() => {}}
           />
         </div>
