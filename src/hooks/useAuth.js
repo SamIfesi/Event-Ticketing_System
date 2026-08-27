@@ -255,11 +255,11 @@ export function useAuth() {
   );
 
   const googleLogin = useCallback(
-    async (accessToken) => {
+    async (idToken) => {
       setLoading(true);
       resetErrors();
       try {
-        const data = await AuthService.googleAuth(accessToken);
+        const data = await AuthService.googleAuth(idToken);
         setAuth({ user: data.user, token: data.token, isVerified: true });
         toastSuccess('Welcome! Signed in with Google.');
         navigate(getDefaultPath(data.user.role));
