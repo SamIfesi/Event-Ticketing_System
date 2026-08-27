@@ -36,7 +36,27 @@ export default function GoogleSignInButton({
     const idToken = credentialResponse?.credential;
 
     if (!idToken) {
+  function handleSuccess(credentialResponse) {
+    setPending(false);
+    const idToken = credentialResponse?.credential;
+
+    if (!idToken) {
       onError?.('Google sign-in failed. Please try again.');
+      return;
+    }
+
+    onSuccess?.(idToken);
+  }
+
+  function handleError() {
+    setPending(false);
+    onError?.('Google sign-in failed. Please try again.');
+  }
+
+  // Google's button text presets: 'signin_with' | 'signup_with' | 'continue_with' | 'signin'
+  const text = label.toLowerCase().includes('sign up')
+    ? 'signup_with'
+    : 'signin_with';
       return;
     }
 
