@@ -68,6 +68,7 @@ export default function GoogleSignInButton({
             shape="rectangular"
             theme="outline"
             size="large"
+width="100%"
             logo_alignment="left"
           />{' '}
         </GoogleOAuthProvider>
