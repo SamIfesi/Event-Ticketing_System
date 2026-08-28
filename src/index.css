@@ -171,3 +171,10 @@ textarea {
     transform: scale(1) translateY(0);
   }
 }
+
+.google-login-wrapper,
+.google-login-wrapper > div,
+.google-login-wrapper iframe {
+  width: 100% !important;
+  max-width: 100% !important;
+}

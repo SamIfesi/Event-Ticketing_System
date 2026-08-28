@@ -21,6 +21,7 @@
 
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import { useState } from 'react';
+import Spinner from '../loaders/Spinner';
 
 export default function GoogleSignInButton({
   onSuccess,
@@ -54,9 +55,10 @@ export default function GoogleSignInButton({
     : 'signin_with';
 
   return (
-    <div className="w-full flex justify-center">
+    <div className="w-full google-login-wrapper">
       {isDisabled ? (
         <div className="w-full h-11 flex items-center justify-center border border-border rounded-card text-sm text-muted">
+          <Spinner />
           Signing in…
         </div>
       ) : (
@@ -68,9 +70,9 @@ export default function GoogleSignInButton({
             shape="rectangular"
             theme="outline"
             size="large"
-width="100%"
-            logo_alignment="left"
-          />{' '}
+            width="365"
+            logo_alignment="center"
+          />
         </GoogleOAuthProvider>
       )}
     </div>
