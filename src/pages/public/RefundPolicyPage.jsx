@@ -30,7 +30,7 @@ import Navbar from '../../components/layout/Navbar';
 import Sidebar from '../../components/layout/Sidebar';
 import Footer from '../../components/layout/Footer';
 
-const SUPPORT_EMAIL = 'ekesamrose@gmail.com';
+const SUPPORT_EMAIL = 'support@ticketer.website';
 
 const SECTIONS = [
   { id: 'overview', label: 'Overview', icon: List },

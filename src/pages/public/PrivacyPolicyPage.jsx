@@ -12,8 +12,8 @@ import Sidebar from '../../components/layout/Sidebar';
 import Footer from '../../components/layout/Footer';
 import { useState } from 'react';
 
-const LAST_UPDATED = 'July 2, 2026';
-const SUPPORT_EMAIL = 'ekesamrose@gmail.com';
+const LAST_UPDATED = 'September 2, 2026';
+const SUPPORT_EMAIL = 'support@ticketer.website';
 
 function Section({ id, title, children }) {
   return (

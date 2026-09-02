@@ -110,10 +110,10 @@ export default function LegalPage() {
         <p className="text-center text-xs text-muted mt-10">
           Questions about any of these documents? Reach us at{' '}
           <a
-            href="mailto:ekesamrose@gmail.com"
+            href="mailto:support@ticketer.website"
             className="text-accent font-medium hover:text-accent-hover transition-colors"
           >
-            ekesamrose@gmail.com
+            support@ticketer.website
           </a>
         </p>
       </main>
