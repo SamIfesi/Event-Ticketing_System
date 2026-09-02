@@ -26,3 +26,4 @@ dist-ssr
 .env
 
 public/celeb.svg
+Ticketer-key.pem
